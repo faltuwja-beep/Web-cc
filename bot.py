@@ -1,596 +1,543 @@
-import requests
 import telebot
-from telebot.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
-)
+import threading
+from PIL import Image
+import requests
+from datetime import datetime
+from io import BytesIO
+import time
+import json
+import os
 
-# =====================================
-# CONFIG
-# =====================================
+# ================= LOAD .env FILE (no need to export manually) =================
+def load_env_file(path=".env"):
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                os.environ.setdefault(key.strip(), value.strip())
 
-TOKEN = "8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M"
+load_env_file()
 
-API_URL = "https://info.leadershadman.online/wishlist?uid={uid}"
-
-EMOTE_API = (
-    "https://cdn.jsdelivr.net/gh/"
-    "ShahGCreator/icon@main/PNG/{}.png"
-)
-
-INFO_API = (
-    "https://info.leadershadman.online/"
-    "player-info?uid={uid}"
-)
-
-BASE_URL = "https://info.leadershadman.online"
-
-IMAGE_URL = "https://image.leadershadman.online"
-
-
+# ================= CONFIG =================
+TOKEN = os.environ.get("8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M")
+if not TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is required!")
 bot = telebot.TeleBot(TOKEN)
 
+# ========= API LINKS =========
+API_URL = "https://info.leadershadman.online/wishlist?uid={uid}"
+EMOTE_API = "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/{}.png"
+INFO_API = "https://info.leadershadman.online/player-info?uid={uid}"
+# ========= NEW APIs =========
+BASE_URL = "https://info.leadershadman.online"
+IMAGE_URL = "https://image.leadershadman.online"
 
-# =====================================
-# USER STATE
-# =====================================
+def banner_to_sticker(image_data):
 
-user_state = {}
+    img = Image.open(image_data)
+
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+
+    img.thumbnail((512, 512))
+
+    output = BytesIO()
+    output.name = "sticker.png"
+
+    img.save(output, format="PNG")
+
+    output.seek(0)
+
+    return output
+
+# ========= SAFE REQUEST =========
+def safe_get_url(url):
+    response = requests.get(url, timeout=150)
+
+    if response.status_code != 200:
+        raise Exception("API Error")
+
+    return response
 
 
-# =====================================
-# MAIN KEYBOARD
-# =====================================
+# ========= FETCH PLAYER DATA =========
+def fetch_player_data_by_uid_or_name(search_parameter):
 
-def main_keyboard():
+    if search_parameter.isdigit():
+        url = f"{BASE_URL}/player-info?uid={search_parameter}"
+    else:
+        url = f"{BASE_URL}/player-info?name={search_parameter}"
 
-    markup = ReplyKeyboardMarkup(
-        resize_keyboard=True,
-        row_width=2
+    response = requests.get(url, timeout=150)
+
+    if response.status_code != 200:
+        return None
+
+    data = response.json()
+
+    basic_info = data.get("basicInfo", {})
+
+    return (
+        basic_info.get("accountId"),
+        basic_info.get("nickname"),
+        basic_info.get("region", "Not Found"),
+        data
     )
 
-    markup.add(
-        KeyboardButton("🔍 Player Info"),
-        KeyboardButton("❤️ Wishlist")
+
+# ========= FETCH BANNER =========
+def fetch_banner_image(player_data):
+
+    basic_information = player_data.get("basicInfo", {})
+    clan_information = player_data.get("clanBasicInfo", {})
+
+    frame = "true" if basic_information.get(
+        "primeLevel", {}
+    ).get("level") == 8 else "false"
+
+    url = (
+        f"{IMAGE_URL}/banner-image?"
+        f"headPic={basic_information.get('headPic','')}"
+        f"&bannerId={basic_information.get('bannerId','')}"
+        f"&name={basic_information.get('nickname','').replace('#','%23').replace('&','%26')}"
+        f"&level={basic_information.get('level',2)}"
+        f"&guild={clan_information.get('clanName','').replace('#','%23').replace('&','%26')}"
+        f"&pinId={basic_information.get('pinId','900000012')}"
+        f"&celebrity={basic_information.get('celebrityStatus',0)}"
+        f"&primeLevel={basic_information.get('primeLevel',{}).get('level',0)}"
+        f"&frame={frame}"
     )
 
-    markup.add(
-        KeyboardButton("ℹ️ Help")
+    response = safe_get_url(url)
+
+    return response.content
+
+
+# ========= FETCH OUTFIT =========
+def fetch_outfit_image(player_data):
+
+    basic_information = player_data.get("basicInfo", {})
+    profile_information = player_data.get("profileInfo", {})
+
+    equipped_weapons = basic_information.get(
+        "weaponSkinShows", []
     )
 
-    return markup
+    equipped_outfits = profile_information.get(
+        "clothes", []
+    )
 
+    character_id = profile_information.get(
+        "avatarId",
+        "102000007"
+    )
 
-# =====================================
-# START
-# =====================================
+    outfit_ids = ",".join(
+        str(item)
+        for item in (equipped_outfits + equipped_weapons)
+    ) if (equipped_outfits or equipped_weapons) else ""
 
-@bot.message_handler(commands=["start"])
+    url = (
+        f"{IMAGE_URL}/outfit-image?"
+        f"avatar_id={character_id}"
+        f"&clothes={outfit_ids}"
+    )
+
+    response = safe_get_url(url)
+
+    return response.content
+    
+def convert_time(ts):
+    try:
+        if not ts:
+            return "Not Found"
+
+        ts = int(str(ts).strip())
+
+        if ts > 1000000000000:  # milliseconds check
+            ts = ts / 1000
+
+        return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+    except:
+        return "Not Found"         
+              
+# ================= START =================
+@bot.message_handler(commands=['start'])
 def start(message):
+    text = """
+<b><tg-emoji emoji-id='5372981976804366741'>🤖</tg-emoji> FREE FIRE PLAYER INFO BOT <tg-emoji emoji-id='5372981976804366741'>🤖</tg-emoji>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6100170496077204999'>⚡</tg-emoji> BOT FEATURES <tg-emoji emoji-id='6100170496077204999'>⚡</tg-emoji>
 
-    user_state.pop(
-        message.from_user.id,
-        None
-    )
+PLAYER INFO
+View level, likes, rank, account info, activity and more
+PLAYER SYSTEM
+Get complete player information using UID with fast response and accurate data processing
+REAL TIME DATA
+All data is fetched live from API ensuring up to date and reliable information
+MULTIPLE API INTEGRATION
+Uses multiple APIs simultaneously for faster performance and better results
+FAST API DATA
+Optimized system with parallel requests for instant output
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6221914376329237010'>🆘</tg-emoji> MAIN COMMANDS <tg-emoji emoji-id='6221914376329237010'>🆘</tg-emoji>
 
+/get &lt;uid&gt; - Full player info with all personal details  
+/bancheck &lt;uid&gt; - Account status  
+/banner &lt;uid&gt; - give banner image
+/outfit &lt;region&gt; &lt;uid&gt; - give Outfit image
+/region &lt;uid&gt; - Region information  
+/token &lt;uid&gt; &lt;password&gt; - Generate login JWT token  
+/wishlist &lt;uid&gt; - Get wishlist data in JSON   
+/level &lt;uid&gt; - Get level data with EXP and next level progress  
+/events &lt;region&gt; - Give events images 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Type /help to get all commands
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6237905016313615867'>💫</tg-emoji> PLAYER INFO DATA
+
+Get full player data  
+Player guild information  
+Ban check status  
+Get wishlist items  
+Update guest account bio  
+Region information  
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='5796157163084718357'>🌏</tg-emoji> GLOBAL REGION SUPPORT  
+IND, BD, US, VN, SG  
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6100674965755924191'>👑</tg-emoji> BOT POWERED BY 𝗦𝗛𝗔𝗗𝗠𝗔𝗡 𝗖𝗢𝗗𝗘𝗥
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>"""
     bot.send_message(
-        message.chat.id,
-
-        "🎮 *Free Fire Player Tool*\n\n"
-        "Select a service below.",
-
-        reply_markup=main_keyboard(),
-
-        parse_mode="Markdown"
-    )
-
-
-# =====================================
-# PLAYER INFO BUTTON
-# =====================================
-
-@bot.message_handler(
-    func=lambda message:
-    message.text == "🔍 Player Info"
+    chat_id=message.chat.id,
+    text=text,
+    parse_mode="HTML",
+    reply_to_message_id=message.message_id
 )
-def ask_player_uid(message):
 
-    user_state[
-        message.from_user.id
-    ] = "player_info"
+# ================= HELP =================
+@bot.message_handler(commands=['help'])
+def help(message):
+    text = """
+<b><tg-emoji emoji-id='6235722567336859128'>📖</tg-emoji> FREE FIRE PLAYER INFO BOT HELP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6221914376329237010'>🆘</tg-emoji> COMMAND GUIDE <tg-emoji emoji-id='6221914376329237010'>🆘</tg-emoji>
 
+/get &lt;uid&gt;
+Get complete player information including level, rank, likes and account data
+/bancheck &lt;uid&gt;
+Check if the account is banned or safe
+/region &lt;uid&gt;
+Detect the player region using UID
+/token &lt;uid&gt; &lt;password&gt;
+Generate JWT login token for account access
+/wishlist &lt;uid&gt;
+Get player wishlist items directly from API
+/banner &lt;uid&gt; - give banner image
+/outfit &lt;region&gt; &lt;uid&gt; - give Outfit image
+/level &lt;uid&gt;
+Get player level details including EXP and level progress
+/events &lt;region&gt; - Give events images 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='5431577498364158238'>📊</tg-emoji> DATA PROVIDED BY BOT
+
+ACCOUNT INFORMATION
+Player name, UID, level, likes, region and signature
+ACCOUNT ACTIVITY
+Rank details, fire pass status and last login
+GUILD INFORMATION
+Guild name, guild ID, guild level and leader details
+PET DETAILS
+Pet name, type, level and experience
+IMAGE DATA
+Banner image and outfit image sent directly from API
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<tg-emoji emoji-id='6100674965755924191'>👑</tg-emoji> BOT POWERED BY 𝗦𝗛𝗔𝗗𝗠𝗔𝗡 𝗖𝗢𝗗𝗘𝗥
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>
+"""
     bot.send_message(
-        message.chat.id,
-
-        "🔍 *Player Info*\n\n"
-        "Send the Free Fire UID.",
-
-        parse_mode="Markdown"
-    )
-
-
-# =====================================
-# WISHLIST BUTTON
-# =====================================
-
-@bot.message_handler(
-    func=lambda message:
-    message.text == "❤️ Wishlist"
+    chat_id=message.chat.id,
+    text=text,
+    parse_mode="HTML",
+    reply_to_message_id=message.message_id
 )
-def ask_wishlist_uid(message):
+    
 
-    user_state[
-        message.from_user.id
-    ] = "wishlist"
+# ========= FORMAT FUNCTION =========
+def format_info(data):
+    return f"""<b>ACCOUNT INFORMATION:
+┌ Basic Information:
+├─ Prime Level: {data.get('basicInfo', {}).get('primeLevel', {}).get('level', 'Not Found')}
+├─ Name: {data.get('basicInfo', {}).get('nickname', 'Not Found')}
+├─ UID: {data.get('basicInfo', {}).get('accountId', 'Not Found')}
+├─ Level: {data.get('basicInfo', {}).get('level', 'Not Found')} (Exp: {data.get('basicInfo', {}).get('exp', 'Not Found')})
+├─ Region: {data.get('basicInfo', {}).get('region', 'Not Found')}
+├─ Likes: {data.get('basicInfo', {}).get('liked', 'Not Found')}
+├─ Honor Score: {data.get('creditScoreInfo', {}).get('creditScore', 'Not Found')}
+├─ Celebrity Status: {data.get('basicInfo', {}).get('badgeId', 'Not Found')}
+├─ Title Name: {data.get('basicInfo', {}).get('title', 'Not Found')}
+└─ Signature: {data.get('socialInfo', {}).get('signature', 'Not Found')}
 
-    bot.send_message(
-        message.chat.id,
+┌ Activity Information:
+├─ Most Recent OB: {data.get('basicInfo', {}).get('releaseVersion', 'Not Found')}
+├─ Fire Pass: {data.get('basicInfo', {}).get('seasonId', 'Not Found')}
+├─ Current Bp Badges: {data.get('basicInfo', {}).get('badgeCnt', 'Not Found')}
+├─ Br Rank: {data.get('basicInfo', {}).get('rank', 'Not Found')} ({data.get('basicInfo', {}).get('rankingPoints', 'Not Found')})
+├─ Cs Rank: {data.get('basicInfo', {}).get('csRank', 'Not Found')} ({data.get('basicInfo', {}).get('csRankingPoints', 'Not Found')} Star)
+├─ Gender: {data.get('socialInfo', {}).get('gender', 'Not Found')}
+├─ Show Rank: {data.get('socialInfo', {}).get('rankShow', 'Not Found')}
+├─ Show Br Rank: {data.get('basicInfo', {}).get('showBrRank', 'Not Found')}
+├─ Show Cs Rank: {data.get('basicInfo', {}).get('showCsRank', 'Not Found')}
+├─ Created At: {convert_time(data.get('basicInfo', {}).get('createAt'))}
+└─ Last Login: {convert_time(data.get('basicInfo', {}).get('lastLoginAt'))}
 
-        "❤️ *Wishlist Info*\n\n"
-        "Send the Free Fire UID.",
+┌ Overview Information:
+├─ Avatar ID: {data.get('profileInfo', {}).get('avatarId', 'Not Found')}
+├─ Banner ID: {data.get('basicInfo', {}).get('bannerId', 'Not Found')}
+├─ Pin ID: {data.get('profileInfo', {}).get('pinId', 'Default')}
+├─ Active Time: {data.get('socialInfo', {}).get('activeTime', 'Flexible')}
+├─ Active Days: {data.get('socialInfo', {}).get('activeDays', 'Flexible')}
+├─ Mode Prefer: {data.get('socialInfo', {}).get('rankShow', 'No Preference')}
+├─ Equipped Skills: {data.get('profileInfo', {}).get('equippedSkills', 'Not Found')}
+├─ Language: {data.get('socialInfo', {}).get('language', 'Not Found')}
+├─ Equipped Battle Card ID: {data.get('profileInfo', {}).get('battleCardId', 'Not Equipped')}
+├─ Equipped Gun ID: {data.get('profileInfo', {}).get('gunId', 'Not Equipped')}
+├─ Equipped Animation ID: {data.get('profileInfo', {}).get('animationId', 'Not Equipped')}
+├─ Transform Animation ID: {data.get('profileInfo', {}).get('transformAnimationId', 'Not Equipped')}
+└─ Outfits: {data.get('profileInfo', {}).get('clothes', 'Graphically Presented Below')}
 
-        parse_mode="Markdown"
-    )
+┌ Pet Details:
+├─ Equipped?: {data.get('petInfo', {}).get('isSelected', 'Not Found')}
+├─ Pet Name: {data.get('petInfo', {}).get('name', 'Not Found')}
+├─ Pet Type: {data.get('petInfo', {}).get('id', 'Not Found')}
+├─ Pet Exp: {data.get('petInfo', {}).get('exp', 'Not Found')}
+└─ Pet Level: {data.get('petInfo', {}).get('level', 'Not Found')}
 
+┌ Guild Information:
+├─ Guild Name: {data.get('clanBasicInfo', {}).get('clanName', 'Not Found')}
+├─ Guild ID: {data.get('clanBasicInfo', {}).get('clanId', 'Not Found')}
+├─ Guild Level: {data.get('clanBasicInfo', {}).get('clanLevel', 'Not Found')}
+├─ Live Members: {data.get('clanBasicInfo', {}).get('memberNum', 'Not Found')}/{data.get('clanBasicInfo', {}).get('capacity', 'Not Found')}
+└─ Leader Information:
+    ├─ Leader Name: {data.get('captainBasicInfo', {}).get('nickname', 'Not Found')}
+    ├─ Leader UID: {data.get('captainBasicInfo', {}).get('accountId', 'Not Found')}
+    ├─ Leader Level: {data.get('captainBasicInfo', {}).get('level', 'Not Found')} (Exp: {data.get('captainBasicInfo', {}).get('exp', 'Not Found')})
+    ├─ Leader Region: {data.get('captainBasicInfo', {}).get('region', 'Not Found')}
+    ├─ Leader Fire Pass: {data.get('captainBasicInfo', {}).get('seasonId', 'Not Found')}
+    ├─ Leader Created At: {convert_time(data.get('captainBasicInfo', {}).get('createAt'))}
+    ├─ Leader Last Login: {convert_time(data.get('captainBasicInfo', {}).get('lastLoginAt'))}
+    ├─ Leader Most Recent OB: {data.get('captainBasicInfo', {}).get('releaseVersion', 'Not Found')}
+    ├─ Leader Title Name: {data.get('captainBasicInfo', {}).get('title', 'Not Found')}
+    ├─ Leader Current Bp Badges: {data.get('captainBasicInfo', {}).get('badgeCnt', 'Not Found')}
+    ├─ Leader Br Rank: {data.get('captainBasicInfo', {}).get('rank', 'Not Found')} ({data.get('captainBasicInfo', {}).get('rankingPoints', 'Not Found')})
+    └─ Leader Cs Rank: {data.get('captainBasicInfo', {}).get('csRank', 'Not Found')} ({data.get('captainBasicInfo', {}).get('csRankingPoints', 'Not Found')} Star)
 
-# =====================================
-# HELP
-# =====================================
+┌ Public Craftland Maps
+{data.get('craftlandInfo', 'Not Found')}</b>"""
 
-@bot.message_handler(
-    func=lambda message:
-    message.text == "ℹ️ Help"
-)
-def help_command(message):
+# ========= COMMAND =========
+@bot.message_handler(commands=["get"])
+def get_info(message):
+    parts = message.text.split()
 
-    bot.send_message(
-        message.chat.id,
+    # <tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> UID check
+    if len(parts) < 2:
+        bot.reply_to(message, "<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Use: /get UID</b>", parse_mode="HTML")
+        return
 
-        "ℹ️ *How To Use*\n\n"
-        "1️⃣ Select Player Info\n"
-        "2️⃣ Send UID\n"
-        "3️⃣ Get player details\n\n"
-        "OR\n\n"
-        "1️⃣ Select Wishlist\n"
-        "2️⃣ Send UID\n"
-        "3️⃣ Get wishlist information",
+    uid = parts[1]
 
-        reply_markup=main_keyboard(),
-
-        parse_mode="Markdown"
-    )
-
-
-# =====================================
-# SAFE GET VALUE
-# =====================================
-
-def get_value(data, *keys, default="N/A"):
-
-    for key in keys:
-
-        if isinstance(data, dict) and key in data:
-            value = data.get(key)
-
-            if value is not None:
-                return value
-
-    return default
-
-
-# =====================================
-# PLAYER INFO FUNCTION
-# =====================================
-
-def get_player_info(message, uid):
-
-    loading = bot.send_message(
-        message.chat.id,
-
-        "⏳ *Fetching player information...*",
-
-        parse_mode="Markdown"
+    # ⏳ Processing message
+    processing = bot.reply_to(
+        message,
+        f"<b>⏳ Fetching {uid} details, please wait...</b>",
+        parse_mode="HTML"
     )
 
     try:
+        res = requests.get(INFO_API.format(uid=uid)).json()
 
-        url = INFO_API.format(uid=uid)
+        # <tg-emoji emoji-id='6224430136243000396'>🔴</tg-emoji> API error check
+        if not res or "error" in res:
+            try:
+                bot.delete_message(message.chat.id, processing.message_id)
+            except:
+                pass
 
-        response = requests.get(
-            url,
-            timeout=20
-        )
+            error_msg = res.get("error", "Invalid UID or server error.")
+            bot.reply_to(message, f"<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Info Error: {error_msg}</b>", parse_mode="HTML")
+            return
 
-        response.raise_for_status()
+        # <tg-emoji emoji-id='6224390807227470978'>✅</tg-emoji> Normal data
+        text = format_info(res)
 
-        data = response.json()
+        try:
+            bot.delete_message(message.chat.id, processing.message_id)
+        except:
+            pass
 
-        # Some APIs return data inside "data"
-        if isinstance(data, dict):
-
-            player = data.get(
-                "basicInfo",
-                data.get(
-                    "data",
-                    data
-                )
-            )
-
-        else:
-            player = {}
-
-        # Common fields
-        name = get_value(
-            player,
-            "nickname",
-            "name",
-            "playerName"
-        )
-
-        account_id = get_value(
-            player,
-            "accountId",
-            "uid",
-            "playerId",
-            default=uid
-        )
-
-        region = get_value(
-            player,
-            "region"
-        )
-
-        level = get_value(
-            player,
-            "level"
-        )
-
-        exp = get_value(
-            player,
-            "exp"
-        )
-
-        likes = get_value(
-            player,
-            "liked",
-            "likes"
-        )
-
-        rank = get_value(
-            player,
-            "rank"
-        )
-
-        cs_rank = get_value(
-            player,
-            "csRank"
-        )
-
-        ranking_points = get_value(
-            player,
-            "rankingPoints"
-        )
-
-        result = (
-            "🎮 *FREE FIRE PLAYER INFO*\n\n"
-
-            "━━━━━━━━━━━━━━━━━━\n"
-
-            f"👤 *Name:* `{name}`\n"
-            f"🆔 *UID:* `{account_id}`\n"
-            f"🌍 *Region:* `{region}`\n"
-            f"📊 *Level:* `{level}`\n"
-            f"✨ *EXP:* `{exp}`\n"
-            f"❤️ *Likes:* `{likes}`\n\n"
-
-            "━━━━━━━━━━━━━━━━━━\n\n"
-
-            f"🏆 *BR Rank:* `{rank}`\n"
-            f"⚔️ *CS Rank:* `{cs_rank}`\n"
-            f"🎯 *Rank Points:* `{ranking_points}`\n\n"
-
-            "━━━━━━━━━━━━━━━━━━"
-        )
-
-        bot.edit_message_text(
-            result,
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-        bot.send_message(
-            message.chat.id,
-
-            "Choose another service:",
-
-            reply_markup=main_keyboard()
-        )
-
-    except requests.exceptions.Timeout:
-
-        bot.edit_message_text(
-            "❌ *API Timeout!*\n\n"
-            "Server response is taking too long.",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-    except requests.exceptions.RequestException:
-
-        bot.edit_message_text(
-            "❌ *API Connection Error!*\n\n"
-            "Unable to connect to the API server.",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-    except ValueError:
-
-        bot.edit_message_text(
-            "❌ *Invalid API Response!*\n\n"
-            "The server did not return valid JSON.",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
+        bot.reply_to(message, text, parse_mode="HTML")
 
     except Exception as e:
+        try:
+            bot.delete_message(message.chat.id, processing.message_id)
+        except:
+            pass
 
-        bot.edit_message_text(
-            f"❌ *Error!*\n\n`{str(e)}`",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-
-# =====================================
-# WISHLIST FUNCTION
-# =====================================
-
-def get_wishlist(message, uid):
-
-    loading = bot.send_message(
-        message.chat.id,
-
-        "⏳ *Fetching wishlist information...*",
-
-        parse_mode="Markdown"
-    )
-
+        bot.reply_to(message, f"<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Info Error: {e}</b>", parse_mode="HTML")
+        
+   # ===== FETCH PLAYER DATA =====
     try:
+        player = fetch_player_data_by_uid_or_name(uid)
 
-        url = API_URL.format(uid=uid)
-
-        response = requests.get(
-            url,
-            timeout=20
-        )
-
-        response.raise_for_status()
-
-        data = response.json()
-
-        # API can return a dictionary
-        # or list of wishlist/emote IDs
-
-        if isinstance(data, dict):
-
-            # Check common list names
-            items = (
-                data.get("wishlist")
-                or data.get("data")
-                or data.get("items")
-                or data.get("emotes")
-                or []
+        if not player:
+            bot.send_message(
+                message.chat.id,
+                "<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Player Not Found</b>",
+                parse_mode="HTML"
             )
+            return
 
-        elif isinstance(data, list):
+        account_id, nickname, region, player_data = player
 
-            items = data
-
-        else:
-
-            items = []
-
-        # If API response is not a list
-        if not isinstance(items, list):
-
-            items = [items]
-
-        count = len(items)
-
-        result = (
-            "❤️ *FREE FIRE WISHLIST*\n\n"
-
-            f"🆔 *UID:* `{uid}`\n"
-            f"📦 *Total Items:* `{count}`\n\n"
-
-            "━━━━━━━━━━━━━━━━━━\n"
-        )
-
-        # Show first 20 items
-        for index, item in enumerate(
-            items[:20],
-            start=1
-        ):
-
-            if isinstance(item, dict):
-
-                item_id = (
-                    item.get("id")
-                    or item.get("itemId")
-                    or item.get("emoteId")
-                    or "N/A"
-                )
-
-                item_name = (
-                    item.get("name")
-                    or item.get("itemName")
-                    or item.get("emoteName")
-                    or "Unknown"
-                )
-
-                result += (
-                    f"{index}. `{item_name}`\n"
-                    f"   ID: `{item_id}`\n\n"
-                )
-
-            else:
-
-                result += (
-                    f"{index}. `{item}`\n"
-                )
-
-        result += (
-            "\n━━━━━━━━━━━━━━━━━━"
-        )
-
-        bot.edit_message_text(
-            result,
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
+    except Exception as e:
         bot.send_message(
             message.chat.id,
+            f"<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Player Fetch Error:</b> {e}",
+            parse_mode="HTML"
+        )
+        return
 
-            "Choose another service:",
+    # ===== BANNER STICKER =====
+    try:
+        banner_bytes = fetch_banner_image(player_data)
 
-            reply_markup=main_keyboard()
+        sticker = banner_to_sticker(
+            BytesIO(banner_bytes)
         )
 
-    except requests.exceptions.Timeout:
-
-        bot.edit_message_text(
-            "❌ *Wishlist API Timeout!*",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-    except requests.exceptions.RequestException:
-
-        bot.edit_message_text(
-            "❌ *Wishlist API Connection Error!*",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
+        bot.send_sticker(
+            message.chat.id,
+            sticker,
+            reply_to_message_id=message.message_id
         )
 
     except Exception as e:
-
-        bot.edit_message_text(
-            f"❌ *Error!*\n\n`{str(e)}`",
-
-            chat_id=message.chat.id,
-
-            message_id=loading.message_id,
-
-            parse_mode="Markdown"
-        )
-
-
-# =====================================
-# UID INPUT HANDLER
-# =====================================
-
-@bot.message_handler(func=lambda message: True)
-def handle_uid(message):
-
-    user_id = message.from_user.id
-
-    text = message.text.strip()
-
-    state = user_state.get(user_id)
-
-    # Ignore if user has not selected a service
-    if state is None:
-
         bot.send_message(
             message.chat.id,
-
-            "Please select a service first.",
-
-            reply_markup=main_keyboard()
+            f"<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Banner Error:</b> {e}",
+            parse_mode="HTML"
         )
 
-        return
 
-    # UID validation
-    if not text.isdigit():
+    # ===== OUTFIT IMAGE =====
+    try:
+        outfit_bytes = fetch_outfit_image(player_data)
 
+        photo = BytesIO(outfit_bytes)
+        photo.name = "outfit.jpg"
+
+        bot.send_photo(
+                chat_id=message.chat.id,
+                photo=photo,
+                reply_to_message_id=message.message_id,
+                timeout=120
+            )
+
+    except Exception as e:
         bot.send_message(
             message.chat.id,
-
-            "❌ Invalid UID!\n\n"
-            "UID should contain numbers only."
+            f"<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Outfit Error:</b> {e}",
+            parse_mode="HTML"
         )
+       
+# ================= WISHLIST =================
+def animate(msg, stop):
+    dots = ["⏳ Processing", "⏳ Processing.", "⏳ Processing..", "⏳ Processing..."]
+    i = 0
+    while not stop["stop"]:
+        try:
+            bot.edit_message_text(
+                f"<b>{dots[i % len(dots)]}</b>",
+                msg.chat.id,
+                msg.message_id,
+                parse_mode="HTML"
+            )
+            i += 1
+            time.sleep(0.5)
+        except:
+            break
 
+
+@bot.message_handler(commands=["wishlist"])
+def wishlist(message):
+    parts = message.text.split()
+
+    if len(parts) < 2:
+        bot.reply_to(message, "<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Use: /wishlist UID</b>", parse_mode="HTML")
         return
 
-    user_state.pop(
-        user_id,
-        None
-    )
+    uid = parts[1]
 
-    # Player info
-    if state == "player_info":
+    msg = bot.reply_to(message, "<b>⏳ Processing...</b>", parse_mode="HTML")
 
-        get_player_info(
-            message,
-            text
-        )
+    stop_flag = {"stop": False}
+    threading.Thread(target=animate, args=(msg, stop_flag)).start()
 
-    # Wishlist
-    elif state == "wishlist":
+    # <tg-emoji emoji-id='6235234890980269200'>🔗</tg-emoji> API CALL
+    try:
+        res = requests.get(API_URL.format(uid), timeout=15).json()
+    except:
+        stop_flag["stop"] = True
+        bot.edit_message_text("<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> API Error</b>", message.chat.id, msg.message_id, parse_mode="HTML")
+        return
 
-        get_wishlist(
-            message,
-            text
-        )
+    stop_flag["stop"] = True
 
+    # <tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> FAIL CHECK
+    if not res.get("success"):
+        bot.edit_message_text("<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Failed to fetch data</b>", message.chat.id, msg.message_id, parse_mode="HTML")
+        return
 
-# =====================================
-# RUN BOT
-# =====================================
+    player = res.get("player_info", {})
 
-if __name__ == "__main__":
+    # <tg-emoji emoji-id='6224390807227470978'>✅</tg-emoji> PLAYER INFO HEADER
+    info = f"""<b>WISHLIST INFORMATION    
+┌ PLAYER INFO
+├─ Nickname' {player.get("name", "Not Found")}
+├─ UID: {player.get("uid", uid)}
+├─ Region: {player.get("region", "Not Found")}
+└─ STATUS: SUCCESS <tg-emoji emoji-id='6224390807227470978'>✅</tg-emoji>
+</b>"""
 
-    print(
-        "🚀 Free Fire Info Bot Started!"
-    )
+    bot.edit_message_text(info, message.chat.id, msg.message_id, parse_mode="HTML")
 
-    bot.infinity_polling(
-        skip_pending=True
-    )
+    wishlist = res.get("wishlist", [])
+
+    if not wishlist:
+        bot.send_message(message.chat.id, "<b><tg-emoji emoji-id='6224185666704511761'>❌</tg-emoji> Wishlist Not Found</b>", parse_mode="HTML")
+        return
+
+    # ================= ITEMS =================
+    for item in wishlist:
+        name = item.get("name", "Unknown Item")
+        item_id = item.get("item_id")
+        icon = item.get("icon", "")
+        image_link = item.get("item_image_link")
+
+        # <tg-emoji emoji-id='6222206124867718480'>🎯</tg-emoji> PERFECT EMOTE DETECTION
+        if icon and "emote" in icon.lower():
+            image = EMOTE_API.format(item_id) if item_id else image_link
+        elif name and "emote" in name.lower():
+            image = EMOTE_API.format(item_id) if item_id else image_link
+        else:
+            image = image_link
+
+        # <tg-emoji emoji-id='6235620067942341623'>🧾</tg-emoji> CAPTION
+        caption = f"""<b>┌ ITEM DETAILS
+├─ Name: {name}
+├─ ID: {item_id}
+└─ TYPE: {"EMOTE <tg-emoji emoji-id='5323300526723469658'>🎭</tg-emoji>" if "e
