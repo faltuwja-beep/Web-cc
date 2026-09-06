@@ -270,19 +270,30 @@ def home():
     if dep_st.get('status') == 'pending':
         dep_st['rem'] = max(0, int(600 - (time.time() - dep_st.get('time', time.time()))))
     b_data = last_bought.pop(u, None) if u in last_bought else None
-    return render_template_string(HTML_UI, session_user=u, user_bal=bal, user_history=hist, user_dep_status=dep_st, packs=packs_db, bought_data=b_data, tab=request.args.get('tab', 'login'), view=request.args.get('view', 'store'), cat=request.args.get('cat', 'cc'), msg=request.args.get('msg', ''))
+    
+    tab_val = request.args.get('tab', 'login')
+    view_val = request.args.get('view', 'store')
+    cat_val = request.args.get('cat', 'cc')
+    msg_val = request.args.get('msg', '')
+    
+    return render_template_string(HTML_UI, session_user=u, user_bal=bal, user_history=hist, user_dep_status=dep_st, packs=packs_db, bought_data=b_data, tab=tab_val, view=view_val, cat=cat_val, msg=msg_val)
 
 @app.route('/register', methods=['POST'])
 def register():
-    name, u, p = request.form.get('name','').strip(), request.form.get('username','').strip(), request.form.get('password','').strip()
-    if not u or not p: return redirect('/?tab=reg&msg=Fill+all+fields')
-    if u == 'admin' or u in users_db: return redirect('/?tab=reg&msg=Username+taken')
+    name = request.form.get('name', '').strip()
+    u = request.form.get('username', '').strip()
+    p = request.form.get('password', '').strip()
+    if not u or not p: 
+        return redirect('/?tab=reg&msg=Fill+all+fields')
+    if u == 'admin' or u in users_db: 
+        return redirect('/?tab=reg&msg=Username+taken')
     users_db[u] = {'name': name, 'password': p, 'balance': 0.0, 'history': [], 'deposit_status': {'status': 'none'}}
     return redirect('/?tab=login&msg=Account+Created!+Login+Now')
 
 @app.route('/login', methods=['POST'])
 def login():
-    u, p = request.form.get('username','').strip(), request.form.get('password','').strip()
+    u = request.form.get('username', '').strip()
+    p = request.form.get('password', '').strip()
     if u == 'admin' and p == '123':
         current_session["user"] = 'admin'
         return redirect('/')
@@ -298,11 +309,15 @@ def logout():
 
 @app.route('/buy', methods=['POST'])
 def buy():
-    u, pid = current_session["user"], request.form.get('pid', '')
-    if not u or u == 'admin' or u not in users_db or pid not in packs_db: return redirect('/')
+    u = current_session["user"]
+    pid = request.form.get('pid', '')
+    if not u or u == 'admin' or u not in users_db or pid not in packs_db: 
+        return redirect('/')
     it = packs_db[pid]
-    if not it['codes']: return redirect('/?msg=Out+of+stock')
-    if users_db[u]['balance'] < it['price']: return redirect('/?msg=Low+balance')
+    if not it['codes']: 
+        return redirect('/?msg=Out+of+stock')
+    if users_db[u]['balance'] < it['price']: 
+        return redirect('/?msg=Low+balance')
     code = it['codes'].pop(0)
     users_db[u]['balance'] -= it['price']
     users_db[u]['history'].insert(0, {'title': it['name'], 'amount': -it['price'], 'code_data': code})
@@ -312,7 +327,8 @@ def buy():
 @app.route('/deposit', methods=['POST'])
 def deposit():
     u = current_session["user"]
-    amt, utr = float(request.form.get('amt', 0)), request.form.get('utr', '')
+    amt = float(request.form.get('amt', 0))
+    utr = request.form.get('utr', '')
     if u and u in users_db:
         did = str(len(pending_deposits) + 101)
         pending_deposits[did] = {'username': u, 'amount': amt, 'utr': utr, 'time': time.time()}
@@ -326,7 +342,4 @@ def withdraw():
     if u and u in users_db:
         amt = float(request.form.get('amt', 0))
         if users_db[u]['balance'] < amt:
-            return redirect('/?view=wth&msg=Low+balance')
-        users_db[u]['balance'] -= amt
-        users_db[u]['history'].insert(0, {'title': 'Withdrawal Request', 'amount': -amt})
-    return redirect('/?view=wth&msg
+            return redirect('/?view=wth&msg=Low+bal
