@@ -318,7 +318,7 @@ def deposit():
         did = str(len(pending_deposits) + 101)
         pending_deposits[did] = {'username': u, 'amount': amt, 'utr': utr, 'time': time.time()}
         users_db[u]['deposit_status'] = {'status': 'pending', 'time': time.time()}
-        users_db[u]['history'].insert(0, {'title': f"Deposit (UTR: {utr})", 'amount': amt, 'status': 'pending'})
+        users_db[u]['history'].insert(0, {'title': "Deposit (UTR: " + utr + ")", 'amount': amt, 'status': 'pending'})
     return redirect('/?view=dep&msg=Deposit+Submitted!')
 
 @app.route('/withdraw', methods=['POST'])
@@ -327,4 +327,4 @@ def withdraw():
     if u and u in users_db:
         if users_db[u]['balance'] < amt: return redirect('/?view=wth&msg=Low+balance')
         users_db[u]['balance'] -= amt
-        users_db[u]['history'].insert(0, {'title': f"Withd
+        users_db[u]['history'].insert(0, {'title': "W
