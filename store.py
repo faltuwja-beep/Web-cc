@@ -325,8 +325,8 @@ def withdraw():
     u = current_session["user"]
     if u and u in users_db:
         amt = float(request.form.get('amt', 0))
-        if users_db[u]['balance'] < amt: 
+        if users_db[u]['balance'] < amt:
             return redirect('/?view=wth&msg=Low+balance')
         users_db[u]['balance'] -= amt
         users_db[u]['history'].insert(0, {'title': 'Withdrawal Request', 'amount': -amt})
-    return redirect('/?view=wth&ms
+    return redirect('/?view=wth&msg
