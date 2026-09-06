@@ -1,50 +1,85 @@
 import requests
 import telebot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+)
 
-# =========================
+# =====================================
 # CONFIG
-# =========================
+# =====================================
 
-TOKEN = "8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M"
+TOKEN = "YOUR_NEW_BOT_TOKEN"
 
-API_KEY = "Anurag"
+API_URL = "https://info.leadershadman.online/wishlist?uid={uid}"
+
+EMOTE_API = (
+    "https://cdn.jsdelivr.net/gh/"
+    "ShahGCreator/icon@main/PNG/{}.png"
+)
+
+INFO_API = (
+    "https://info.leadershadman.online/"
+    "player-info?uid={uid}"
+)
+
+BASE_URL = "https://info.leadershadman.online"
+
+IMAGE_URL = "https://image.leadershadman.online"
+
 
 bot = telebot.TeleBot(TOKEN)
 
 
-# =========================
-# KEYBOARD
-# =========================
+# =====================================
+# USER STATE
+# =====================================
+
+user_state = {}
+
+
+# =====================================
+# MAIN KEYBOARD
+# =====================================
 
 def main_keyboard():
+
     markup = ReplyKeyboardMarkup(
-        resize_keyboard=True
+        resize_keyboard=True,
+        row_width=2
     )
 
     markup.add(
-        KeyboardButton("🔍 Free Fire UID Info")
+        KeyboardButton("🔍 Player Info"),
+        KeyboardButton("❤️ Wishlist")
     )
 
     markup.add(
-        KeyboardButton("ℹ️ Bot Info")
+        KeyboardButton("ℹ️ Help")
     )
 
     return markup
 
 
-# =========================
-# START COMMAND
-# =========================
+# =====================================
+# START
+# =====================================
 
 @bot.message_handler(commands=["start"])
 def start(message):
 
+    user_state.pop(
+        message.from_user.id,
+        None
+    )
+
     bot.send_message(
         message.chat.id,
 
-        "🎮 *Welcome to Free Fire UID Info Bot!*\n\n"
-        "🔍 Click the button below and send a Free Fire UID.",
+        "🎮 *Free Fire Player Tool*\n\n"
+        "Select a service below.",
 
         reply_markup=main_keyboard(),
 
@@ -52,243 +87,227 @@ def start(message):
     )
 
 
-# =========================
-# BUTTON HANDLER
-# =========================
+# =====================================
+# PLAYER INFO BUTTON
+# =====================================
 
 @bot.message_handler(
     func=lambda message:
-    message.text == "🔍 Free Fire UID Info"
+    message.text == "🔍 Player Info"
 )
-def ask_uid(message):
+def ask_player_uid(message):
+
+    user_state[
+        message.from_user.id
+    ] = "player_info"
 
     bot.send_message(
         message.chat.id,
 
-        "🎮 *Send Free Fire UID*\n\n"
-        "Example:\n`14307670967`",
+        "🔍 *Player Info*\n\n"
+        "Send the Free Fire UID.",
 
         parse_mode="Markdown"
     )
 
-    bot.register_next_step_handler(
-        message,
-        get_uid_info
+
+# =====================================
+# WISHLIST BUTTON
+# =====================================
+
+@bot.message_handler(
+    func=lambda message:
+    message.text == "❤️ Wishlist"
+)
+def ask_wishlist_uid(message):
+
+    user_state[
+        message.from_user.id
+    ] = "wishlist"
+
+    bot.send_message(
+        message.chat.id,
+
+        "❤️ *Wishlist Info*\n\n"
+        "Send the Free Fire UID.",
+
+        parse_mode="Markdown"
     )
 
 
-# =========================
-# GET UID INFO
-# =========================
+# =====================================
+# HELP
+# =====================================
 
-def get_uid_info(message):
+@bot.message_handler(
+    func=lambda message:
+    message.text == "ℹ️ Help"
+)
+def help_command(message):
 
-    uid = message.text.strip()
+    bot.send_message(
+        message.chat.id,
 
-    # UID validation
-    if not uid.isdigit():
+        "ℹ️ *How To Use*\n\n"
+        "1️⃣ Select Player Info\n"
+        "2️⃣ Send UID\n"
+        "3️⃣ Get player details\n\n"
+        "OR\n\n"
+        "1️⃣ Select Wishlist\n"
+        "2️⃣ Send UID\n"
+        "3️⃣ Get wishlist information",
 
-        bot.send_message(
-            message.chat.id,
+        reply_markup=main_keyboard(),
 
-            "❌ Invalid UID!\n\n"
-            "Please send numbers only.",
+        parse_mode="Markdown"
+    )
 
-            reply_markup=main_keyboard()
-        )
 
-        return
+# =====================================
+# SAFE GET VALUE
+# =====================================
 
-    # Loading message
+def get_value(data, *keys, default="N/A"):
+
+    for key in keys:
+
+        if isinstance(data, dict) and key in data:
+            value = data.get(key)
+
+            if value is not None:
+                return value
+
+    return default
+
+
+# =====================================
+# PLAYER INFO FUNCTION
+# =====================================
+
+def get_player_info(message, uid):
+
     loading = bot.send_message(
         message.chat.id,
 
-        "⏳ *Fetching Free Fire player info...*",
+        "⏳ *Fetching player information...*",
 
         parse_mode="Markdown"
     )
 
     try:
 
-        # API URL
-        api_url = (
-            "https://ff-info-ro45.vercel.app/api"
-            f"?uid={uid}&key={API_KEY}"
-        )
+        url = INFO_API.format(uid=uid)
 
         response = requests.get(
-            api_url,
+            url,
             timeout=20
         )
 
-        # Check HTTP error
         response.raise_for_status()
 
         data = response.json()
 
-        # Basic Info
-        basic = data.get(
-            "basicInfo",
-            {}
-        )
+        # Some APIs return data inside "data"
+        if isinstance(data, dict):
 
-        # Pet Info
-        pet = data.get(
-            "petInfo",
-            {}
-        )
+            player = data.get(
+                "basicInfo",
+                data.get(
+                    "data",
+                    data
+                )
+            )
 
-        # Clan Info
-        clan = data.get(
-            "clanBasicInfo",
-            {}
-        )
+        else:
+            player = {}
 
-        # Player Details
-        nickname = basic.get(
+        # Common fields
+        name = get_value(
+            player,
             "nickname",
-            "Not Found"
+            "name",
+            "playerName"
         )
 
-        account_id = basic.get(
+        account_id = get_value(
+            player,
             "accountId",
-            uid
+            "uid",
+            "playerId",
+            default=uid
         )
 
-        region = basic.get(
-            "region",
-            "N/A"
+        region = get_value(
+            player,
+            "region"
         )
 
-        level = basic.get(
-            "level",
-            "N/A"
+        level = get_value(
+            player,
+            "level"
         )
 
-        exp = basic.get(
-            "exp",
-            "N/A"
+        exp = get_value(
+            player,
+            "exp"
         )
 
-        likes = basic.get(
+        likes = get_value(
+            player,
             "liked",
-            "N/A"
+            "likes"
         )
 
-        rank = basic.get(
-            "rank",
-            "N/A"
+        rank = get_value(
+            player,
+            "rank"
         )
 
-        rank_points = basic.get(
-            "rankingPoints",
-            "N/A"
+        cs_rank = get_value(
+            player,
+            "csRank"
         )
 
-        cs_rank = basic.get(
-            "csRank",
-            "N/A"
+        ranking_points = get_value(
+            player,
+            "rankingPoints"
         )
 
-        max_rank = basic.get(
-            "maxRank",
-            "N/A"
+        result = (
+            "🎮 *FREE FIRE PLAYER INFO*\n\n"
+
+            "━━━━━━━━━━━━━━━━━━\n"
+
+            f"👤 *Name:* `{name}`\n"
+            f"🆔 *UID:* `{account_id}`\n"
+            f"🌍 *Region:* `{region}`\n"
+            f"📊 *Level:* `{level}`\n"
+            f"✨ *EXP:* `{exp}`\n"
+            f"❤️ *Likes:* `{likes}`\n\n"
+
+            "━━━━━━━━━━━━━━━━━━\n\n"
+
+            f"🏆 *BR Rank:* `{rank}`\n"
+            f"⚔️ *CS Rank:* `{cs_rank}`\n"
+            f"🎯 *Rank Points:* `{ranking_points}`\n\n"
+
+            "━━━━━━━━━━━━━━━━━━"
         )
 
-        cs_max_rank = basic.get(
-            "csMaxRank",
-            "N/A"
-        )
+        bot.edit_message_text(
+            result,
 
-        version = basic.get(
-            "releaseVersion",
-            "N/A"
-        )
+            chat_id=message.chat.id,
 
-        # Clan
-        clan_name = clan.get(
-            "clanName",
-            "No Guild"
-        )
+            message_id=loading.message_id,
 
-        # Pet
-        pet_id = pet.get(
-            "id",
-            "N/A"
-        )
-
-        pet_level = pet.get(
-            "level",
-            "N/A"
-        )
-
-        # Diamond
-        diamond = data.get(
-            "diamondCostRes",
-            {}
-        )
-
-        diamond_cost = diamond.get(
-            "diamondCost",
-            "N/A"
-        )
-
-        # Profile message
-        result = f"""
-🎮 *FREE FIRE PLAYER INFO*
-
-━━━━━━━━━━━━━━━━━━
-
-👤 *Name:* `{nickname}`
-
-🆔 *UID:* `{account_id}`
-
-🌍 *Region:* `{region}`
-
-📊 *Level:* `{level}`
-
-✨ *EXP:* `{exp}`
-
-❤️ *Likes:* `{likes}`
-
-━━━━━━━━━━━━━━━━━━
-
-🏆 *BR Rank:* `{rank}`
-
-🎯 *Rank Points:* `{rank_points}`
-
-⚔️ *CS Rank:* `{cs_rank}`
-
-🥇 *Max BR Rank:* `{max_rank}`
-
-🥇 *Max CS Rank:* `{cs_max_rank}`
-
-━━━━━━━━━━━━━━━━━━
-
-🛡️ *Guild:* `{clan_name}`
-
-🐾 *Pet ID:* `{pet_id}`
-
-📈 *Pet Level:* `{pet_level}`
-
-💎 *Diamond Cost:* `{diamond_cost}`
-
-━━━━━━━━━━━━━━━━━━
-
-🎮 *Game Version:* `{version}`
-"""
-
-        bot.delete_message(
-            message.chat.id,
-            loading.message_id
+            parse_mode="Markdown"
         )
 
         bot.send_message(
             message.chat.id,
 
-            result,
-
-            parse_mode="Markdown",
+            "Choose another service:",
 
             reply_markup=main_keyboard()
         )
@@ -296,27 +315,38 @@ def get_uid_info(message):
     except requests.exceptions.Timeout:
 
         bot.edit_message_text(
-
             "❌ *API Timeout!*\n\n"
-            "Server is taking too long. Try again.",
+            "Server response is taking too long.",
 
-            message.chat.id,
+            chat_id=message.chat.id,
 
-            loading.message_id,
+            message_id=loading.message_id,
 
             parse_mode="Markdown"
         )
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
 
         bot.edit_message_text(
+            "❌ *API Connection Error!*\n\n"
+            "Unable to connect to the API server.",
 
-            "❌ *API Error!*\n\n"
-            "Unable to connect to the server.",
+            chat_id=message.chat.id,
 
-            message.chat.id,
+            message_id=loading.message_id,
 
-            loading.message_id,
+            parse_mode="Markdown"
+        )
+
+    except ValueError:
+
+        bot.edit_message_text(
+            "❌ *Invalid API Response!*\n\n"
+            "The server did not return valid JSON.",
+
+            chat_id=message.chat.id,
+
+            message_id=loading.message_id,
 
             parse_mode="Markdown"
         )
@@ -324,44 +354,243 @@ def get_uid_info(message):
     except Exception as e:
 
         bot.edit_message_text(
+            f"❌ *Error!*\n\n`{str(e)}`",
 
-            "❌ *Error!*\n\n"
-            f"`{str(e)}`",
+            chat_id=message.chat.id,
 
-            message.chat.id,
-
-            loading.message_id,
+            message_id=loading.message_id,
 
             parse_mode="Markdown"
         )
 
 
-# =========================
-# BOT INFO
-# =========================
+# =====================================
+# WISHLIST FUNCTION
+# =====================================
 
-@bot.message_handler(
-    func=lambda message:
-    message.text == "ℹ️ Bot Info"
-)
-def bot_info(message):
+def get_wishlist(message, uid):
 
-    bot.send_message(
+    loading = bot.send_message(
         message.chat.id,
 
-        "🤖 *Free Fire UID Info Bot*\n\n"
-        "Send any Free Fire UID to get player information.",
+        "⏳ *Fetching wishlist information...*",
 
         parse_mode="Markdown"
     )
 
+    try:
 
-# =========================
+        url = API_URL.format(uid=uid)
+
+        response = requests.get(
+            url,
+            timeout=20
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        # API can return a dictionary
+        # or list of wishlist/emote IDs
+
+        if isinstance(data, dict):
+
+            # Check common list names
+            items = (
+                data.get("wishlist")
+                or data.get("data")
+                or data.get("items")
+                or data.get("emotes")
+                or []
+            )
+
+        elif isinstance(data, list):
+
+            items = data
+
+        else:
+
+            items = []
+
+        # If API response is not a list
+        if not isinstance(items, list):
+
+            items = [items]
+
+        count = len(items)
+
+        result = (
+            "❤️ *FREE FIRE WISHLIST*\n\n"
+
+            f"🆔 *UID:* `{uid}`\n"
+            f"📦 *Total Items:* `{count}`\n\n"
+
+            "━━━━━━━━━━━━━━━━━━\n"
+        )
+
+        # Show first 20 items
+        for index, item in enumerate(
+            items[:20],
+            start=1
+        ):
+
+            if isinstance(item, dict):
+
+                item_id = (
+                    item.get("id")
+                    or item.get("itemId")
+                    or item.get("emoteId")
+                    or "N/A"
+                )
+
+                item_name = (
+                    item.get("name")
+                    or item.get("itemName")
+                    or item.get("emoteName")
+                    or "Unknown"
+                )
+
+                result += (
+                    f"{index}. `{item_name}`\n"
+                    f"   ID: `{item_id}`\n\n"
+                )
+
+            else:
+
+                result += (
+                    f"{index}. `{item}`\n"
+                )
+
+        result += (
+            "\n━━━━━━━━━━━━━━━━━━"
+        )
+
+        bot.edit_message_text(
+            result,
+
+            chat_id=message.chat.id,
+
+            message_id=loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+        bot.send_message(
+            message.chat.id,
+
+            "Choose another service:",
+
+            reply_markup=main_keyboard()
+        )
+
+    except requests.exceptions.Timeout:
+
+        bot.edit_message_text(
+            "❌ *Wishlist API Timeout!*",
+
+            chat_id=message.chat.id,
+
+            message_id=loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+    except requests.exceptions.RequestException:
+
+        bot.edit_message_text(
+            "❌ *Wishlist API Connection Error!*",
+
+            chat_id=message.chat.id,
+
+            message_id=loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+    except Exception as e:
+
+        bot.edit_message_text(
+            f"❌ *Error!*\n\n`{str(e)}`",
+
+            chat_id=message.chat.id,
+
+            message_id=loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+
+# =====================================
+# UID INPUT HANDLER
+# =====================================
+
+@bot.message_handler(func=lambda message: True)
+def handle_uid(message):
+
+    user_id = message.from_user.id
+
+    text = message.text.strip()
+
+    state = user_state.get(user_id)
+
+    # Ignore if user has not selected a service
+    if state is None:
+
+        bot.send_message(
+            message.chat.id,
+
+            "Please select a service first.",
+
+            reply_markup=main_keyboard()
+        )
+
+        return
+
+    # UID validation
+    if not text.isdigit():
+
+        bot.send_message(
+            message.chat.id,
+
+            "❌ Invalid UID!\n\n"
+            "UID should contain numbers only."
+        )
+
+        return
+
+    user_state.pop(
+        user_id,
+        None
+    )
+
+    # Player info
+    if state == "player_info":
+
+        get_player_info(
+            message,
+            text
+        )
+
+    # Wishlist
+    elif state == "wishlist":
+
+        get_wishlist(
+            message,
+            text
+        )
+
+
+# =====================================
 # RUN BOT
-# =========================
+# =====================================
 
-print("🚀 Free Fire UID Info Bot Started!")
+if __name__ == "__main__":
 
-bot.infinity_polling(
-    skip_pending=True
-)
+    print(
+        "🚀 Free Fire Info Bot Started!"
+    )
+
+    bot.infinity_polling(
+        skip_pending=True
+    )
