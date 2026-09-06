@@ -11,7 +11,7 @@ from telebot.types import (
 # CONFIG
 # =====================================
 
-TOKEN = "YOUR_NEW_BOT_TOKEN"
+TOKEN = "8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M"
 
 API_URL = "https://info.leadershadman.online/wishlist?uid={uid}"
 
