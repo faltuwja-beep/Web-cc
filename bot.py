@@ -44,7 +44,7 @@ def check_subscription(user_id):
     member = bot.get_chat_member(REQUIRED_CHANNEL, user_id)
     if member.status in ["member", "creator", "administrator"]:
       return True
-  except:
+  except Exception:
     pass
   return False
 
@@ -144,7 +144,7 @@ def send_welcome(message):
             " wallet me **₹5** add kar diye gaye hain! 💰✨",
             parse_mode="Markdown",
         )
-    except:
+    except Exception:
       pass
 
   if not check_subscription(user_id):
@@ -293,7 +293,7 @@ def handle_text(message):
             parse_mode="Markdown",
         )
         success_count += 1
-      except:
+      except Exception:
         pass
     bot.reply_to(
         message,
@@ -542,7 +542,7 @@ def handle_text(message):
       basic = data.get("basicInfo", {})
       nickname = basic.get("nickname", "N/A")
       likes = basic.get("liked", "N/A")
-    except:
+    except Exception:
       nickname = "N/A"
       likes = "N/A"
 
@@ -623,6 +623,4 @@ def handle_text(message):
       bot.send_message(
           message.chat.id,
           "Neeche diye gaye buttons se dusra task select karein: 👇",
-          reply_markup=get_main_keyboard(user_id),
-      )
-    except E
+          reply_markup=get_main
