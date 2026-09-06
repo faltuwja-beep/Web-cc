@@ -209,8 +209,9 @@ def handle_query(call):
   elif call.data.startswith("approve_"):
     if user_id != ADMIN_ID:
       return
-    _, target_user_id, amount = call.data.split("_")
-    target_user_id, amount = int(target_user_id), int(amount)
+    parts = call.data.split("_")
+    target_user_id = int(parts[1])
+    amount = int(parts[2])
     user_balances[target_user_id] = (
         user_balances.get(target_user_id, 0) + amount
     )
@@ -237,8 +238,8 @@ def handle_query(call):
   elif call.data.startswith("reject_"):
     if user_id != ADMIN_ID:
       return
-    _, target_user_id, amount = call.data.split("_")
-    target_user_id = int(target_user_id)
+    parts = call.data.split("_")
+    target_user_id = int(parts[1])
     bot.answer_callback_query(call.id, "Deposit rejected.")
     bot.edit_message_text(
         "❌ *Deposit Reject Ho Gaya!*\nUser ID: `" + str(target_user_id) + "`",
@@ -654,4 +655,5 @@ def handle_text(message):
           "Queried UID: "
           + uid
           + " at "
-          + datetime.dateti
+          + datetime.datetime.now().strftime("%d-%m-%Y | %I:%M %p"),
+    
