@@ -17,7 +17,7 @@ ADMIN_ID = 7161571409
 REQUIRED_CHANNEL = "@eraningwithask"
 AI_API_KEY = "AQ.Ab8RN6JGzoIesCfV8RONnPq3ySr5TMzDx7vm8dGAVDeNpFIOhg"
 
-# Dynamic UPI Variable (Admin can update this anytime from Admin Panel)
+# Dynamic UPI Variable
 CURRENT_UPI_ID = "sima6241@ptaxis"
 
 # Bot & Flask Initialization
@@ -77,12 +77,10 @@ def format_countdown(expiry_timestamp):
   remaining = int(expiry_timestamp - time.time())
   if remaining <= 0:
     return "⏰ Plan Expired!"
-
   days = remaining // 86400
   hours = (remaining % 86400) // 3600
   minutes = (remaining % 3600) // 60
   seconds = remaining % 60
-
   return f"⏳ {days} Din {hours} Ghante {minutes} Minute baaki hain 🔥"
 
 
@@ -139,12 +137,11 @@ def send_welcome(message):
         if "referred_users" not in user_referrals:
           user_referrals["referred_users"] = []
         user_referrals["referred_users"].append(user_id)
-
         user_balances[referrer_id] = user_balances.get(referrer_id, 0) + 5
         bot.send_message(
             referrer_id,
-            "🎉 *Balle Balle! Referral Reward Mil Gaya!*\n🎁 Naye user ke judne"
-            " par aapke wallet me **₹5** add kar diye gaye hain! 💰✨",
+            "🎉 *Referral Reward Mil Gaya!*\n🎁 Naye user ke judne par aapke"
+            " wallet me **₹5** add kar diye gaye hain! 💰✨",
             parse_mode="Markdown",
         )
     except:
@@ -258,7 +255,7 @@ def handle_query(call):
     target_user_id = int(target_user_id)
     amount = int(amount)
 
-    bot.answer_callback_query(call.id, f"Deposit rejected.")
+    bot.answer_callback_query(call.id, "Deposit rejected.")
     bot.edit_message_text(
         f"❌ *Deposit Reject Ho Gaya!*\nUser ID: `{target_user_id}` | Amount:"
         f" `₹{amount}`",
@@ -626,4 +623,6 @@ def handle_text(message):
       bot.send_message(
           message.chat.id,
           "Neeche diye gaye buttons se dusra task select karein: 👇",
-     
+          reply_markup=get_main_keyboard(user_id),
+      )
+    except E
