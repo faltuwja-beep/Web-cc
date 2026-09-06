@@ -522,7 +522,6 @@ def handle_text(message):
     )
     add_history(user_id, history_log)
 
-    # Dynamic Multi-Step Animation Sequence for UID processing
     anim_msg = bot.reply_to(
         message,
         "✨ 🔄 *Initializing Secure Handshake with FF Server...* ⚡ 🎮",
@@ -653,3 +652,6 @@ def handle_text(message):
       add_history(
           user_id,
           "Queried UID: "
+          + uid
+          + " at "
+          + datetime.dateti
