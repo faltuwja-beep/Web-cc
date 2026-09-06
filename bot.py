@@ -17,18 +17,20 @@ ADMIN_ID = 7161571409
 REQUIRED_CHANNEL = "@eraningwithask"
 AI_API_KEY = "AQ.Ab8RN6JGzoIesCfV8RONnPq3ySr5TMzDx7vm8dGAVDeNpFIOhg"
 
+# Dynamic UPI Variable (Admin can update this anytime from Admin Panel)
 CURRENT_UPI_ID = "sima6241@ptaxis"
 
+# Bot & Flask Initialization
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-  return "Prime Tips Bot is Online and Running!"
+  return "⚡ Prime Tips Bot is Online & Running Smoothly! 🚀"
 
 
-# In-Memory Storage
+# In-Memory Storage Databases
 user_balances = {}
 user_state = {}
 user_timers = {}
@@ -50,16 +52,16 @@ def check_subscription(user_id):
 def get_main_keyboard(user_id):
   markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
   markup.add(
-      KeyboardButton("🛒 Buy Plans (Likes)"),
-      KeyboardButton("💰 Add Money (Wallet)"),
-      KeyboardButton("💼 My Wallet"),
-      KeyboardButton("🔍 Free Fire UID Info"),
-      KeyboardButton("👥 Refer & Earn"),
-      KeyboardButton("📜 History"),
-      KeyboardButton("🤖 AI Support Assistant"),
+      KeyboardButton("🛒 Buy Plans (Likes) 💎"),
+      KeyboardButton("💰 Add Money (Wallet) 💳"),
+      KeyboardButton("💼 My Wallet 📊"),
+      KeyboardButton("🔍 Free Fire UID Info 🎮"),
+      KeyboardButton("👥 Refer & Earn 🎁"),
+      KeyboardButton("📜 History 📜"),
+      KeyboardButton("🤖 AI Support Assistant 🧠"),
   )
   if user_id == ADMIN_ID:
-    markup.add(KeyboardButton("👑 Admin Panel"))
+    markup.add(KeyboardButton("👑 Admin Panel ⚡"))
   return markup
 
 
@@ -75,37 +77,51 @@ def format_countdown(expiry_timestamp):
   remaining = int(expiry_timestamp - time.time())
   if remaining <= 0:
     return "⏰ Plan Expired!"
+
   days = remaining // 86400
   hours = (remaining % 86400) // 3600
   minutes = (remaining % 3600) // 60
   seconds = remaining % 60
-  return f"{days}d {hours}h {minutes}m {seconds}s baaki hain ⏳"
+
+  return f"⏳ {days} Din {hours} Ghante {minutes} Minute baaki hain 🔥"
 
 
 def get_ai_response(prompt_text):
   try:
-    time.sleep(1)
+    time.sleep(0.5)
     query = prompt_text.lower()
     if "like" in query or "likes" in query:
       return (
-          "🤖 *Prime Tips AI (Hindi):*\n\nFree Fire mein likes badhane ke liye"
-          " aap hamare 15 Days (₹59) ya 30 Days (₹99) wale plans kharid sakte"
-          " hain jisme daily 220 likes milte hain!"
+          "🤖 *Prime Tips AI Assistant:*\n\n🔥 Free Fire profile me likes"
+          " badhane ke liye aap hamare **15 Days (₹59)** ya **30 Days (₹99)**"
+          " wale VIP plans kharid sakte hain, jisme daily 220+ likes milte hain!"
+          " ⚡"
       )
     elif "wallet" in query or "paisa" in query or "balance" in query:
       return (
-          f"🤖 *Prime Tips AI (Hindi):*\n\nWallet mein paise add karne ke liye"
-          f" 'Add Money (Wallet)' button par click karein aur `{CURRENT_UPI_ID}`"
-          " par payment karke screenshot/UTR bhej dein."
+          f"💳 *Prime Tips AI Assistant:*\n\nApne wallet me balance add karne ke"
+          f" liye niche menu se **'Add Money (Wallet)'** par click karein aur"
+          f" di gayi UPI ID (`{CURRENT_UPI_ID}`) par payment karke UTR/Screenshot"
+          f" bhej dein. 💰"
+      )
+    elif "refer" in query or "dost" in query:
+      return (
+          "🎁 *Prime Tips AI Assistant:*\n\nAap **'Refer & Earn'** section se"
+          " apna unique link dosto ke sath share karke har successful join par"
+          " instant **₹5** kama sakte hain! 🚀"
       )
     else:
       return (
-          f"🤖 *Prime Tips AI (Hindi):*\n\nAapne pucha: '{prompt_text}'.\nMain"
-          " Prime Tips ka smart assistant hoon. Madad ke liye @Xenon_ask9 par"
-          " sampark karein."
+          f"🤖 *Prime Tips AI Assistant:*\n\nAapne pucha: *'{prompt_text}'*.\nMain"
+          " aapka smart assistant hoon. Free Fire plans, wallet ya likes se"
+          " judi kisi bhi sahayta ke liye aap niche diye gaye buttons ka use"
+          " kar sakte hain! 🌟"
       )
   except Exception:
-    return "🤖 Namaste! Aapka sandesh mil gaya hai."
+    return (
+        "🤖 Namaste! Aapka sandesh mil gaya hai. Main aapki kya sahayta kar"
+        " sakta hoon? ✨"
+    )
 
 
 @bot.message_handler(commands=["start"])
@@ -123,11 +139,12 @@ def send_welcome(message):
         if "referred_users" not in user_referrals:
           user_referrals["referred_users"] = []
         user_referrals["referred_users"].append(user_id)
+
         user_balances[referrer_id] = user_balances.get(referrer_id, 0) + 5
         bot.send_message(
             referrer_id,
-            "🎉 *Referral Reward Mil Gaya!*\n🎁 Naye user ke judne par **₹5**"
-            " add ho gaye hain!",
+            "🎉 *Balle Balle! Referral Reward Mil Gaya!*\n🎁 Naye user ke judne"
+            " par aapke wallet me **₹5** add kar diye gaye hain! 💰✨",
             parse_mode="Markdown",
         )
     except:
@@ -137,16 +154,17 @@ def send_welcome(message):
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
         InlineKeyboardButton(
-            "📢 Join Official Channel", url="https://t.me/eraningwithask"
+            "📢 Join Official Channel 🚀", url="https://t.me/eraningwithask"
         ),
         InlineKeyboardButton(
-            "🔄 Verify Subscription", callback_data="check_join"
+            "🔄 Verify Subscription ✅", callback_data="check_join"
         ),
     )
     bot.send_message(
         message.chat.id,
-        "⚠️ *Access Restricted!*\n\nPehle hamara official channel join karein"
-        " phir 'Verify Subscription' dabayein.",
+        "⚠️ *Access Restricted!* 🛑\n\nPrime Tips ki sari services use karne ke"
+        " liye pehle hamara official channel join karna anivarya hai. Join"
+        " karne ke baad niche **'Verify Subscription'** par click karein! 👇",
         reply_markup=markup,
         parse_mode="Markdown",
     )
@@ -154,7 +172,9 @@ def send_welcome(message):
 
   bot.send_message(
       message.chat.id,
-      "🌟 *Prime Tips Free Fire Utility Bot me Swagat hai!*",
+      "🌟 *Swagat hai aapka Prime Tips Free Fire Utility Bot me!* 🎮🔥\n\nAapka"
+      " personal gaming hub tayar hai. Neeche diye gaye options me se chunein"
+      " 👇",
       reply_markup=get_main_keyboard(user_id),
       parse_mode="Markdown",
   )
@@ -171,7 +191,7 @@ def handle_query(call):
       bot.delete_message(chat_id, call.message.message_id)
       bot.send_message(
           chat_id,
-          "✨ *Prime Tips Hub Unlock Ho Gaya!* 🚀",
+          "✨ *Prime Tips Hub Successfully Unlock Ho Gaya!* 🚀🔥",
           reply_markup=get_main_keyboard(user_id),
           parse_mode="Markdown",
       )
@@ -197,10 +217,11 @@ def handle_query(call):
 
     user_balances[user_id] -= plan_cost
     user_state[user_id] = f"waiting_for_plan_uid_{days}"
+
     bot.send_message(
         chat_id,
-        f"✅ *Payment Deducted (₹{plan_cost})*\n\nEnter target **Free Fire"
-        " UID**:",
+        f"✅ *Payment Successful!* (₹{plan_cost} cut ho gaye 💳)\n\nAb apna target"
+        " **Free Fire UID** bhejein jisme likes shuru karni hain: 🎮✨",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
@@ -209,14 +230,37 @@ def handle_query(call):
     if user_id != ADMIN_ID:
       return
     _, target_user_id, amount = call.data.split("_")
-    target_user_id, amount = int(target_user_id), int(amount)
+    target_user_id = int(target_user_id)
+    amount = int(amount)
+
     user_balances[target_user_id] = (
         user_balances.get(target_user_id, 0) + amount
     )
-    add_history(target_user_id, f"Added ₹{amount} via Admin approval")
+    add_history(target_user_id, f"Added ₹{amount} via Admin approval ✅")
     bot.answer_callback_query(call.id, f"Approved! ₹{amount} added.")
     bot.edit_message_text(
-        f"✅ *Deposit Approved!*\nUser ID: `{target_user_id}` | Added:"
+        f"✅ *Deposit Approve Ho Gaya!*\nUser ID: `{target_user_id}` | Added:"
+        f" `₹{amount}` 💰",
+        chat_id=chat_id,
+        message_id=call.message.message_id,
+        parse_mode="Markdown",
+    )
+    bot.send_message(
+        target_user_id,
+        f"🎉 *Deposit Confirmed!*\nAdmin ne aapka ₹{amount} ka payment approve"
+        " kar diya hai. Wallet check karein! 🚀💵",
+    )
+
+  elif call.data.startswith("reject_"):
+    if user_id != ADMIN_ID:
+      return
+    _, target_user_id, amount = call.data.split("_")
+    target_user_id = int(target_user_id)
+    amount = int(amount)
+
+    bot.answer_callback_query(call.id, f"Deposit rejected.")
+    bot.edit_message_text(
+        f"❌ *Deposit Reject Ho Gaya!*\nUser ID: `{target_user_id}` | Amount:"
         f" `₹{amount}`",
         chat_id=chat_id,
         message_id=call.message.message_id,
@@ -224,26 +268,8 @@ def handle_query(call):
     )
     bot.send_message(
         target_user_id,
-        f"🎉 *Deposit Confirmed!*\nAdmin ne aapka ₹{amount} approve kar diya"
-        " hai.",
-    )
-
-  elif call.data.startswith("reject_"):
-    if user_id != ADMIN_ID:
-      return
-    _, target_user_id, amount = call.data.split("_")
-    target_user_id, amount = int(target_user_id), int(amount)
-    bot.answer_callback_query(call.id, f"Deposit rejected.")
-    bot.edit_message_text(
-        f"❌ *Deposit Rejected!*\nUser ID: `{target_user_id}`",
-        chat_id=chat_id,
-        message_id=call.message.message_id,
-        parse_mode="Markdown",
-    )
-    bot.send_message(
-        target_user_id,
-        "❌ *Deposit Rejected.*\nAapka payment proof reject ho gaya hai."
-        " Support: @Xenon_ask9",
+        "❌ *Deposit Rejected.*\nAapka payment proof admin dwara reject kar"
+        " diya gaya hai. Kripya sahi details ke sath dobara try karein. ⚠️",
     )
 
 
@@ -266,7 +292,7 @@ def handle_text(message):
       try:
         bot.send_message(
             uid,
-            f"📢 *Prime Tips Announcement:*\n\n{text}",
+            f"📢 *Prime Tips Special Announcement:*\n\n{text} ✨",
             parse_mode="Markdown",
         )
         success_count += 1
@@ -274,7 +300,8 @@ def handle_text(message):
         pass
     bot.reply_to(
         message,
-        f"✅ Broadcast sent to {success_count} users.",
+        f"✅ Broadcast successfully {success_count} active users tak bhej"
+        " diya gaya hai! 🚀",
         reply_markup=get_main_keyboard(user_id),
     )
     return
@@ -284,7 +311,7 @@ def handle_text(message):
     CURRENT_UPI_ID = text
     bot.reply_to(
         message,
-        f"✅ *UPI ID Updated Successfully!*\nNew UPI: `{CURRENT_UPI_ID}`",
+        f"✅ *UPI ID Successfully Updated!*\n\nNew UPI ID: `{CURRENT_UPI_ID}` 💳",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
@@ -295,15 +322,16 @@ def handle_text(message):
       user_state.pop(user_id, None)
       bot.send_message(
           message.chat.id,
-          "🤖 AI Support closed.",
+          "🤖 AI Support session safely band kar diya gaya hai. ✨",
           reply_markup=get_main_keyboard(user_id),
       )
       return
+
     ai_response = get_ai_response(text)
     bot.send_message(message.chat.id, ai_response, parse_mode="Markdown")
     return
 
-  if text == "🛒 Buy Plans (Likes)":
+  if text.startswith("🛒 Buy Plans (Likes)"):
     user_state.pop(user_id, None)
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
@@ -316,94 +344,109 @@ def handle_text(message):
     )
     bot.send_message(
         message.chat.id,
-        "📦 *Subscription Plans:*\n• **₹59:** 15 Days\n• **₹99:** 30 Days",
+        "📦 *Prime Tips VIP Subscription Plans:*\n\n• **₹59 Plan:** 15 Days"
+        " Plan | 220 Likes/Day ⚡\n• **₹99 Plan:** 30 Days Plan | 220 Likes/Day"
+        " 🔥\n\n*(Note: Plan kharidne se pehle Wallet me balance add karein)* 💳",
         reply_markup=markup,
         parse_mode="Markdown",
     )
     return
 
-  elif text == "💰 Add Money (Wallet)":
+  elif text.startswith("💰 Add Money (Wallet)"):
     user_state[user_id] = "waiting_for_amount"
     bot.send_message(
         message.chat.id,
-        "💰 *Wallet Deposit*\nEnter amount (e.g., `59` or `99`):",
+        "💰 *Wallet Deposit Center* 💳\n\nAap apne wallet me kitna amount add karna"
+        " chahte hain? (Example: `59` ya `99`)\nKripya sirf numeric value"
+        " enter karein: 👇",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
     return
 
-  elif text == "💼 My Wallet":
+  elif text.startswith("💼 My Wallet"):
     user_state.pop(user_id, None)
     bal = user_balances.get(user_id, 0)
     bot.send_message(
         message.chat.id,
-        f"💼 *Wallet Balance:* `₹{bal}`",
+        f"💼 *Wallet Balance Ledger* 📊\n\n• Available Balance: `₹{bal}`"
+        " 💵✨",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
     return
 
-  elif text == "🔍 Free Fire UID Info":
+  elif text.startswith("🔍 Free Fire UID Info"):
     user_state[user_id] = "waiting_for_info_uid"
     bot.send_message(
         message.chat.id,
-        "🔍 Enter target player **UID**:",
+        "🔍 *Free Fire UID Telemetry* 🎮\n\nKripya jis player ki info nikalni"
+        " hai uska exact **UID** type karke bhejein: 👇",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
     return
 
-  elif text == "👥 Refer & Earn":
+  elif text.startswith("👥 Refer & Earn"):
     user_state.pop(user_id, None)
     bot_info = bot.get_me()
     ref_link = f"https://t.me/{bot_info.username}?start=ref_{user_id}"
     bot.send_message(
         message.chat.id,
-        f"👥 *Refer & Earn*\nShare link & earn ₹5 per join!\n🔗 `{ref_link}`",
+        "👥 *Refer & Earn Program* 🎁\n\nApna personal link dosto ke sath share"
+        " karein. Har successful referral par instant **₹5** ka reward paye!"
+        f"\n\n🔗 *Your Referral Link:*\n`{ref_link}` 🚀",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
     return
 
-  elif text == "📜 History":
+  elif text.startswith("📜 History"):
     user_state.pop(user_id, None)
     history_list = user_history.get(user_id, [])
-    history_text = (
-        "\n".join([f"▫️ {item}" for item in history_list])
-        if history_list
-        else "No history found."
-    )
+    if not history_list:
+      history_text = "Abhi tak aapki koi activity record nahi hai. ✨"
+    else:
+      history_text = "\n".join([f"▫️ {item}" for item in history_list])
+
     bot.send_message(
         message.chat.id,
-        f"📜 *Activity History:*\n\n{history_text}",
+        f"📜 *Detailed Activity & Plan History:* 📊\n\n{history_text}",
         reply_markup=get_main_keyboard(user_id),
         parse_mode="Markdown",
     )
     return
 
-  elif text == "🤖 AI Support Assistant":
+  elif text.startswith("🤖 AI Support Assistant"):
     user_state[user_id] = "ai_support_chat"
     ai_markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
     ai_markup.add(KeyboardButton("🔙 Exit AI Support"))
     bot.send_message(
         message.chat.id,
-        "🤖 *AI Support Active.*\nContact support: @Xenon_ask9",
+        "🤖 *AI Support Active (Hindi Mode)* 🧠✨\n\nAapko jo bhi doubt ho ya"
+        " jankari chahiye, yahan message bhejein. (Support contact:"
+        " @Xenon_ask9) 👇",
         reply_markup=ai_markup,
         parse_mode="Markdown",
     )
     return
 
-  elif text == "👑 Admin Panel" and user_id == ADMIN_ID:
+  elif text.startswith("👑 Admin Panel") and user_id == ADMIN_ID:
     user_state.pop(user_id, None)
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
-        InlineKeyboardButton("📊 System Analytics", callback_data="admin_stats"),
-        InlineKeyboardButton("📢 Broadcast", callback_data="admin_bc"),
-        InlineKeyboardButton("⚙️ Change UPI ID", callback_data="admin_change_upi"),
+        InlineKeyboardButton(
+            "📊 System Analytics (Users) 📈", callback_data="admin_stats"
+        ),
+        InlineKeyboardButton("📢 Broadcast Message 🚀", callback_data="admin_bc"),
+        InlineKeyboardButton(
+            "⚙️ Change UPI ID 💳", callback_data="admin_change_upi"
+        ),
     )
     bot.send_message(
         message.chat.id,
-        "👑 *Admin Command Center*",
+        "👑 *Prime Tips Admin Command Center* ⚡\n\nSelect an administrative"
+        " action:",
         reply_markup=markup,
         parse_mode="Markdown",
     )
@@ -411,24 +454,30 @@ def handle_text(message):
 
   if state == "waiting_for_amount":
     if not text.isdigit():
-      bot.reply_to(message, "❌ Numbers only please!")
+      bot.reply_to(message, "❌ Invalid input! Kripya sirf numbers enter karein.")
       return
+
     user_state[user_id] = f"waiting_for_ss_{text}"
     bot.reply_to(
         message,
-        f"💳 *UPI Gateway*\nUPI ID: `{CURRENT_UPI_ID}`\nAmount:"
-        f" `₹{text}`\n\nSend Transaction ID / Screenshot detail:",
+        f"💳 *UPI Payment Gateway* ⚡\n\nScan / Pay to UPI ID:"
+        f" `{CURRENT_UPI_ID}`\nAmount: `₹{text}`\n\nPayment complete karne ke"
+        " baad uska **Transaction ID / UTR number** ya screenshot detail yahan"
+        " submit karein: 👇",
         parse_mode="Markdown",
     )
 
   elif state and state.startswith("waiting_for_ss_"):
     amount = state.split("_")[3]
     user_state.pop(user_id, None)
+
     bot.reply_to(
         message,
-        "⏳ *Verification Pending.*",
+        "⏳ *Verification Pending...*\nAapka payment proof admin ke paas bhej"
+        " diya gaya hai. Kripya sanyam banaye rakhein! 👍",
         reply_markup=get_main_keyboard(user_id),
     )
+
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
         InlineKeyboardButton(
@@ -440,8 +489,9 @@ def handle_text(message):
     )
     bot.send_message(
         ADMIN_ID,
-        f"🔔 *New Deposit!*\n👤 {username} (`{user_id}`)\n💰 `₹{amount}`\nProof:"
-        f" {text}",
+        f"🔔 *New Wallet Deposit Request!* 💰\n\n👤 User Name: {username}\n🆔 User"
+        f" ID: `{user_id}`\n💰 Amount: `₹{amount}`\n\nProof Details:"
+        f" `{text}`",
         reply_markup=markup,
         parse_mode="Markdown",
     )
@@ -450,86 +500,130 @@ def handle_text(message):
     days = int(state.split("_")[4])
     uid = text
     user_state.pop(user_id, None)
+
     if not uid.isdigit():
-      bot.reply_to(message, "❌ Invalid UID!")
+      bot.reply_to(message, "❌ Invalid UID! Kripya sahi numbers wala UID dalein.")
       return
 
+    start_time = datetime.datetime.now()
     expiry_time_sec = time.time() + (days * 86400)
-    add_history(
-        user_id,
-        f"Plan: {days} Days for UID: {uid} at"
-        f" {datetime.datetime.now().strftime('%d-%m-%Y')}",
+    expiry_datetime = start_time + datetime.timedelta(days=days)
+
+    start_str = start_time.strftime("%d-%m-%Y | %I:%M %p")
+    expiry_str = expiry_datetime.strftime("%d-%m-%Y | %I:%M %p")
+
+    user_timers[user_id] = {
+        "uid": uid,
+        "days": days,
+        "expires": expiry_time_sec,
+    }
+
+    history_log = (
+        f"🛒 Plan: {days} Days (220 Likes/Day)\n🆔 UID: {uid}\n📥 Liya gaya:"
+        f" {start_str}\n⌛ Khatm hoga: {expiry_str}"
     )
-    bot.reply_to(
+    add_history(user_id, history_log)
+
+    anim_msg = bot.reply_to(
         message,
-        f"🎉 *Plan Deployed Successfully!* 🚀\nUID: `{uid}`\nDuration:"
-        f" `{days} Days`",
-        reply_markup=get_main_keyboard(user_id),
+        "✨ 🔄 *Connecting to Free Fire Secure Server...* ⚡ 🎮",
         parse_mode="Markdown",
+    )
+    time.sleep(0.6)
+    bot.edit_message_text(
+        "🔥 🔍 *Fetching Player Profile & Activating Live Timer...* ⏱️ 🚀",
+        chat_id=message.chat.id,
+        message_id=anim_msg.message_id,
+        parse_mode="Markdown",
+    )
+    time.sleep(0.6)
+
+    try:
+      api_url = f"https://ff-info-ro45.vercel.app/api?uid={uid}&key=Anurag"
+      response = requests.get(api_url, timeout=15)
+      data = response.json()
+      basic = data.get("basicInfo", {})
+      nickname = basic.get("nickname", "N/A")
+      likes = basic.get("liked", "N/A")
+    except:
+      nickname = "N/A"
+      likes = "N/A"
+
+    countdown_str = format_countdown(expiry_time_sec)
+
+    final_card = (
+        f"🎉 *Plan Successfully Deployed!* 🚀✨\n\n"
+        f"👤 *Player Name:* `{nickname}`\n"
+        f"🆔 *UID:* `{uid}`\n"
+        f"❤️ *Current Likes:* `{likes}`\n"
+        f"📅 *Duration:* `{days} Days`\n"
+        f"⚡ *Daily Quota:* `220 Likes/Day`\n"
+        f"📥 *Start Time:* `{start_str}`\n"
+        f"⌛ *Expiry Time:* `{expiry_str}`\n\n"
+        f"⏱️ *Live Timer Status:* `{countdown_str}` 🔥"
+    )
+
+    bot.edit_message_text(
+        final_card,
+        chat_id=message.chat.id,
+        message_id=anim_msg.message_id,
+        parse_mode="Markdown",
+    )
+    bot.send_message(
+        message.chat.id,
+        "Aap niche menu se dusra option select kar sakte hain: 👇",
+        reply_markup=get_main_keyboard(user_id),
     )
 
   elif state == "waiting_for_info_uid":
     uid = text
     user_state.pop(user_id, None)
+
     if not uid.isdigit():
-      bot.reply_to(message, "❌ Invalid UID!")
+      bot.reply_to(message, "❌ Invalid UID pattern format!")
       return
+
+    anim_msg = bot.reply_to(
+        message,
+        "✨ ⏳ *Fetching player telemetry data with animations...* 🎮 🔥",
+        parse_mode="Markdown",
+    )
+    time.sleep(0.8)
+
     try:
       api_url = f"https://ff-info-ro45.vercel.app/api?uid={uid}&key=Anurag"
-      res = requests.get(api_url, timeout=15).json()
-      basic = res.get("basicInfo", {})
-      info_text = (
-          f"🎮 *PROFILE*\nName: `{basic.get('nickname', 'N/A')}`\nUID:"
-          f" `{uid}`\nLikes: `{basic.get('liked', 'N/A')}`"
+      response = requests.get(api_url, timeout=15)
+      data = response.json()
+
+      basic = data.get("basicInfo", {})
+      clan = data.get("clanBasicInfo", {})
+
+      formatted_text = (
+          f"┏━━━━ 🎮 *PLAYER PROFILE* ━━━━┓\n"
+          f"┃\n"
+          f"┣ 👤 *Name:* `{basic.get('nickname', 'N/A')}`\n"
+          f"┣ 🆔 *UID:* `{uid}`\n"
+          f"┣ 📊 *Level:* `{basic.get('level', 'N/A')}` | 🌐 *Region:*"
+          f" `{basic.get('region', 'N/A')}`\n"
+          f"┣ ❤️ *Likes:* `{basic.get('liked', 'N/A')}`\n"
+          f"┣ 🏆 *BR Rank:* `{basic.get('rank', 'N/A')}`\n"
+          f"┣ ⚔️ *CS Rank:* `{basic.get('csRank', 'N/A')}`\n"
+          f"┣ 🛡️ *Guild:* `{clan.get('clanName', 'N/A')}`\n"
+          f"┃\n"
+          f"┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ⚡"
       )
-      bot.reply_to(message, info_text, parse_mode="Markdown")
-    except Exception as e:
-      bot.reply_to(message, f"❌ Error: {e}")
-
-
-@bot.callback_query_handler(
-    func=lambda call: call.data in [
-        "admin_stats",
-        "admin_bc",
-        "admin_change_upi",
-    ]
-)
-def handle_admin_inline(call):
-  if call.from_user.id != ADMIN_ID:
-    bot.answer_callback_query(call.id, "❌ Unauthorized", show_alert=True)
-    return
-  if call.data == "admin_stats":
-    bot.edit_message_text(
-        f"📊 Total Users: {len(active_users)}",
-        call.message.chat.id,
-        call.message.message_id,
-        parse_mode="Markdown",
-    )
-  elif call.data == "admin_bc":
-    user_state[call.from_user.id] = "waiting_for_broadcast"
-    bot.edit_message_text(
-        "📢 Enter message to broadcast:",
-        call.message.chat.id,
-        call.message.message_id,
-    )
-  elif call.data == "admin_change_upi":
-    user_state[call.from_user.id] = "waiting_for_new_upi"
-    bot.edit_message_text(
-        f"⚙️ Current UPI: `{CURRENT_UPI_ID}`\nSend new UPI:",
-        call.message.chat.id,
-        call.message.message_id,
-        parse_mode="Markdown",
-    )
-
-
-def run_bot():
-  bot.infinity_polling(none_stop=True, interval=0)
-
-
-if __name__ == "__main__":
-  # Background thread for bot polling
-  threading.Thread(target=run_bot, daemon=True).start()
-  # Start Flask app for Render Web Service port requirement
-  port = int(os.environ.get("PORT", 10000))
-  app.run(host="0.0.0.0", port=port)
-        
+      add_history(
+          user_id,
+          f"Queried UID: {uid} at"
+          f" {datetime.datetime.now().strftime('%d-%m-%Y | %I:%M %p')}",
+      )
+      bot.edit_message_text(
+          formatted_text,
+          chat_id=message.chat.id,
+          message_id=anim_msg.message_id,
+          parse_mode="Markdown",
+      )
+      bot.send_message(
+          message.chat.id,
+          "Neeche diye gaye buttons se dusra task select karein: 👇",
+     
