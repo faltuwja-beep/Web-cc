@@ -9,7 +9,7 @@ from telebot.types import (
 )
 
 # Configuration & Credentials
-TOKEN = "8765709173:AAHNEVm4FcT86L7_RJZw5ihUd-uZtXf_I2E"
+TOKEN = "8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M"
 ADMIN_ID = 7161571409
 REQUIRED_CHANNEL = "@eraningwithask"
 
