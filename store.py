@@ -4,7 +4,6 @@ from flask import Flask, request, redirect, render_template_string
 app = Flask(__name__)
 users_db, pending_deposits = {}, {}
 
-# Packs Data with Categories & Out of Stock items
 packs_db = {
     "cc_99": {"cat": "cc", "name": "₹1,000 CC Balance Card", "price": 99, "rating": "4.7/5", "sold": "850+", "codes": []},
     "cc_199": {"cat": "cc", "name": "₹2,000 VIP CC Balance Card", "price": 199, "rating": "4.9/5", "sold": "1,420+", "codes": ["CARD-4312-9982 | PIN: 9021"]},
@@ -318,13 +317,16 @@ def deposit():
         did = str(len(pending_deposits) + 101)
         pending_deposits[did] = {'username': u, 'amount': amt, 'utr': utr, 'time': time.time()}
         users_db[u]['deposit_status'] = {'status': 'pending', 'time': time.time()}
-        users_db[u]['history'].insert(0, {'title': "Deposit (UTR: " + utr + ")", 'amount': amt, 'status': 'pending'})
+        users_db[u]['history'].insert(0, {'title': 'Deposit UTR ' + utr, 'amount': amt, 'status': 'pending'})
     return redirect('/?view=dep&msg=Deposit+Submitted!')
 
 @app.route('/withdraw', methods=['POST'])
 def withdraw():
-    u, amt, upi = current_session["user"], float(request.form.get('amt', 0)), request.form.get('upi', '')
+    u = current_session["user"]
     if u and u in users_db:
-        if users_db[u]['balance'] < amt: return redirect('/?view=wth&msg=Low+balance')
+        amt = float(request.form.get('amt', 0))
+        if users_db[u]['balance'] < amt: 
+            return redirect('/?view=wth&msg=Low+balance')
         users_db[u]['balance'] -= amt
-        users_db[u]['history'].insert(0, {'title': "W
+        users_db[u]['history'].insert(0, {'title': 'Withdrawal Request', 'amount': -amt})
+    return redirect('/?view=wth&ms
