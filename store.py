@@ -1,4 +1,3 @@
-cat << 'EOF' > store.py
 import time, os
 from flask import Flask, request, redirect, render_template_string
 
@@ -328,4 +327,4 @@ def withdraw():
     if u and u in users_db:
         if users_db[u]['balance'] < amt: return redirect('/?view=wth&msg=Low+balance')
         users_db[u]['balance'] -= amt
-        users_db[u]['history'].ins
+        users_db[u]['history'].insert(0, {'title': f"Withd
