@@ -1,79 +1,367 @@
-import time
 import requests
 import telebot
-from flask import Flask
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-TOKEN = "8765709173:AAHaDmKQzPnQv1nLkpYlvN8KNALxpPMEstA"
-ADMIN_ID = 7161571409
-REQUIRED_CHANNEL = "@eraningwithask"
+# =========================
+# CONFIG
+# =========================
+
+TOKEN = "8765709173:AAGGxm08W3vCr2sN_5g8OZ34rFZqrYNSl6M"
+
+API_KEY = "Anurag"
 
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return "Bot is Active!"
 
-def check_subscription(user_id):
-    try:
-        member = bot.get_chat_member(REQUIRED_CHANNEL, user_id)
-        if member.status in ["member", "creator", "administrator"]:
-            return True
-    except:
-        pass
-    return False
+# =========================
+# KEYBOARD
+# =========================
 
-def get_keyboard(user_id):
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    markup.add(
-        KeyboardButton("🛒 Buy Likes Plan"),
-        KeyboardButton("💰 Add Money"),
-        KeyboardButton("💼 My Wallet"),
-        KeyboardButton("🔍 FF UID Info"),
-        KeyboardButton("👥 Refer & Earn"),
-        KeyboardButton("📜 History"),
-        KeyboardButton("🤖 AI Support")
+def main_keyboard():
+    markup = ReplyKeyboardMarkup(
+        resize_keyboard=True
     )
-    if user_id == ADMIN_ID:
-        markup.add(KeyboardButton("👑 Admin Panel"))
+
+    markup.add(
+        KeyboardButton("🔍 Free Fire UID Info")
+    )
+
+    markup.add(
+        KeyboardButton("ℹ️ Bot Info")
+    )
+
     return markup
 
-@bot.message_handler(commands=['start'])
+
+# =========================
+# START COMMAND
+# =========================
+
+@bot.message_handler(commands=["start"])
 def start(message):
-    user_id = message.from_user.id
-    if not check_subscription(user_id):
-        markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton("📢 Join Channel", url="https://t.me/eraningwithask"))
-        markup.add(InlineKeyboardButton("✅ Verify", callback_data="check"))
-        bot.send_message(message.chat.id, "Pehle channel join karein:", reply_markup=markup)
+
+    bot.send_message(
+        message.chat.id,
+
+        "🎮 *Welcome to Free Fire UID Info Bot!*\n\n"
+        "🔍 Click the button below and send a Free Fire UID.",
+
+        reply_markup=main_keyboard(),
+
+        parse_mode="Markdown"
+    )
+
+
+# =========================
+# BUTTON HANDLER
+# =========================
+
+@bot.message_handler(
+    func=lambda message:
+    message.text == "🔍 Free Fire UID Info"
+)
+def ask_uid(message):
+
+    bot.send_message(
+        message.chat.id,
+
+        "🎮 *Send Free Fire UID*\n\n"
+        "Example:\n`14307670967`",
+
+        parse_mode="Markdown"
+    )
+
+    bot.register_next_step_handler(
+        message,
+        get_uid_info
+    )
+
+
+# =========================
+# GET UID INFO
+# =========================
+
+def get_uid_info(message):
+
+    uid = message.text.strip()
+
+    # UID validation
+    if not uid.isdigit():
+
+        bot.send_message(
+            message.chat.id,
+
+            "❌ Invalid UID!\n\n"
+            "Please send numbers only.",
+
+            reply_markup=main_keyboard()
+        )
+
         return
-    bot.send_message(message.chat.id, "Swagat hai! Menu niche hai:", reply_markup=get_keyboard(user_id))
 
-@bot.callback_query_handler(func=lambda call: True)
-def callback(call):
-    if call.data == "check":
-        if check_subscription(call.from_user.id):
-            bot.answer_callback_query(call.id, "Verified!")
-            bot.delete_message(call.message.chat.id, call.message.message_id)
-            bot.send_message(call.message.chat.id, "Unlock ho gaya!", reply_markup=get_keyboard(call.from_user.id))
-        else:
-            bot.answer_callback_query(call.id, "Pehle join karo!", show_alert=True)
+    # Loading message
+    loading = bot.send_message(
+        message.chat.id,
 
-@bot.message_handler(func=lambda message: True)
-def text_handler(message):
-    text = message.text
-    if text == "🛒 Buy Likes Plan":
-        bot.reply_to(message, "Plans: \n1. ₹59 - 15 Days\n2. ₹99 - 30 Days")
-    elif text == "💼 My Wallet":
-        bot.reply_to(message, "Aapka balance: ₹0")
-    elif text == "🤖 AI Support":
-        bot.reply_to(message, "AI Support active hai. Sawal puchein ya @Xenon_ask9 par sampark karein.")
-    else:
-        bot.reply_to(message, "Sahi option chunein.")
+        "⏳ *Fetching Free Fire player info...*",
 
-if __name__ == "__main__":
-    import threading
-    threading.Thread(target=lambda: bot.infinity_polling(), daemon=True).start()
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-    
+        parse_mode="Markdown"
+    )
+
+    try:
+
+        # API URL
+        api_url = (
+            "https://ff-info-ro45.vercel.app/api"
+            f"?uid={uid}&key={API_KEY}"
+        )
+
+        response = requests.get(
+            api_url,
+            timeout=20
+        )
+
+        # Check HTTP error
+        response.raise_for_status()
+
+        data = response.json()
+
+        # Basic Info
+        basic = data.get(
+            "basicInfo",
+            {}
+        )
+
+        # Pet Info
+        pet = data.get(
+            "petInfo",
+            {}
+        )
+
+        # Clan Info
+        clan = data.get(
+            "clanBasicInfo",
+            {}
+        )
+
+        # Player Details
+        nickname = basic.get(
+            "nickname",
+            "Not Found"
+        )
+
+        account_id = basic.get(
+            "accountId",
+            uid
+        )
+
+        region = basic.get(
+            "region",
+            "N/A"
+        )
+
+        level = basic.get(
+            "level",
+            "N/A"
+        )
+
+        exp = basic.get(
+            "exp",
+            "N/A"
+        )
+
+        likes = basic.get(
+            "liked",
+            "N/A"
+        )
+
+        rank = basic.get(
+            "rank",
+            "N/A"
+        )
+
+        rank_points = basic.get(
+            "rankingPoints",
+            "N/A"
+        )
+
+        cs_rank = basic.get(
+            "csRank",
+            "N/A"
+        )
+
+        max_rank = basic.get(
+            "maxRank",
+            "N/A"
+        )
+
+        cs_max_rank = basic.get(
+            "csMaxRank",
+            "N/A"
+        )
+
+        version = basic.get(
+            "releaseVersion",
+            "N/A"
+        )
+
+        # Clan
+        clan_name = clan.get(
+            "clanName",
+            "No Guild"
+        )
+
+        # Pet
+        pet_id = pet.get(
+            "id",
+            "N/A"
+        )
+
+        pet_level = pet.get(
+            "level",
+            "N/A"
+        )
+
+        # Diamond
+        diamond = data.get(
+            "diamondCostRes",
+            {}
+        )
+
+        diamond_cost = diamond.get(
+            "diamondCost",
+            "N/A"
+        )
+
+        # Profile message
+        result = f"""
+🎮 *FREE FIRE PLAYER INFO*
+
+━━━━━━━━━━━━━━━━━━
+
+👤 *Name:* `{nickname}`
+
+🆔 *UID:* `{account_id}`
+
+🌍 *Region:* `{region}`
+
+📊 *Level:* `{level}`
+
+✨ *EXP:* `{exp}`
+
+❤️ *Likes:* `{likes}`
+
+━━━━━━━━━━━━━━━━━━
+
+🏆 *BR Rank:* `{rank}`
+
+🎯 *Rank Points:* `{rank_points}`
+
+⚔️ *CS Rank:* `{cs_rank}`
+
+🥇 *Max BR Rank:* `{max_rank}`
+
+🥇 *Max CS Rank:* `{cs_max_rank}`
+
+━━━━━━━━━━━━━━━━━━
+
+🛡️ *Guild:* `{clan_name}`
+
+🐾 *Pet ID:* `{pet_id}`
+
+📈 *Pet Level:* `{pet_level}`
+
+💎 *Diamond Cost:* `{diamond_cost}`
+
+━━━━━━━━━━━━━━━━━━
+
+🎮 *Game Version:* `{version}`
+"""
+
+        bot.delete_message(
+            message.chat.id,
+            loading.message_id
+        )
+
+        bot.send_message(
+            message.chat.id,
+
+            result,
+
+            parse_mode="Markdown",
+
+            reply_markup=main_keyboard()
+        )
+
+    except requests.exceptions.Timeout:
+
+        bot.edit_message_text(
+
+            "❌ *API Timeout!*\n\n"
+            "Server is taking too long. Try again.",
+
+            message.chat.id,
+
+            loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+    except requests.exceptions.RequestException as e:
+
+        bot.edit_message_text(
+
+            "❌ *API Error!*\n\n"
+            "Unable to connect to the server.",
+
+            message.chat.id,
+
+            loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+    except Exception as e:
+
+        bot.edit_message_text(
+
+            "❌ *Error!*\n\n"
+            f"`{str(e)}`",
+
+            message.chat.id,
+
+            loading.message_id,
+
+            parse_mode="Markdown"
+        )
+
+
+# =========================
+# BOT INFO
+# =========================
+
+@bot.message_handler(
+    func=lambda message:
+    message.text == "ℹ️ Bot Info"
+)
+def bot_info(message):
+
+    bot.send_message(
+        message.chat.id,
+
+        "🤖 *Free Fire UID Info Bot*\n\n"
+        "Send any Free Fire UID to get player information.",
+
+        parse_mode="Markdown"
+    )
+
+
+# =========================
+# RUN BOT
+# =========================
+
+print("🚀 Free Fire UID Info Bot Started!")
+
+bot.infinity_polling(
+    skip_pending=True
+)
