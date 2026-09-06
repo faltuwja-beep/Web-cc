@@ -271,12 +271,19 @@ def home():
         dep_st['rem'] = max(0, int(600 - (time.time() - dep_st.get('time', time.time()))))
     b_data = last_bought.pop(u, None) if u in last_bought else None
     
-    tab_val = request.args.get('tab', 'login')
-    view_val = request.args.get('view', 'store')
-    cat_val = request.args.get('cat', 'cc')
-    msg_val = request.args.get('msg', '')
-    
-    return render_template_string(HTML_UI, session_user=u, user_bal=bal, user_history=hist, user_dep_status=dep_st, packs=packs_db, bought_data=b_data, tab=tab_val, view=view_val, cat=cat_val, msg=msg_val)
+    return render_template_string(
+        HTML_UI, 
+        session_user=u, 
+        user_bal=bal, 
+        user_history=hist, 
+        user_dep_status=dep_st, 
+        packs=packs_db, 
+        bought_data=b_data, 
+        tab=request.args.get('tab', 'login'), 
+        view=request.args.get('view', 'store'), 
+        cat=request.args.get('cat', 'cc'), 
+        msg=request.args.get('msg', '')
+    )
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -342,4 +349,4 @@ def withdraw():
     if u and u in users_db:
         amt = float(request.form.get('amt', 0))
         if users_db[u]['balance'] < amt:
-            return redirect('/?view=wth&msg=Low+bal
+            return redirect('/?view=wth&ms
