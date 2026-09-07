@@ -1,9 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "sonu_super_secret_key_store"
+
+API_URL = "https://ff-info-ro45.vercel.app/api"
+LIKE_API_BASE = "https://two0likeapifreebyzexxyh4x.onrender.com/like"
+
+site_stats = {
+    "total_checks": 0,
+    "total_likes_sent": 0
+}
+daily_limit_tracker = {}
 
 def init_db():
     conn = sqlite3.connect('store.db')
@@ -37,10 +47,9 @@ def init_db():
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
-            ("REDEEM CODE", "Redeem Code", 699.0, "Google Play Gift Card"),
-            ("DEMO VISA CARD", "CC Card", 399.0, "Working Test CC Info"),
-            ("MASTERCARD", "CC Card", 1099.0, "Mastercard High Balance"),
-            ("BLACKMARKET VISA", "CC Card", 499.0, "Bitcoin Visa Card")
+            ("Google Play Redeem Code ₹699", "Redeem Code", 699.0, "Instant Delivery Code"),
+            ("Demo Visa Card", "CC Card", 399.0, "Working Test CC Info"),
+            ("Mastercard VIP", "CC Card", 1099.0, "High Balance Mastercard")
         ]
         cursor.executemany("INSERT INTO products (name, category, price, details) VALUES (?, ?, ?, ?)", default_items)
 
@@ -119,7 +128,144 @@ def shop():
     products = cursor.fetchall()
     conn.close()
 
-    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products)
+    history = session.get("search_history", [])
+    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, history=history, stats=site_stats)
+
+@app.route("/check-uid", methods=["POST"])
+def check_uid():
+    if "username" not in session:
+        return redirect(url_for("login"))
+        
+    uid = request.form.get("uid", "").strip()
+    player = None
+    error = None
+
+    if not uid.isdigit():
+        error = "❌ Please enter a valid Free Fire UID"
+    else:
+        try:
+            response = requests.get(API_URL, params={"uid": uid, "key": "Anurag"}, timeout=20)
+            response.raise_for_status()
+            data = response.json()
+
+            basic = data.get("basicInfo", {})
+            clan = data.get("clanBasicInfo", {})
+            pet = data.get("petInfo", {})
+
+            player = {
+                "nickname": basic.get("nickname", "N/A"),
+                "uid": basic.get("accountId", uid),
+                "level": basic.get("level", "N/A"),
+                "region": basic.get("region", "N/A"),
+                "likes": int(basic.get("liked", 0)),
+                "rank": basic.get("rank", "N/A"),
+                "cs_rank": basic.get("csRank", "N/A"),
+                "exp": basic.get("exp", "N/A"),
+                "guild": clan.get("clanName", "No Guild"),
+                "pet": pet.get("id", "N/A")
+            }
+
+            site_stats["total_checks"] += 1
+
+            history = session.get("search_history", [])
+            search_item = {"uid": uid, "name": player["nickname"]}
+            if search_item not in history:
+                history.insert(0, search_item)
+                session["search_history"] = history[:5]
+
+        except Exception:
+            error = "❌ API connection error or Invalid UID."
+
+    conn = sqlite3.connect('store.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT balance, is_admin FROM users WHERE username = ?", (session["username"],))
+    user_data = cursor.fetchone()
+    balance = user_data[0] if user_data else 0.0
+    is_admin = user_data[1] if user_data else 0
+    cursor.execute("SELECT * FROM products")
+    products = cursor.fetchall()
+    conn.close()
+
+    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, player=player, error=error, history=session.get("search_history", []), stats=site_stats)
+
+@app.route("/send-likes", methods=["POST"])
+def send_likes():
+    if "username" not in session:
+        return redirect(url_for("login"))
+        
+    uid = request.form.get("uid", "").strip()
+    region = request.form.get("region", "ind").strip()
+    
+    conn = sqlite3.connect('store.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT balance, is_admin FROM users WHERE username = ?", (session["username"],))
+    user_data = cursor.fetchone()
+    balance = user_data[0] if user_data else 0.0
+    is_admin = user_data[1] if user_data else 0
+    cursor.execute("SELECT * FROM products")
+    products = cursor.fetchall()
+    conn.close()
+
+    if not uid.isdigit():
+        return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, error="❌ Please enter a valid Free Fire UID", history=session.get("search_history", []), stats=site_stats)
+
+    old_likes = 0
+    nickname = "Player"
+    try:
+        info_resp = requests.get(API_URL, params={"uid": uid, "key": "Anurag"}, timeout=20)
+        if info_resp.status_code == 200:
+            data = info_resp.json()
+            basic = data.get("basicInfo", {})
+            old_likes = int(basic.get("liked", 0))
+            nickname = basic.get("nickname", "Player")
+    except Exception:
+        pass
+
+    today_date = datetime.now().strftime("%Y-%m-%d")
+    if daily_limit_tracker.get(uid) == today_date:
+        result_data = {
+            "uid": uid, "nickname": nickname, "old_likes": old_likes, "new_likes": old_likes,
+            "added_likes": 0, "success": False, "message": "⚠️ Is UID par aaj ke free likes already bhej diye gaye hain! (1 day limit)"
+        }
+        return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, result_data=result_data, history=session.get("search_history", []), stats=site_stats)
+
+    like_api_url = f"{LIKE_API_BASE}?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
+    new_likes = old_likes
+    status_success = False
+    
+    try:
+        like_resp = requests.get(like_api_url, timeout=20)
+        info_resp_after = requests.get(API_URL, params={"uid": uid, "key": "Anurag"}, timeout=20)
+        if info_resp_after.status_code == 200:
+            data_after = info_resp_after.json()
+            basic_after = data_after.get("basicInfo", {})
+            new_likes = int(basic_after.get("liked", old_likes))
+
+        if new_likes > old_likes:
+            status_success = True
+            daily_limit_tracker[uid] = today_date
+            added = new_likes - old_likes
+            site_stats["total_likes_sent"] += added
+        elif like_resp.status_code == 200:
+            status_success = True
+            daily_limit_tracker[uid] = today_date
+            added = 20
+            site_stats["total_likes_sent"] += added
+            new_likes = old_likes + added
+        else:
+            status_success = False
+            added = 0
+    except Exception:
+        status_success = False
+        added = 0
+
+    result_data = {
+        "uid": uid, "nickname": nickname, "old_likes": old_likes, "new_likes": new_likes,
+        "added_likes": added, "success": status_success,
+        "message": "Likes successfully sent!" if status_success else "Like nahi gaye / Failed."
+    }
+
+    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, result_data=result_data, history=session.get("search_history", []), stats=site_stats)
 
 @app.route("/add-money", methods=["POST"])
 def add_money():
