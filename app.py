@@ -26,25 +26,38 @@ def init_db():
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
     
-    # Ensure users table exists with base columns first
+    # Create base table with ALL columns to prevent missing column errors
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
-                        password TEXT)''')
-    
-    # Safely check and add missing columns one by one
-    existing_columns = [col[1] for col in cursor.execute("PRAGMA table_info(users)").fetchall()]
-    
-    if "balance" not in existing_columns:
+                        password TEXT,
+                        balance REAL DEFAULT 0.0,
+                        referral_code TEXT UNIQUE,
+                        referred_by TEXT,
+                        referral_count INTEGER DEFAULT 0,
+                        is_admin INTEGER DEFAULT 0)''')
+
+    # Double check and add columns if an older table version exists
+    try:
         cursor.execute("ALTER TABLE users ADD COLUMN balance REAL DEFAULT 0.0")
-    if "referral_code" not in existing_columns:
+    except sqlite3.OperationalError:
+        pass
+    try:
         cursor.execute("ALTER TABLE users ADD COLUMN referral_code TEXT")
-    if "referred_by" not in existing_columns:
+    except sqlite3.OperationalError:
+        pass
+    try:
         cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
-    if "referral_count" not in existing_columns:
+    except sqlite3.OperationalError:
+        pass
+    try:
         cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
-    if "is_admin" not in existing_columns:
+    except sqlite3.OperationalError:
+        pass
+    try:
         cursor.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,10 +84,7 @@ def init_db():
 
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
-        cursor.execute("INSERT INTO users (username, password, balance, referral_code, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 1)")
-    else:
-        # Give referral code to admin if missing
-        cursor.execute("UPDATE users SET referral_code = 'ADMIN1' WHERE username = 'admin' AND (referral_code IS NULL OR referral_code = '')")
+        cursor.execute("INSERT INTO users (username, password, balance, referral_code, referral_count, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 0, 1)")
 
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
@@ -322,4 +332,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-    
+        
