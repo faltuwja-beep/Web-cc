@@ -8,7 +8,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 70px; }
 
-/* Live Ticker Bar */
 .live-ticker {
     background: linear-gradient(90deg, #182b1c, #0e1e12);
     border-bottom: 1px solid #38d46b;
@@ -20,7 +19,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     overflow: hidden;
 }
 
-/* Navbar */
 .navbar { background: #120b20; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
 .menu-btn { background: #1c102b; border: 1px solid #43205c; color: white; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
@@ -28,7 +26,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
 .nav-right { display: flex; align-items: center; gap: 10px; }
 .wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #ffd21c; font-weight: bold; }
 
-/* Sidebar Menu Drawer */
 #side-menu {
     display: none;
     position: fixed;
@@ -62,7 +59,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
 
 .container { max-width: 650px; margin: auto; padding: 15px; }
 
-/* Notice Banner */
 .notice-banner { background: linear-gradient(135deg, #182b1c, #0e1e12); border: 1px solid #38d46b; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
 .notice-banner h3 { color: #38d46b; font-size: 14px; margin-bottom: 5px; }
 .notice-banner p { color: #aaa; font-size: 11px; line-height: 1.4; }
@@ -76,7 +72,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
 .card-desc { font-size: 10px; color: #aaa; margin-bottom: 6px; }
 .card-price { font-size: 14px; color: #ffd21c; font-weight: bold; }
 
-/* Popups */
 .modal {
     display: none;
     position: fixed;
@@ -103,16 +98,15 @@ input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 
 button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
 .flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
+.flash-success { background: #102b1a; border: 1px solid #38d46b; color: #38d46b; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
 </style>
 </head>
 <body>
 
-<!-- Live Ticker Bar -->
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Rohit Sharma purchased Google Play Redeem Code ₹699 (Balance ₹5,000) just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Aman Verma bought VIP Mastercard (Balance ₹25,000) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Telegram Admin Instant Alerts Active!</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Rohit Sharma purchased Google Play Redeem Code ₹699 (Balance ₹5,000) just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Aman Verma bought VIP Mastercard (Balance ₹25,000) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Telegram Inline Admin Approvals Active!</marquee>
 </div>
 
-<!-- Navbar with 3-Lines Menu Icon -->
 <div class="navbar">
     <div class="nav-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
@@ -127,7 +121,6 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
-<!-- Sidebar Menu Drawer -->
 <div id="side-menu" onclick="closeMenu()">
     <div class="menu-drawer" onclick="event.stopPropagation()">
         <h3 style="color:#42d66d; margin-bottom:10px;">📌 Navigation Menu</h3>
@@ -143,8 +136,12 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 <div class="container">
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}{% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}{% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="{% if cat=='success' %}flash-success{% else %}flash-msg{% endif %}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
     {% endwith %}
 
     <div class="notice-banner">
@@ -163,7 +160,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
                 <div class="card-name">{{ p[1] }}</div>
                 <div class="card-desc">{{ p[4] }}</div>
                 <div class="card-price">₹{{ p[3] }}</div>
-                <button onclick="openQRModal()" style="width:100%; margin-top:6px; padding:7px; background:#38d46b; color:#07100a; font-size:12px;">Buy Now</button>
+                <a href="/buy/{{ p[0] }}"><button style="width:100%; margin-top:6px; padding:7px; background:#38d46b; color:#07100a; font-size:12px;">Buy Now</button></a>
             </div>
         </div>
         {% endfor %}
@@ -171,7 +168,6 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 </div>
 
-<!-- QR Code Add Money Modal -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR Code</h3>
@@ -190,7 +186,6 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
-<!-- Payment History Modal -->
 <div id="history-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #42d66d; margin-bottom: 10px;">⏱️ Your Payment History</h3>
@@ -223,4 +218,3 @@ function closeHistoryModal() { document.getElementById('history-modal').style.di
 
 </body>
 </html>
-
