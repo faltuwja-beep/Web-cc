@@ -8,6 +8,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 70px; }
 
+/* Live Fake Buyers Ticker */
 .live-ticker {
     background: linear-gradient(90deg, #182b1c, #0e1e12);
     border-bottom: 1px solid #38d46b;
@@ -17,14 +18,15 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
+    box-shadow: 0 0 15px rgba(56, 212, 107, 0.3);
 }
 
 .navbar { background: #120b20; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
 .menu-btn { background: #1c102b; border: 1px solid #43205c; color: white; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-.logo { color: #42d66d; font-size: 18px; font-weight: bold; }
+.logo { color: #42d66d; font-size: 18px; font-weight: bold; text-shadow: 0 0 10px rgba(66, 214, 109, 0.5); }
 .nav-right { display: flex; align-items: center; gap: 10px; }
-.wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #ffd21c; font-weight: bold; }
+.wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #ffd21c; font-weight: bold; box-shadow: 0 0 10px rgba(255, 210, 28, 0.2); }
 
 #side-menu {
     display: none;
@@ -54,18 +56,34 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     text-align: left;
     display: block;
     text-decoration: none;
+    transition: 0.3s;
 }
-.menu-item:hover { border-color: #42d66d; }
+.menu-item:hover { border-color: #42d66d; box-shadow: 0 0 10px rgba(66,214,109,0.3); }
 
 .container { max-width: 650px; margin: auto; padding: 15px; }
 
-.notice-banner { background: linear-gradient(135deg, #182b1c, #0e1e12); border: 1px solid #38d46b; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-.notice-banner h3 { color: #38d46b; font-size: 14px; margin-bottom: 5px; }
-.notice-banner p { color: #aaa; font-size: 11px; line-height: 1.4; }
+/* Welcome Notice Animation */
+.welcome-banner { 
+    background: linear-gradient(135deg, #182b1c, #0e1e12); 
+    border: 1px solid #38d46b; 
+    padding: 15px; 
+    border-radius: 12px; 
+    text-align: center; 
+    margin-bottom: 20px;
+    animation: pulseGlow 2s infinite;
+}
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(56, 212, 107, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(56, 212, 107, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(56, 212, 107, 0.2); }
+}
+.welcome-banner h3 { color: #38d46b; font-size: 15px; margin-bottom: 5px; }
+.welcome-banner p { color: #ccc; font-size: 12px; line-height: 1.4; }
 
 .section-title { margin: 15px 0 10px 0; font-size: 16px; color: #42d66d; }
 .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
+.product-card:hover { border-color: #38d46b; transform: translateY(-2px); }
 .card-banner { height: 85px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
 .card-details { padding: 12px; }
 .card-name { font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 4px; }
@@ -95,6 +113,7 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     overflow-y: auto;
 }
 input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
+input:focus { border-color: #38d46b; }
 button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
 .flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
@@ -103,8 +122,9 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 </head>
 <body>
 
+<!-- Live Fake Buyers Ticker -->
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Welcome to Xenon Store! Instant Delivery on Redeem Codes & CC Cards &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Sima Devi UPI Active (sima6241@ptaxis)</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹299 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹699 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Instant Delivery & Balance Updates Active!</marquee>
 </div>
 
 <div class="navbar">
@@ -144,9 +164,10 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
       {% endif %}
     {% endwith %}
 
-    <div class="notice-banner">
-        <h3>⚠️ Sima Devi (UPI: sima6241@ptaxis)</h3>
-        <p>Website se payment karte waqt QR code par naam zaroor check karein. Naam match na ho toh payment na karein!</p>
+    <!-- Glowing Animated Welcome Notice -->
+    <div class="welcome-banner">
+        <h3>⚡ Welcome to Xenon Store!</h3>
+        <p>100% Secure & Instant Delivery. Add money using the QR option in the menu to instantly buy redeem codes & CC cards!</p>
     </div>
 
     <div class="section-title">✨ Featured Cards & Redeem Codes</div>
@@ -168,11 +189,12 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 </div>
 
-<!-- QR Modal with Sima Devi UPI -->
+<!-- QR Modal with Sima Devi UPI & Notice -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR (Sima Devi)</h3>
-        <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">UPI: <b>sima6241@ptaxis</b></p>
+        <p style="font-size: 11px; color: #aaa; margin-bottom: 5px;">UPI ID: <b>sima6241@ptaxis</b></p>
+        <p style="font-size: 10px; color: #ff9ba5; margin-bottom: 10px;">⚠️ Naam match na ho toh payment na karein!</p>
         
         <div style="text-align: center; margin-bottom: 12px;">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
