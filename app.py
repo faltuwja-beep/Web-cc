@@ -123,7 +123,6 @@ def register():
             conn = sqlite3.connect('store.db')
             cursor = conn.cursor()
 
-            # Check if referral code is valid
             referrer = None
             if ref_input:
                 cursor.execute("SELECT username FROM users WHERE referral_code = ?", (ref_input,))
@@ -131,7 +130,7 @@ def register():
                 if ref_user:
                     referrer = ref_user[0]
 
-            cursor.execute("INSERT INTO users (username, password, referral_code, referred_by) VALUES (?, ?, ?, ?)", 
+            cursor.execute("INSERT INTO users (username, password, balance, referral_code, referred_by, referral_count, is_admin) VALUES (?, ?, 0.0, ?, ?, 0, 0)", 
                            (username, password, my_ref, referrer))
             user_id = cursor.lastrowid
             conn.commit()
@@ -203,7 +202,6 @@ def buy_product(product_id):
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
         cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data))
         
-        # Referral commission check (First buy bonus or every buy? Giving ₹50 on purchase if referred)
         if referred_by:
             cursor.execute("UPDATE users SET balance = balance + 50.0, referral_count = referral_count + 1 WHERE username = ?", (referred_by,))
             send_telegram_alert(f"💸 *Referral Commission Paid!*\n👤 Referrer: `{referred_by}` received ₹50 because their referral `{session['username']}` made a purchase!")
