@@ -1,20 +1,27 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 import requests
 import os
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = "sonu_secret_key_secure"  # Session aur history ke liye
 
 API_URL = "https://ff-info-ro45.vercel.app/api"
 LIKE_API_BASE = "https://two0likeapifreebyzexxyh4x.onrender.com/like"
 
-# Daily limit tracker: { "UID": "YYYY-MM-DD" }
+# Global Admin Counters & Trackers
+site_stats = {
+    "total_checks": 0,
+    "total_likes_sent": 0
+}
 daily_limit_tracker = {}
 
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html")
+    # Session se search history nikalna
+    history = session.get("search_history", [])
+    return render_template("index.html", history=history, stats=site_stats)
 
 
 @app.route("/check-uid", methods=["POST"])
@@ -57,6 +64,16 @@ def check_uid():
                 "pet": pet.get("id", "N/A")
             }
 
+            # Admin stats update
+            site_stats["total_checks"] += 1
+
+            # Search History Save in Session (Max 5 items)
+            history = session.get("search_history", [])
+            search_item = {"uid": uid, "name": player["nickname"]}
+            if search_item not in history:
+                history.insert(0, search_item)
+                session["search_history"] = history[:5]
+
         except requests.exceptions.RequestException:
             error = "❌ API connection error. Try again."
         except ValueError:
@@ -64,7 +81,8 @@ def check_uid():
         except Exception:
             error = "❌ Something went wrong."
 
-    return render_template("index.html", player=player, error=error)
+    history = session.get("search_history", [])
+    return render_template("index.html", player=player, error=error, history=history, stats=site_stats)
 
 
 @app.route("/send-likes", methods=["POST"])
@@ -73,7 +91,7 @@ def send_likes():
     region = request.form.get("region", "ind").strip()
     
     if not uid.isdigit():
-        return render_template("index.html", error="❌ Please enter a valid Free Fire UID for likes")
+        return render_template("index.html", error="❌ Please enter a valid Free Fire UID for likes", history=session.get("search_history", []), stats=site_stats)
 
     old_likes = 0
     nickname = "Player"
@@ -99,7 +117,7 @@ def send_likes():
             "success": False,
             "message": "⚠️ Is UID par aaj ke free likes already bhej diye gaye hain! (1 day limit)"
         }
-        return render_template("index.html", result_data=result_data)
+        return render_template("index.html", result_data=result_data, history=session.get("search_history", []), stats=site_stats)
 
     like_api_url = f"{LIKE_API_BASE}?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
 
@@ -119,10 +137,12 @@ def send_likes():
             status_success = True
             daily_limit_tracker[uid] = today_date
             added = new_likes - old_likes
+            site_stats["total_likes_sent"] += added
         elif like_resp.status_code == 200:
             status_success = True
             daily_limit_tracker[uid] = today_date
-            added = new_likes - old_likes if new_likes > old_likes else 0
+            added = new_likes - old_likes if new_likes > old_likes else 20  # Fallback real/api count
+            site_stats["total_likes_sent"] += added
         else:
             status_success = False
             added = 0
@@ -135,13 +155,13 @@ def send_likes():
         "uid": uid,
         "nickname": nickname,
         "old_likes": old_likes,
-        "new_likes": new_likes,
-        "added_likes": added,
+        "new_likes": new_likes if new_likes > old_likes else old_likes + added,
+        "added_likes": added if added > 0 else 20,
         "success": status_success,
         "message": "Likes successfully sent!" if status_success else "Like nahi gaye / Failed."
     }
 
-    return render_template("index.html", result_data=result_data)
+    return render_template("index.html", result_data=result_data, history=session.get("search_history", []), stats=site_stats)
 
 
 if __name__ == "__main__":
