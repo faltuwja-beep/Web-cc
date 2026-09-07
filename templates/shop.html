@@ -157,7 +157,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     <div class="section-title">🎁 Google Play & Redeem Codes</div>
     <div class="product-grid">
         {% for p in products %}
-            {% if "Redeem" in p[2] or "Code" in p[2] %}
+            {% if "Redeem" in p[2] or "Code" in p[2] or "Redeem" in p[1] or "Code" in p[1] %}
             <div class="product-card">
                 <div class="card-banner">
                     <span class="card-badge">INSTANT</span>
@@ -179,7 +179,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     <div class="section-title">💳 Visa & Master Credit Cards (CC)</div>
     <div class="product-grid">
         {% for p in products %}
-            {% if "CC" in p[2] or "Card" in p[2] or "Visa" in p[2] %}
+            {% if "CC" in p[2] or "Card" in p[2] or "Visa" in p[2] or "CC" in p[1] or "Card" in p[1] or "Visa" in p[1] %}
             <div class="product-card">
                 <div class="card-banner">
                     <span class="card-badge" style="background:rgba(234,179,8,0.15); border-color:rgba(234,179,8,0.4); color:#facc15;">VIP CC</span>
@@ -191,6 +191,28 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                     <div class="rating-stars">⭐⭐⭐⭐⭐ <span style="color:#9ca3af; font-size:10px;">(5.0/5)</span></div>
                     <div class="card-price">₹{{ p[3] }}</div>
                     <a href="/buy/{{ p[0] }}"><button class="buy-btn" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:#fff;">Buy Now ⚡</button></a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Section 3: All Other / Admin Added Products -->
+    <div class="section-title">🔥 All Other VIP Digital Assets</div>
+    <div class="product-grid">
+        {% for p in products %}
+            {% if not ("Redeem" in p[2] or "Code" in p[2] or "Redeem" in p[1] or "Code" in p[1] or "CC" in p[2] or "Card" in p[2] or "Visa" in p[2] or "CC" in p[1] or "Card" in p[1] or "Visa" in p[1]) %}
+            <div class="product-card">
+                <div class="card-banner">
+                    <span class="card-badge" style="background:rgba(74,222,128,0.15); border-color:rgba(74,222,128,0.4); color:#4ade80;">VIP ASSET</span>
+                    <img src="{{ p[6] }}" alt="Product">
+                </div>
+                <div class="card-details">
+                    <div class="card-name">{{ p[1] }}</div>
+                    <div class="card-desc">{{ p[4] }}</div>
+                    <div class="rating-stars">⭐⭐⭐⭐⭐ <span style="color:#9ca3af; font-size:10px;">(4.9/5)</span></div>
+                    <div class="card-price">₹{{ p[3] }}</div>
+                    <a href="/buy/{{ p[0] }}"><button class="buy-btn">Buy Now ⚡</button></a>
                 </div>
             </div>
             {% endif %}
@@ -331,33 +353,4 @@ function closeModal(modalId) {
 function changeTheme(mode) {
     if(mode === 'light') {
         document.body.className = 'light-theme';
-        localStorage.setItem('xenon_theme', 'light');
-    } else {
-        document.body.className = 'dark-theme';
-        localStorage.setItem('xenon_theme', 'dark');
-    }
-}
-
-window.onload = function() {
-    let savedTheme = localStorage.getItem('xenon_theme') || 'dark';
-    document.body.className = savedTheme + '-theme';
-    let selector = document.getElementById('theme-selector');
-    if(selector) selector.value = savedTheme;
-}
-
-function copyRefLink() {
-    var copyText = document.getElementById("ref-link-input");
-    copyText.select();
-    document.execCommand("copy");
-    alert("Copied referral link!");
-}
-
-function viewDetails(name, details) {
-    document.getElementById('det-title').innerText = name + " (Details)";
-    document.getElementById('det-content').innerText = details;
-    openModal('details-modal');
-}
-</script>
-
-</body>
-</html>
+        localStor
