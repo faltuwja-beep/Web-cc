@@ -94,6 +94,20 @@ header p{ color:#aaa; margin-top:7px; }
     padding:20px;
 }
 
+/* Admin Dashboard Counter Box */
+.admin-board {
+    background: #130b20;
+    border: 1px solid #43205c;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+.admin-item h4 { color: #42d66d; font-size: 16px; }
+.admin-item span { color: #ffd21c; font-size: 14px; font-weight: bold; }
+
 .action-buttons {
     display: flex;
     flex-direction: column;
@@ -172,6 +186,28 @@ button:hover {
 .row:last-child{ border:none; }
 .label{ color:#aaa; }
 .value{ color:#ffd21c; font-weight:bold; text-align:right; max-width:55%; word-break:break-word; }
+
+/* Recent History Box */
+.history-box {
+    margin-top: 15px;
+    background: #09050f;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #3e1e56;
+}
+.history-title { color: #aaa; font-size: 13px; margin-bottom: 8px; }
+.history-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.history-chip {
+    background: #1b102b;
+    border: 1px solid #522775;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #42d66d;
+    cursor: pointer;
+    text-decoration: none;
+}
+.history-chip:hover { background: #2a1642; }
 
 /* Loading Spinner Animation Overlay */
 #loading-overlay {
@@ -301,6 +337,18 @@ footer{
 
 <div class="container">
 
+<!-- Admin Dashboard Stats Counter Bar -->
+<div class="admin-board">
+    <div class="admin-item">
+        <h4>📊 Total Checks</h4>
+        <span>{{ stats.total_checks }}</span>
+    </div>
+    <div class="admin-item">
+        <h4>🔥 Likes Sent</h4>
+        <span>{{ stats.total_likes_sent }}</span>
+    </div>
+</div>
+
 <!-- 3 Main Action Buttons At Top/Front -->
 <div class="action-buttons">
     <button onclick="showSection('check')" style="background: linear-gradient(90deg, #38d46b, #b7dc39); color: #07100a;">
@@ -371,18 +419,42 @@ footer{
 <div id="check-section" class="search-box">
     <h3 style="color:#38d46b; margin-bottom:12px;">🔍 Check Player UID Info</h3>
     <form action="/check-uid" method="POST" onsubmit="showLoading()">
-        <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
+        <input type="text" id="uid-input" name="uid" placeholder="Enter Free Fire UID" required>
         <button type="submit" style="background:#38d46b; color:#07100a;">Search UID Info</button>
     </form>
+
+    <!-- Recent History Chips -->
+    {% if history %}
+    <div class="history-box">
+        <div class="history-title">⏱️ Recent Searches:</div>
+        <div class="history-list">
+            {% for item in history %}
+            <span class="history-chip" onclick="fillUid('{{ item.uid }}')">{{ item.uid }} ({{ item.name }})</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <div id="likes-section" class="search-box" style="display:none;">
     <h3 style="color:#ff9900; margin-bottom:12px;">🔥 Send Free 20 Likes</h3>
     <form action="/send-likes" method="POST" onsubmit="showLoading()">
-        <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
+        <input type="text" id="like-uid-input" name="uid" placeholder="Enter Free Fire UID" required>
         <input type="hidden" name="region" value="ind">
         <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">Send 20 Likes Now</button>
     </form>
+
+    <!-- Recent History Chips for Likes -->
+    {% if history %}
+    <div class="history-box">
+        <div class="history-title">⏱️ Recent Searches:</div>
+        <div class="history-list">
+            {% for item in history %}
+            <span class="history-chip" onclick="fillLikeUid('{{ item.uid }}')">{{ item.uid }} ({{ item.name }})</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endif %}
@@ -411,6 +483,12 @@ function closeBuyModal() {
 }
 function showLoading() {
     document.getElementById('loading-overlay').style.display = 'flex';
+}
+function fillUid(uid) {
+    document.getElementById('uid-input').value = uid;
+}
+function fillLikeUid(uid) {
+    document.getElementById('like-uid-input').value = uid;
 }
 function showSection(type) {
     const checkSec = document.getElementById('check-section');
