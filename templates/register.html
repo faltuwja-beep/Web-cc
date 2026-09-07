@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register - YoYo Shop</title>
+<title>Register - Xenon Store</title>
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
 body { background: #0b0614; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -13,42 +13,25 @@ body { background: #0b0614; color: white; display: flex; justify-content: center
 label { display: block; color: #aaa; font-size: 13px; margin-bottom: 5px; }
 input { width: 100%; padding: 14px; background: #09050f; border: 1px solid #492460; color: white; border-radius: 10px; font-size: 15px; outline: none; }
 input:focus { border-color: #ff9900; }
-.btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #ff9900, #ff3300); border: none; font-weight: bold; border-radius: 10px; cursor: pointer; color: white; font-size: 16px; margin-top: 10px; transition: 0.3s; }
-.btn:hover { opacity: 0.9; }
+.btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #ff9900, #ff3300); border: none; font-weight: bold; border-radius: 10px; cursor: pointer; color: white; font-size: 16px; margin-top: 10px; }
 .switch-link { text-align: center; margin-top: 20px; font-size: 14px; color: #aaa; }
 .switch-link a { color: #ff9900; text-decoration: none; font-weight: bold; }
-.flash-msg { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; text-align: center; }
-.flash-error { background: #35101a; border: 1px solid #742331; color: #ff9ba5; }
-.flash-success { background: #102b1a; border: 1px solid #38d46b; color: #38d46b; }
+.flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
 </style>
 </head>
 <body>
 <div class="auth-container">
     <h2>📝 Create Account</h2>
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for cat, msg in messages %}
-          <div class="flash-msg {% if cat=='error' %}flash-error{% else %}flash-success{% endif %}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}{% endif %}
     {% endwith %}
-
     <form method="POST">
-        <div class="form-group">
-            <label>Choose Username</label>
-            <input type="text" name="username" placeholder="Enter username" required autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label>Choose Password</label>
-            <input type="password" name="password" placeholder="Enter password" required>
-        </div>
+        <div class="form-group"><label>Choose Username</label><input type="text" name="username" placeholder="Username" required></div>
+        <div class="form-group"><label>Choose Password</label><input type="password" name="password" placeholder="Password" required></div>
+        <div class="form-group"><label>Referral Code (Optional)</label><input type="text" name="ref_code" value="{{ ref_code }}" placeholder="Enter referral code if any"></div>
         <button type="submit" class="btn">Register Account</button>
     </form>
-    
-    <div class="switch-link">
-        Already have an account? <a href="/login">Login Here</a>
-    </div>
+    <div class="switch-link">Already have an account? <a href="/login">Login Here</a></div>
 </div>
 </body>
 </html>
