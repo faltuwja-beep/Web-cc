@@ -22,43 +22,41 @@ def send_telegram_alert(message):
 def generate_referral_code():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
-def init_db():
+def get_db_connection():
     conn = sqlite3.connect('store.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Create base table with ALL columns to prevent missing column errors
+    # 1. Create base users table if not exists
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
-                        password TEXT,
-                        balance REAL DEFAULT 0.0,
-                        referral_code TEXT UNIQUE,
-                        referred_by TEXT,
-                        referral_count INTEGER DEFAULT 0,
-                        is_admin INTEGER DEFAULT 0)''')
+                        password TEXT)''')
+    
+    # 2. Automatically ensure all required columns exist (Auto-Healing)
+    required_columns = {
+        "balance": "REAL DEFAULT 0.0",
+        "referral_code": "TEXT UNIQUE",
+        "referred_by": "TEXT",
+        "referral_count": "INTEGER DEFAULT 0",
+        "is_admin": "INTEGER DEFAULT 0"
+    }
+    
+    cursor.execute("PRAGMA table_info(users)")
+    existing_cols = [row["name"] for row in cursor.fetchall()]
+    
+    for col_name, col_type in required_columns.items():
+        if col_name not in existing_cols:
+            try:
+                cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
+            except sqlite3.OperationalError:
+                pass
 
-    # Double check and add columns if an older table version exists
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN balance REAL DEFAULT 0.0")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN referral_code TEXT")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-
+    # 3. Create other tables
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT,
@@ -82,10 +80,12 @@ def init_db():
                         price REAL,
                         secret_data TEXT)''')
 
+    # 4. Insert default admin if not exists
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, balance, referral_code, referral_count, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 0, 1)")
 
+    # 5. Insert default products if empty
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
@@ -100,6 +100,11 @@ def init_db():
     conn.close()
 
 init_db()
+
+@app.before_request
+def before_request():
+    # Ensures database and columns are checked/repaired on every app wake up
+    init_db()
 
 @app.route("/")
 def home():
@@ -116,15 +121,13 @@ def login():
             flash("❌ Please fill in all fields", "error")
             return render_template("login.html")
 
-        conn = sqlite3.connect('store.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-        user = cursor.fetchone()
+        conn = get_db_connection()
+        user = conn.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
         conn.close()
 
         if user:
-            session["username"] = user[1]
-            session["is_admin"] = user[7] if len(user) > 7 else 0
+            session["username"] = user["username"]
+            session["is_admin"] = user["is_admin"] if "is_admin" in user.keys() else 0
             return redirect(url_for("shop"))
         else:
             flash("❌ Invalid Username or Password", "error")
@@ -144,15 +147,14 @@ def register():
 
         my_ref = generate_referral_code()
         try:
-            conn = sqlite3.connect('store.db')
+            conn = get_db_connection()
             cursor = conn.cursor()
 
             referrer = None
             if ref_input:
-                cursor.execute("SELECT username FROM users WHERE referral_code = ?", (ref_input,))
-                ref_user = cursor.fetchone()
+                ref_user = cursor.execute("SELECT username FROM users WHERE referral_code = ?", (ref_input,)).fetchone()
                 if ref_user:
-                    referrer = ref_user[0]
+                    referrer = ref_user["username"]
 
             cursor.execute("INSERT INTO users (username, password, balance, referral_code, referred_by, referral_count, is_admin) VALUES (?, ?, 0.0, ?, ?, 0, 0)", 
                            (username, password, my_ref, referrer))
@@ -174,26 +176,23 @@ def shop():
     if "username" not in session:
         return redirect(url_for("login"))
     
-    conn = sqlite3.connect('store.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, balance, referral_code, referral_count, is_admin FROM users WHERE username = ?", (session["username"],))
-    user_data = cursor.fetchone()
+    conn = get_db_connection()
+    user_data = conn.execute("SELECT id, balance, referral_code, referral_count, is_admin FROM users WHERE username = ?", (session["username"],)).fetchone()
     
-    user_id = user_data[0] if user_data else 0
-    balance = user_data[1] if user_data else 0.0
-    referral_code = user_data[2] if user_data else ""
-    referral_count = user_data[3] if user_data else 0
-    is_admin = user_data[4] if user_data else 0
+    if not user_data:
+        conn.close()
+        session.clear()
+        return redirect(url_for("login"))
 
-    cursor.execute("SELECT * FROM products")
-    products = cursor.fetchall()
+    user_id = user_data["id"]
+    balance = user_data["balance"] if user_data["balance"] is not None else 0.0
+    referral_code = user_data["referral_code"] if user_data["referral_code"] else ""
+    referral_count = user_data["referral_count"] if user_data["referral_count"] is not None else 0
+    is_admin = user_data["is_admin"] if user_data["is_admin"] is not None else 0
 
-    cursor.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],))
-    my_payments = cursor.fetchall()
-
-    cursor.execute("SELECT id, product_name, price, secret_data FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],))
-    my_purchases = cursor.fetchall()
-
+    products = conn.execute("SELECT * FROM products").fetchall()
+    my_payments = conn.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],)).fetchall()
+    my_purchases = conn.execute("SELECT id, product_name, price, secret_data FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
     conn.close()
 
     referral_link = request.host_url + "register?ref=" + referral_code
@@ -204,23 +203,22 @@ def buy_product(product_id):
     if "username" not in session:
         return redirect(url_for("login"))
     
-    conn = sqlite3.connect('store.db')
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, balance, referred_by FROM users WHERE username = ?", (session["username"],))
-    user_res = cursor.fetchone()
-    user_id = user_res[0] if user_res else 0
-    balance = user_res[1] if user_res else 0.0
-    referred_by = user_res[2] if user_res else None
+    
+    user_res = cursor.execute("SELECT id, balance, referred_by FROM users WHERE username = ?", (session["username"],)).fetchone()
+    user_id = user_res["id"]
+    balance = user_res["balance"] if user_res["balance"] is not None else 0.0
+    referred_by = user_res["referred_by"]
 
-    cursor.execute("SELECT name, price, secret_data FROM products WHERE id = ?", (product_id,))
-    prod = cursor.fetchone()
+    prod = cursor.execute("SELECT name, price, secret_data FROM products WHERE id = ?", (product_id,)).fetchone()
 
     if not prod:
         conn.close()
         flash("❌ Product not found!", "error")
         return redirect(url_for("shop"))
 
-    p_name, p_price, secret_data = prod
+    p_name, p_price, secret_data = prod["name"], prod["price"], prod["secret_data"]
 
     if balance >= p_price:
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
@@ -257,10 +255,9 @@ def add_money():
         flash("❌ Please enter valid amount and UTR number", "error")
         return redirect(url_for("shop"))
 
-    conn = sqlite3.connect('store.db')
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO payments (username, amount, utr, status) VALUES (?, ?, ?, 'Pending')", 
-                   (session["username"], amount, utr))
+    conn = get_db_connection()
+    conn.execute("INSERT INTO payments (username, amount, utr, status) VALUES (?, ?, ?, 'Pending')", 
+                 (session["username"], amount, utr))
     conn.commit()
     conn.close()
 
@@ -274,16 +271,15 @@ def admin_panel():
     if "username" not in session:
         return redirect(url_for("login"))
         
-    conn = sqlite3.connect('store.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT is_admin FROM users WHERE username = ?", (session["username"],))
-    res = cursor.fetchone()
-    if not res or res[0] != 1:
+    conn = get_db_connection()
+    res = conn.execute("SELECT is_admin FROM users WHERE username = ?", (session["username"],)).fetchone()
+    if not res or res["is_admin"] != 1:
         conn.close()
         return redirect(url_for("shop"))
 
     if request.method == "POST":
         action = request.form.get("action")
+        cursor = conn.cursor()
         if action == "add_product":
             name = request.form.get("name")
             category = request.form.get("category")
@@ -306,10 +302,9 @@ def admin_panel():
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
         elif action == "approve_payment":
             pay_id = request.form.get("pay_id")
-            cursor.execute("SELECT username, amount, status FROM payments WHERE id = ?", (pay_id,))
-            pay_data = cursor.fetchone()
-            if pay_data and pay_data[2] == 'Pending':
-                uname, amt = pay_data[0], pay_data[1]
+            pay_data = cursor.execute("SELECT username, amount, status FROM payments WHERE id = ?", (pay_id,)).fetchone()
+            if pay_data and pay_data["status"] == 'Pending':
+                uname, amt = pay_data["username"], pay_data["amount"]
                 cursor.execute("UPDATE users SET balance = balance + ? WHERE username = ?", (amt, uname))
                 cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
         elif action == "reject_payment":
@@ -317,10 +312,8 @@ def admin_panel():
             cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
         conn.commit()
 
-    cursor.execute("SELECT * FROM products")
-    products = cursor.fetchall()
-    cursor.execute("SELECT * FROM payments ORDER BY id DESC")
-    payments = cursor.fetchall()
+    products = conn.execute("SELECT * FROM products").fetchall()
+    payments = conn.execute("SELECT * FROM payments ORDER BY id DESC").fetchall()
     conn.close()
     return render_template("admin.html", products=products, payments=payments)
 
@@ -332,4 +325,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-        
+    
