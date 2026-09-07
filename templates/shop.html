@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoYo Shop</title>
+<title>Xenon Store</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 70px; }
@@ -104,13 +104,13 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 <body>
 
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Rohit Sharma purchased Google Play Redeem Code ₹699 (Balance ₹5,000) just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Aman Verma bought VIP Mastercard (Balance ₹25,000) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Telegram Inline Admin Approvals Active!</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Welcome to Xenon Store! Instant Delivery on Redeem Codes & CC Cards &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Sima Devi UPI Active (sima6241@ptaxis)</marquee>
 </div>
 
 <div class="navbar">
     <div class="nav-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <span class="logo">YoYo Shop (ID: #{{ user_id }})</span>
+        <span class="logo">Xenon Store (ID: #{{ user_id }})</span>
     </div>
     <div class="nav-right">
         <div class="wallet-pill">💰 ₹{{ balance }}</div>
@@ -168,7 +168,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 </div>
 
-<!-- Updated QR Code using Sima Devi UPI (sima6241@ptaxis) -->
+<!-- QR Modal with Sima Devi UPI -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR (Sima Devi)</h3>
@@ -195,7 +195,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
                 {% for pay in my_payments %}
                 <div style="background:#09050f; padding:8px; border-radius:6px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between;">
                     <span>₹{{ pay[0] }} (UTR: {{ pay[1][:6] }}...)</span>
-                    <span style="color:{% if pay[2]=='Approved' %}#38d46b{% else %}#ffd21c{% endif %};">{{ pay[2] }}</span>
+                    <span style="color:{% if pay[2]=='Approved' %}#38d46b{% elif pay[2]=='Rejected' %}#ff9ba5{% else %}#ffd21c{% endif %};">{{ pay[2] }}</span>
                 </div>
                 {% endfor %}
             {% else %}
