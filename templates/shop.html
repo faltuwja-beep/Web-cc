@@ -45,7 +45,7 @@ body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #fffff
     background: var(--nav-bg); backdrop-filter: blur(15px);
     border-top: 1px solid rgba(139, 92, 246, 0.25);
     display: flex; justify-content: space-around; align-items: center;
-    padding: 10px 5px; z-index: 1000; box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+    padding: 10px 5px; z-index: 2000; box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
 }
 .nav-item {
     background: none; border: none; color: var(--text-main); font-size: 10px; font-weight: 700;
@@ -95,7 +95,7 @@ body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #fffff
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(3, 1, 7, 0.85); backdrop-filter: blur(10px);
-    justify-content: center; align-items: center; z-index: 1001; padding: 20px;
+    justify-content: center; align-items: center; z-index: 3000; padding: 20px;
 }
 .modal-box {
     background: var(--modal-bg); padding: 24px; border-radius: 22px;
@@ -132,10 +132,10 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 <!-- VIP Bottom Navigation Bar -->
 <div class="bottom-nav">
     <button class="nav-item active" onclick="window.location.href='/shop'"><span>🏠</span>Shop</button>
-    <button class="nav-item" onclick="openQRModal()"><span>💳</span>Add Money</button>
-    <button class="nav-item" onclick="openReferralModal()"><span>👥</span>Refer</button>
-    <button class="nav-item" onclick="openPurchasesModal()"><span>🛍️</span>Purchases</button>
-    <button class="nav-item" onclick="openSettingsModal()"><span>⚙️</span>Settings</button>
+    <button class="nav-item" onclick="openModal('qr-modal')"><span>💳</span>Add Money</button>
+    <button class="nav-item" onclick="openModal('referral-modal')"><span>👥</span>Refer</button>
+    <button class="nav-item" onclick="openModal('purchases-modal')"><span>🛍️</span>Purchases</button>
+    <button class="nav-item" onclick="openModal('settings-modal')"><span>⚙️</span>Settings</button>
 </div>
 
 <div class="container">
@@ -241,7 +241,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
             <button type="submit" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 5px;">Submit Payment Proof</button>
         </form>
 
-        <!-- Payment History Box Inside QR Modal -->
         <div style="margin-top: 15px; border-top: 1px solid rgba(139,92,246,0.3); padding-top: 10px; text-align: left;">
             <h4 style="font-size: 12px; color: #4ade80; margin-bottom: 6px;">⏱️ Recent Payments Status:</h4>
             <div style="max-height: 120px; overflow-y: auto;">
@@ -258,7 +257,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
             </div>
         </div>
 
-        <button onclick="closeQRModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">Close Window</button>
+        <button onclick="closeModal('qr-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">Close Window</button>
     </div>
 </div>
 
@@ -272,7 +271,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
         <div style="margin-top: 15px; background: var(--input-bg); padding: 12px; border-radius: 12px; font-size: 13px;">
             Total Friends Referred: <b style="color: #facc15;">{{ referral_count }}</b>
         </div>
-        <button onclick="closeReferralModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
+        <button onclick="closeModal('referral-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
 
@@ -292,11 +291,11 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                 <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases yet.</p>
             {% endif %}
         </div>
-        <button onclick="closePurchasesModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
+        <button onclick="closeModal('purchases-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
 
-<!-- Settings Modal (Theme, Name, Password Change) -->
+<!-- Settings Modal -->
 <div id="settings-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⚙️ Account Settings</h3>
@@ -320,7 +319,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
         </form>
 
         <a href="/logout"><button style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">🚪 Logout Account</button></a>
-        <button onclick="closeSettingsModal()" style="width: 100%; background: #374151; color: white; margin-top: 8px;">Close</button>
+        <button onclick="closeModal('settings-modal')" style="width: 100%; background: #374151; color: white; margin-top: 8px;">Close Window</button>
     </div>
 </div>
 
@@ -332,16 +331,28 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
             🎉 Purchase Successful! Check below for your secure credentials.
         </div>
         <div id="det-content" style="background: #030712; padding: 15px; border-radius: 12px; font-size: 13px; color: #facc15; text-align: left; white-space: pre-wrap; word-break: break-all; margin-bottom: 15px; font-family: monospace;"></div>
-        <button onclick="closeDetailsModal()" style="width: 100%; background: #4ade80; color: #030712; font-weight: 700;">Back</button>
+        <button onclick="closeModal('details-modal')" style="width: 100%; background: #4ade80; color: #030712; font-weight: 700;">Back</button>
     </div>
 </div>
 
 <script>
-function openQRModal() { document.getElementById('qr-modal').style.display = 'flex'; }
-function closeQRModal() { document.getElementById('qr-modal').style.display = 'none'; }
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
 
-function openPurchasesModal() { document.getElementById('purchases-modal').style.display = 'flex'; }
-function closePurchasesModal() { document.getElementById('purchases-modal').style.display = 'none'; }
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
-function openReferralModal() { document.getElementById('referral-modal').style.display = 'flex'; }
-function close
+function changeTheme(mode) {
+    if(mode === 'light') {
+        document.body.className = 'light-theme';
+        localStorage.setItem('xenon_theme', 'light');
+    } else {
+        document.bo
