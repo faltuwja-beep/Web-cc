@@ -42,6 +42,13 @@ def init_db():
                         utr TEXT,
                         status TEXT DEFAULT 'Pending')''')
 
+    cursor.execute('''CREATE TABLE IF NOT EXISTS purchases (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        username TEXT,
+                        product_name TEXT,
+                        price REAL,
+                        details TEXT)''')
+
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, balance, is_admin) VALUES ('admin', 'admin123', 0.0, 1)")
@@ -133,9 +140,13 @@ def shop():
 
     cursor.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],))
     my_payments = cursor.fetchall()
+
+    cursor.execute("SELECT id, product_name, price, details FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],))
+    my_purchases = cursor.fetchall()
+
     conn.close()
 
-    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments)
+    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
 
 @app.route("/buy/<int:product_id>")
 def buy_product(product_id):
@@ -161,12 +172,13 @@ def buy_product(product_id):
 
     if balance >= p_price:
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
+        cursor.execute("INSERT INTO purchases (username, product_name, price, details) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, p_details))
         conn.commit()
         conn.close()
 
         send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
 
-        flash(f"🎉 Successfully Purchased {p_name}! Your Details/Code: {p_details}", "success")
+        flash("🎉 Purchase Successful! Check your Purchase History below to view details.", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -257,4 +269,3 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-        
