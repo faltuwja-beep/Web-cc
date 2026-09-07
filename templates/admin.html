@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><title>Admin Panel</title>
+<meta charset="UTF-8"><title>Admin Panel - Xenon Store</title>
 <style>
 body { background: #0b0614; color: white; font-family: Arial; padding: 20px; }
 .box { background: #130b20; padding: 20px; border-radius: 12px; border: 1px solid #3e1e56; margin-bottom: 20px; }
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { border: 1px solid #3e1e56; padding: 10px; font-size: 14px; text-align: left; }
+th, td { border: 1px solid #3e1e56; padding: 10px; font-size: 13px; text-align: left; }
 th { background: #1c102b; color: #42d66d; }
-input { padding: 8px; background: #09050f; border: 1px solid #492460; color: white; border-radius: 5px; }
-button { padding: 8px 15px; background: #38d46b; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; }
+input { padding: 8px; background: #09050f; border: 1px solid #492460; color: white; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 5px; }
+button { padding: 8px 12px; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; color: white; }
 </style>
 </head>
 <body>
-<h1>👑 Admin Panel</h1>
-<a href="/shop" style="color:#42d66d;">Back to Shop</a> | <a href="/logout" style="color:#ff9ba5;">Logout</a>
+<h1>👑 Xenon Store Admin Panel</h1>
+<a href="/shop" style="color:#42d66d; text-decoration:none; font-weight:bold;">← Back to Shop</a> | <a href="/logout" style="color:#ff9ba5; text-decoration:none; font-weight:bold;">Logout</a>
 
 <div class="box" style="margin-top:20px;">
-    <h3>➕ Add Product / Card</h3>
+    <h3>➕ Add New Product & Delivery Details (e.g. Code/CC Info)</h3>
     <form method="POST">
         <input type="hidden" name="action" value="add_product">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="category" placeholder="Category" required>
-        <input type="number" step="0.01" name="price" placeholder="Price" required>
-        <input type="text" name="details" placeholder="Details" required>
-        <button type="submit">Add</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input type="text" name="name" placeholder="Product Name (e.g. Redeem Code ₹200)" required>
+            <input type="text" name="category" placeholder="Category (Redeem Code / CC Card)" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+            <input type="number" step="0.01" name="price" placeholder="Selling Price (₹)" required>
+            <input type="text" name="details" placeholder="Secret Details / Code given on Buy (e.g. PIN: 9821-XYZ)" required>
+        </div>
+        <button type="submit" style="background:#38d46b; color:#07100a; width:100%;">Add Product to Store</button>
     </form>
 </div>
 
 <div class="box">
-    <h3>📦 Manage Products & Prices</h3>
+    <h3>📦 Manage Products, Prices & Delivery Details</h3>
     <table>
-        <tr><th>ID</th><th>Name</th><th>Price</th><th>Action</th></tr>
+        <tr><th>ID</th><th>Name</th><th>Price (₹)</th><th>Delivery Details / Code</th><th>Action</th></tr>
         {% for p in products %}
         <tr>
             <form method="POST">
@@ -39,14 +43,15 @@ button { padding: 8px 15px; background: #38d46b; border: none; font-weight: bold
                 <input type="hidden" name="pid" value="{{ p[0] }}">
                 <td>{{ p[0] }}</td>
                 <td>{{ p[1] }}</td>
-                <td><input type="number" step="0.01" name="price" value="{{ p[3] }}"></td>
+                <td><input type="number" step="0.01" name="price" value="{{ p[3] }}" style="width:80px;"></td>
+                <td><input type="text" name="details" value="{{ p[4] }}"></td>
                 <td>
                     <button type="submit" style="background:#ff9900;">Update</button>
             </form>
-            <form method="POST" style="display:inline;">
+            <form method="POST" style="display:inline; margin-left:5px;">
                 <input type="hidden" name="action" value="delete_product">
                 <input type="hidden" name="pid" value="{{ p[0] }}">
-                <button type="submit" style="background:#742331; color:white;">Delete</button>
+                <button type="submit" style="background:#742331;">Delete</button>
             </form>
                 </td>
         </tr>
@@ -64,15 +69,22 @@ button { padding: 8px 15px; background: #38d46b; border: none; font-weight: bold
             <td>{{ pay[1] }}</td>
             <td>₹{{ pay[2] }}</td>
             <td>{{ pay[3] }}</td>
-            <td style="color:{% if pay[4]=='Approved' %}#38d46b{% else %}#ffd21c{% endif %};">{{ pay[4] }}</td>
+            <td style="color:{% if pay[4]=='Approved' %}#38d46b{% elif pay[4]=='Rejected' %}#ff9ba5{% else %}#ffd21c{% endif %};">{{ pay[4] }}</td>
             <td>
                 {% if pay[4] == 'Pending' %}
-                <form method="POST">
+                <form method="POST" style="display:inline;">
                     <input type="hidden" name="action" value="approve_payment">
                     <input type="hidden" name="pay_id" value="{{ pay[0] }}">
                     <button type="submit" style="background:#38d46b;">Approve</button>
                 </form>
-                {% else %}Done{% endif %}
+                <form method="POST" style="display:inline; margin-left:5px;">
+                    <input type="hidden" name="action" value="reject_payment">
+                    <input type="hidden" name="pay_id" value="{{ pay[0] }}">
+                    <button type="submit" style="background:#742331;">Reject</button>
+                </form>
+                {% else %}
+                Done
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
