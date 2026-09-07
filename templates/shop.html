@@ -197,31 +197,9 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
         {% endfor %}
     </div>
 
-    <!-- Section 3: Anime & Streaming Section -->
-    <div class="section-title">🍥 Anime Merch & Streaming VIP</div>
-    <div class="product-grid">
-        {% for p in products %}
-            {% if "Anime" in p[2] or "Streaming" in p[2] or "VIP" in p[2] and "Card" not in p[2] and "Redeem" not in p[2] %}
-            <div class="product-card">
-                <div class="card-banner">
-                    <span class="card-badge" style="background:rgba(236,72,153,0.15); border-color:rgba(236,72,153,0.4); color:#ec4899;">ANIME VIP</span>
-                    <img src="{{ p[6] }}" alt="Product">
-                </div>
-                <div class="card-details">
-                    <div class="card-name">{{ p[1] }}</div>
-                    <div class="card-desc">{{ p[4] }}</div>
-                    <div class="rating-stars">⭐⭐⭐⭐⭐ <span style="color:#9ca3af; font-size:10px;">(4.8/5)</span></div>
-                    <div class="card-price">₹{{ p[3] }}</div>
-                    <a href="/buy/{{ p[0] }}"><button class="buy-btn" style="background:linear-gradient(135deg, #ec4899, #be185d); color:#fff;">Buy Now ⚡</button></a>
-                </div>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-
 </div>
 
-<!-- QR Modal (With Integrated Payment History) -->
+<!-- QR Modal -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money & Payment History</h3>
@@ -355,4 +333,31 @@ function changeTheme(mode) {
         document.body.className = 'light-theme';
         localStorage.setItem('xenon_theme', 'light');
     } else {
-        document.bo
+        document.body.className = 'dark-theme';
+        localStorage.setItem('xenon_theme', 'dark');
+    }
+}
+
+window.onload = function() {
+    let savedTheme = localStorage.getItem('xenon_theme') || 'dark';
+    document.body.className = savedTheme + '-theme';
+    let selector = document.getElementById('theme-selector');
+    if(selector) selector.value = savedTheme;
+}
+
+function copyRefLink() {
+    var copyText = document.getElementById("ref-link-input");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Copied referral link!");
+}
+
+function viewDetails(name, details) {
+    document.getElementById('det-title').innerText = name + " (Details)";
+    document.getElementById('det-content').innerText = details;
+    openModal('details-modal');
+}
+</script>
+
+</body>
+</html>
