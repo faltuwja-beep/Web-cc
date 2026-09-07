@@ -134,6 +134,7 @@ button:hover {
     border:1px solid #742331;
     border-radius:12px;
     color:#ff9ba5;
+    line-height: 1.5;
 }
 .profile{
     margin-top:20px;
@@ -181,7 +182,7 @@ footer{
 </head>
 <body>
 
-<!-- Instagram Follow Gate Popup -->
+<!-- Instagram Follow Gate Popup (Sirf ek baar aayega agar already follow kar liya ho) -->
 <div id="insta-gate">
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
@@ -277,6 +278,7 @@ Created by Sonu
 
 <script>
 window.onload = function() {
+    // Agar user ne pehle follow kar liya hai toh popup hide rahega
     if(localStorage.getItem('insta_followed') === 'true') {
         document.getElementById('insta-gate').style.display = 'none';
     }
@@ -289,4 +291,3 @@ function unlockWebsite() {
 
 </body>
 </html>
-.
