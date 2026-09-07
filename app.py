@@ -18,10 +18,13 @@ def home():
         uid = request.form.get("uid", "").strip()
 
         if not uid.isdigit():
-            error = "Please enter a valid Free Fire UID"
+
+            error = "❌ Please enter a valid Free Fire UID"
 
         else:
+
             try:
+
                 response = requests.get(
                     API_URL,
                     params={
@@ -40,26 +43,49 @@ def home():
                 pet = data.get("petInfo", {})
 
                 player = {
-                    "nickname": basic.get("nickname", "N/A"),
-                    "uid": basic.get("accountId", uid),
-                    "level": basic.get("level", "N/A"),
-                    "region": basic.get("region", "N/A"),
-                    "likes": basic.get("liked", "N/A"),
-                    "rank": basic.get("rank", "N/A"),
-                    "cs_rank": basic.get("csRank", "N/A"),
-                    "exp": basic.get("exp", "N/A"),
-                    "guild": clan.get("clanName", "No Guild"),
-                    "pet_id": pet.get("id", "N/A")
+
+                    "nickname":
+                        basic.get("nickname", "N/A"),
+
+                    "uid":
+                        basic.get("accountId", uid),
+
+                    "level":
+                        basic.get("level", "N/A"),
+
+                    "region":
+                        basic.get("region", "N/A"),
+
+                    "likes":
+                        basic.get("liked", "N/A"),
+
+                    "rank":
+                        basic.get("rank", "N/A"),
+
+                    "cs_rank":
+                        basic.get("csRank", "N/A"),
+
+                    "exp":
+                        basic.get("exp", "N/A"),
+
+                    "guild":
+                        clan.get("clanName", "No Guild"),
+
+                    "pet":
+                        pet.get("id", "N/A")
                 }
 
             except requests.exceptions.RequestException:
-                error = "API connection error. Please try again."
+
+                error = "❌ API connection error. Try again."
 
             except ValueError:
-                error = "API returned invalid data."
 
-            except Exception:
-                error = "Something went wrong."
+                error = "❌ Invalid API response."
+
+            except Exception as e:
+
+                error = "❌ Something went wrong."
 
     return render_template(
         "index.html",
@@ -68,12 +94,33 @@ def home():
     )
 
 
+@app.route("/send-likes", methods=["POST"])
+def send_likes():
+    uid = request.form.get("uid", "").strip()
+    region = request.form.get("region", "ind").strip()
+    
+    like_api = f"https://two0likeapifreebyzexxyh4x.onrender.com/like?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
+    
+    like_message = None
+    try:
+        response = requests.get(like_api, timeout=20)
+        response.raise_for_status()
+        data = response.json()
+        like_message = data.get("message", "Likes sent successfully!")
+    except Exception:
+        like_message = "❌ Failed to send likes. Try again."
+        
+    return render_template("index.html", like_message=like_message)
+
+
 if __name__ == "__main__":
 
-    port = int(os.environ.get("PORT", 8080))
+    port = int(
+        os.environ.get("PORT", 8080)
+    )
 
     app.run(
         host="0.0.0.0",
-        port=port,
-        debug=False
+        port=port
     )
+    
