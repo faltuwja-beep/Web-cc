@@ -66,19 +66,15 @@ def send_likes():
     uid = request.form.get("uid", "").strip()
     region = request.form.get("region", "ind").strip()
     old_likes = int(request.form.get("old_likes", 0))
-
-    like_api = f"https://two0likeapifreebyzexxyh4x.onrender.com/link?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
-    # Note: Aapki di gayi URL path (/like ya /link) ke mutabiq adjust kiya gaya hai
-
-    # Pehle player ki current details fir se fetch karte hain taaki updated likes mil sakein
-    new_likes = old_likes
     nickname = request.form.get("nickname", "Player")
+
+    like_api = f"https://two0likeapifreebyzexxyh4x.onrender.com/like?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
+
+    new_likes = old_likes
     
     try:
-        # Pehle Like API hit karein
         requests.get(like_api, timeout=20)
         
-        # Thoda gap dekar ya turant profile API se naye likes check karein
         info_resp = requests.get(API_URL, params={"uid": uid, "key": "Anurag"}, timeout=20)
         if info_resp.status_code == 200:
             data = info_resp.json()
