@@ -6,18 +6,29 @@ import requests
 app = Flask(__name__)
 app.secret_key = "sonu_super_secret_key_store"
 
-# Apna Telegram Bot Token aur Chat ID yahan daalein
-TELEGRAM_BOT_TOKEN = "8999778583:AAHc6VSkoBMp0YaJzRIezVa08zs8P0rp0ds"
+TELEGRAM_BOT_TOKEN = "8822410482:AAEgv8CYy3VKHn6sv6Rezsw9BSQna5vsUJo"
 TELEGRAM_CHAT_ID = "7161571409"
 
-def send_telegram_alert(message):
-    if TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE":
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
-        try:
-            requests.post(url, json=payload, timeout=5)
-        except Exception:
-            pass
+def send_telegram_approval(pay_id, username, amount, utr):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {"text": "✅ Approve", "callback_data": f"app_{pay_id}"},
+                {"text": "❌ Reject", "callback_data": f"rej_{pay_id}"}
+            ]
+        ]
+    }
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": f"🔔 *New Payment Request!*\n👤 User: `{username}`\n💰 Amount: `₹{amount}`\n🔢 UTR: `{utr}`",
+        "parse_mode": "Markdown",
+        "reply_markup": keyboard
+    }
+    try:
+        requests.post(url, json=payload, timeout=5)
+    except Exception:
+        pass
 
 def init_db():
     conn = sqlite3.connect('store.db')
@@ -51,10 +62,10 @@ def init_db():
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
-            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery Code"),
-            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC Info"),
-            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Mastercard"),
-            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card")
+            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Code: GPR-9982-XYZ"),
+            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | 4532xxxx 09/28 123"),
+            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | 5412xxxx 11/27 456"),
+            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | 4000xxxx 05/29 789")
         ]
         cursor.executemany("INSERT INTO products (name, category, price, details) VALUES (?, ?, ?, ?)", default_items)
 
@@ -128,12 +139,44 @@ def shop():
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
 
-    # User ki payment history fetch karna
     cursor.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],))
     my_payments = cursor.fetchall()
     conn.close()
 
     return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments)
+
+@app.route("/buy/<int:product_id>")
+def buy_product(product_id):
+    if "username" not in session:
+        return redirect(url_for("login"))
+    
+    conn = sqlite3.connect('store.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT balance FROM users WHERE username = ?", (session["username"],))
+    user_res = cursor.fetchone()
+    balance = user_res[0] if user_res else 0.0
+
+    cursor.execute("SELECT name, price, details FROM products WHERE id = ?", (product_id,))
+    prod = cursor.fetchone()
+
+    if not prod:
+        conn.close()
+        flash("❌ Product not found!", "error")
+        return redirect(url_for("shop"))
+
+    p_name, p_price, p_details = prod
+
+    if balance >= p_price:
+        cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
+        conn.commit()
+        conn.close()
+        flash(f"🎉 Purchased {p_name}! Details: {p_details}", "success")
+    else:
+        conn.close()
+        shortfall = p_price - balance
+        flash(f"⚠️ Insufficient balance! You need ₹{shortfall} more. Please add money via QR.", "error")
+
+    return redirect(url_for("shop"))
 
 @app.route("/add-money", methods=["POST"])
 def add_money():
@@ -153,15 +196,50 @@ def add_money():
     cursor = conn.cursor()
     cursor.execute("INSERT INTO payments (username, amount, utr, status) VALUES (?, ?, ?, 'Pending')", 
                    (session["username"], amount, utr))
+    pay_id = cursor.lastrowid
     conn.commit()
     conn.close()
 
-    # Telegram par admin ko alert bhejna
-    msg = f"🔔 *New Payment Request!*\n👤 User: `{session['username']}`\n💰 Amount: `₹{amount}`\n🔢 UTR: `{utr}`\n\n*Aap website ke admin panel me jaakar approve karein.*"
-    send_telegram_alert(msg)
-
-    flash("⏳ Payment request submitted! Telegram alert sent to Admin.", "success")
+    send_telegram_approval(pay_id, session["username"], amount, utr)
+    flash("⏳ Payment proof submitted! Check Telegram admin panel for approval.", "success")
     return redirect(url_for("shop"))
+
+@app.route("/telegram-webhook", methods=["POST"])
+def telegram_webhook():
+    data = request.get_json()
+    if "callback_query" in data:
+        callback = data["callback_query"]
+        callback_data = callback["data"]
+        chat_id = callback["message"]["chat"]["id"]
+        message_id = callback["message"]["message_id"]
+        
+        parts = callback_data.split("_")
+        action = parts[0]
+        pay_id = parts[1]
+        
+        conn = sqlite3.connect('store.db')
+        cursor = conn.cursor()
+        if action == "app":
+            cursor.execute("SELECT username, amount FROM payments WHERE id = ? AND status = 'Pending'", (pay_id,))
+            pay_data = cursor.fetchone()
+            if pay_data:
+                uname, amt = pay_data
+                cursor.execute("UPDATE users SET balance = balance + ? WHERE username = ?", (amt, uname))
+                cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
+                conn.commit()
+                requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText", json={
+                    "chat_id": chat_id, "message_id": message_id,
+                    "text": f"✅ Payment ID #{pay_id} Approved Successfully! Balance credited to {uname}."
+                })
+        elif action == "rej":
+            cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
+            conn.commit()
+            requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText", json={
+                "chat_id": chat_id, "message_id": message_id,
+                "text": f"❌ Payment ID #{pay_id} Rejected."
+            })
+        conn.close()
+    return "OK", 200
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin_panel():
@@ -191,14 +269,6 @@ def admin_panel():
         elif action == "delete_product":
             pid = request.form.get("pid")
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
-        elif action == "approve_payment":
-            pay_id = request.form.get("pay_id")
-            cursor.execute("SELECT username, amount FROM payments WHERE id = ?", (pay_id,))
-            pay_data = cursor.fetchone()
-            if pay_data:
-                uname, amt = pay_data
-                cursor.execute("UPDATE users SET balance = balance + ? WHERE username = ?", (amt, uname))
-                cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
         conn.commit()
 
     cursor.execute("SELECT * FROM products")
@@ -216,4 +286,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-    
+        
