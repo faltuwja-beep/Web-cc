@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FF Player Info & Buy Likes</title>
+<title>FF Player Info & Likes</title>
 <style>
 *{
     margin:0;
@@ -198,7 +198,6 @@ button:hover {
 .buy-box h2 { color: #ff9900; margin-bottom: 15px; }
 .plan-card {
     background: #09050f;
-    border:: 1px solid #492460;
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 15px;
@@ -206,7 +205,7 @@ button:hover {
     border: 1px solid #3e1e56;
 }
 .plan-card h3 { color: #42d66d; margin-bottom: 5px; font-size: 18px; }
-.plan-card p { color: #ccc; font-size: 14px; margin-bottom: 10px; }
+.plan-card p { color: #ccc; font-size: 14px; margin-bottom: 10px; line-height: 1.4; }
 .close-btn {
     background: #742331;
     color: white;
@@ -222,6 +221,7 @@ footer{
 </head>
 <body>
 
+<!-- Instagram Follow Gate Popup -->
 <div id="insta-gate">
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
@@ -233,22 +233,22 @@ footer{
     </div>
 </div>
 
-<!-- Buy Likes Popup Modal -->
+<!-- Buy VIP Likes Modal -->
 <div id="buy-modal">
     <div class="buy-box">
         <h2>💎 VIP Like Plans</h2>
-        <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Plan buy karne ke liye Telegram par message karein!</p>
+        <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Plan buy karne ke liye niche diye gaye button par click karke Telegram par message karein!</p>
         
         <div class="plan-card">
             <h3>Plan 1: ₹59</h3>
             <p>⏳ 15 Days Plan<br>🔥 Daily 220 Likes</p>
-            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Buy via Telegram</button></a>
+            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Message on Telegram (@Xenon_ask9)</button></a>
         </div>
 
         <div class="plan-card">
             <h3>Plan 2: ₹120</h3>
             <p>⏳ 30 Days Plan<br>🔥 Daily 220 Likes</p>
-            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Buy via Telegram</button></a>
+            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Message on Telegram (@Xenon_ask9)</button></a>
         </div>
 
         <button class="close-btn" onclick="closeBuyModal()">❌ Close</button>
@@ -262,12 +262,13 @@ footer{
 
 <div class="container">
 
-<!-- Buy Likes Top Navigation Button -->
+<!-- Button 3: Buy VIP Likes Plan Button -->
 <button onclick="openBuyModal()" style="margin-bottom: 20px; background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
     💎 BUY VIP LIKES (PLANS)
 </button>
 
 {% if result_data %}
+<!-- Real Likes Result View -->
 <div class="profile">
 <div class="profile-head">
 <div class="avatar">🔥</div>
@@ -278,7 +279,7 @@ footer{
 <div class="row"><span class="label">❤️ Likes Before</span><span class="value">{{ result_data.old_likes }}</span></div>
 <div class="row"><span class="label">🚀 Likes After</span><span class="value" style="color:#42d66d;">{{ result_data.new_likes }}</span></div>
 <div class="row"><span class="label">➕ Likes Added</span><span class="value" style="color:#ff9900;">+{{ result_data.added_likes }} Likes</span></div>
-<div class="row"><span class="label">✨ Status</span><span class="value" style="color:#38d46b;">Successfully Sent!</span></div>
+<div class="row"><span class="label">✨ Status</span><span class="value" style="color:{% if result_data.success %}#38d46b{% else %}#ff9ba5{% endif %};">{% if result_data.success %}Real Likes Sent Successfully!{% else %}API Response Delayed / No Likes Added{% endif %}</span></div>
 </div>
 </div>
 
@@ -288,6 +289,7 @@ footer{
 
 {% else %}
 
+<!-- Button 1: Check UID Search Box -->
 <div class="search-box">
 <form method="POST">
 <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
@@ -314,18 +316,19 @@ footer{
 <div class="row"><span class="label">❤️ Likes</span><span class="value">{{ player.likes }}</span></div>
 <div class="row"><span class="label">🏆 BR Rank</span><span class="value">{{ player.rank }}</span></div>
 <div class="row"><span class="label">⚔️ CS Rank</span><span class="value">{{ player.cs_rank }}</span></div>
-<div class="key"><span class="label">📈 Experience</span><span class="value">{{ player.exp }}</span></div>
+<div class="row"><span class="label">📈 Experience</span><span class="value">{{ player.exp }}</span></div>
 <div class="row"><span class="label">👥 Guild</span><span class="value">{{ player.guild }}</span></div>
 <div class="row"><span class="label">🐾 Pet ID</span><span class="value">{{ player.pet }}</span></div>
 </div>
 </div>
 
+<!-- Button 2: Send 20 Likes Form Button -->
 <form action="/send-likes" method="POST" style="margin-top: 20px;">
     <input type="hidden" name="uid" value="{{ player.uid }}">
     <input type="hidden" name="region" value="{{ player.region }}">
     <input type="hidden" name="old_likes" value="{{ player.likes }}">
     <input type="hidden" name="nickname" value="{{ player.nickname }}">
-    <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
+    <button type="submit" style="background: linear-gradient(90deg, #38d46b, #42d66d); color: #07100a;">
         🔥 SEND 20 LIKES NOW
     </button>
 </form>
