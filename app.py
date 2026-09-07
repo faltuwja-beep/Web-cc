@@ -9,6 +9,14 @@ app.secret_key = "sonu_super_secret_key_store"
 TELEGRAM_BOT_TOKEN = "8822410482:AAEgv8CYy3VKHn6sv6Rezsw9BSQna5vsUJo"
 TELEGRAM_CHAT_ID = "7161571409"
 
+def send_telegram_alert(message):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
+    try:
+        requests.post(url, json=payload, timeout=5)
+    except Exception:
+        pass
+
 def send_telegram_approval(pay_id, username, amount, utr):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     keyboard = {
@@ -116,8 +124,13 @@ def register():
             conn = sqlite3.connect('store.db')
             cursor = conn.cursor()
             cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+            user_id = cursor.lastrowid
             conn.commit()
             conn.close()
+
+            # Send Telegram alert for new registration with assigned User ID
+            send_telegram_alert(f"👤 *New User Registered!*\n🆔 User ID: `#{user_id}`\n📛 Username: `{username}`")
+
             flash("✅ Account created successfully! Please login.", "success")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
@@ -131,10 +144,11 @@ def shop():
     
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT balance, is_admin FROM users WHERE username = ?", (session["username"],))
+    cursor.execute("SELECT id, balance, is_admin FROM users WHERE username = ?", (session["username"],))
     user_data = cursor.fetchone()
-    balance = user_data[0] if user_data else 0.0
-    is_admin = user_data[1] if user_data else 0
+    user_id = user_data[0] if user_data else 0
+    balance = user_data[1] if user_data else 0.0
+    is_admin = user_data[2] if user_data else 0
 
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
@@ -143,7 +157,7 @@ def shop():
     my_payments = cursor.fetchall()
     conn.close()
 
-    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments)
+    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments)
 
 @app.route("/buy/<int:product_id>")
 def buy_product(product_id):
@@ -152,9 +166,10 @@ def buy_product(product_id):
     
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT balance FROM users WHERE username = ?", (session["username"],))
+    cursor.execute("SELECT id, balance FROM users WHERE username = ?", (session["username"],))
     user_res = cursor.fetchone()
-    balance = user_res[0] if user_res else 0.0
+    user_id = user_res[0] if user_res else 0
+    balance = user_res[1] if user_res else 0.0
 
     cursor.execute("SELECT name, price, details FROM products WHERE id = ?", (product_id,))
     prod = cursor.fetchone()
@@ -170,7 +185,11 @@ def buy_product(product_id):
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
         conn.commit()
         conn.close()
-        flash(f"🎉 Purchased {p_name}! Details: {p_details}", "success")
+
+        # Send Telegram alert for purchase
+        send_telegram_alert(f"🛍️ *Product Purchased!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
+
+        flash(f"🎉 Purchased {p_name}! Details / Code: {p_details}", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -229,7 +248,7 @@ def telegram_webhook():
                 conn.commit()
                 requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText", json={
                     "chat_id": chat_id, "message_id": message_id,
-                    "text": f"✅ Payment ID #{pay_id} Approved Successfully! Balance credited to {uname}."
+                    "text": f"✅ Payment ID #{pay_id} Approved Successfully! Balance ₹{amt} credited to {uname}."
                 })
         elif action == "rej":
             cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
@@ -286,4 +305,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-        
+            
