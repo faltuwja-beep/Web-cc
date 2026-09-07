@@ -1,9 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 import os
+import requests
 
 app = Flask(__name__)
 app.secret_key = "sonu_super_secret_key_store"
+
+# Apna Telegram Bot Token aur Chat ID yahan daalein
+TELEGRAM_BOT_TOKEN = "8999778583:AAHc6VSkoBMp0YaJzRIezVa08zs8P0rp0ds"
+TELEGRAM_CHAT_ID = "7161571409"
+
+def send_telegram_alert(message):
+    if TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE":
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
+        try:
+            requests.post(url, json=payload, timeout=5)
+        except Exception:
+            pass
 
 def init_db():
     conn = sqlite3.connect('store.db')
@@ -60,7 +74,6 @@ def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
-
         if not username or not password:
             flash("❌ Please fill in all fields", "error")
             return render_template("login.html")
@@ -77,7 +90,6 @@ def login():
             return redirect(url_for("shop"))
         else:
             flash("❌ Invalid Username or Password", "error")
-            
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -85,7 +97,6 @@ def register():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
-
         if not username or not password:
             flash("❌ Please fill in all fields", "error")
             return render_template("register.html")
@@ -100,7 +111,6 @@ def register():
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
             flash("❌ Username already taken! Choose another.", "error")
-            
     return render_template("register.html")
 
 @app.route("/shop")
@@ -117,9 +127,13 @@ def shop():
 
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
+
+    # User ki payment history fetch karna
+    cursor.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],))
+    my_payments = cursor.fetchall()
     conn.close()
 
-    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products)
+    return render_template("shop.html", username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments)
 
 @app.route("/add-money", methods=["POST"])
 def add_money():
@@ -141,7 +155,12 @@ def add_money():
                    (session["username"], amount, utr))
     conn.commit()
     conn.close()
-    flash("⏳ Payment request submitted! Admin will verify and approve soon.", "success")
+
+    # Telegram par admin ko alert bhejna
+    msg = f"🔔 *New Payment Request!*\n👤 User: `{session['username']}`\n💰 Amount: `₹{amount}`\n🔢 UTR: `{utr}`\n\n*Aap website ke admin panel me jaakar approve karein.*"
+    send_telegram_alert(msg)
+
+    flash("⏳ Payment request submitted! Telegram alert sent to Admin.", "success")
     return redirect(url_for("shop"))
 
 @app.route("/admin", methods=["GET", "POST"])
