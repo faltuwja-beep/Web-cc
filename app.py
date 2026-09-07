@@ -4,7 +4,7 @@ import os
 import requests
 
 app = Flask(__name__)
-app.secret_key = "sonu_super_secret_key_store"
+app.secret_key = "xenon_store_secret_key"
 
 TELEGRAM_BOT_TOKEN = "8822410482:AAEgv8CYy3VKHn6sv6Rezsw9BSQna5vsUJo"
 TELEGRAM_CHAT_ID = "7161571409"
@@ -12,27 +12,6 @@ TELEGRAM_CHAT_ID = "7161571409"
 def send_telegram_alert(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "Markdown"}
-    try:
-        requests.post(url, json=payload, timeout=5)
-    except Exception:
-        pass
-
-def send_telegram_approval(pay_id, username, amount, utr):
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    keyboard = {
-        "inline_keyboard": [
-            [
-                {"text": "✅ Approve", "callback_data": f"app_{pay_id}"},
-                {"text": "❌ Reject", "callback_data": f"rej_{pay_id}"}
-            ]
-        ]
-    }
-    payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
-        "text": f"🔔 *New Payment Request!*\n👤 User: `{username}`\n💰 Amount: `₹{amount}`\n🔢 UTR: `{utr}`",
-        "parse_mode": "Markdown",
-        "reply_markup": keyboard
-    }
     try:
         requests.post(url, json=payload, timeout=5)
     except Exception:
@@ -128,8 +107,7 @@ def register():
             conn.commit()
             conn.close()
 
-            # Send Telegram alert for new registration with assigned User ID
-            send_telegram_alert(f"👤 *New User Registered!*\n🆔 User ID: `#{user_id}`\n📛 Username: `{username}`")
+            send_telegram_alert(f"👤 *New User Registered in Xenon Store!*\n🆔 User ID: `#{user_id}`\n📛 Username: `{username}`")
 
             flash("✅ Account created successfully! Please login.", "success")
             return redirect(url_for("login"))
@@ -186,10 +164,9 @@ def buy_product(product_id):
         conn.commit()
         conn.close()
 
-        # Send Telegram alert for purchase
-        send_telegram_alert(f"🛍️ *Product Purchased!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
+        send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
 
-        flash(f"🎉 Purchased {p_name}! Details / Code: {p_details}", "success")
+        flash(f"🎉 Successfully Purchased {p_name}! Your Details/Code: {p_details}", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -215,50 +192,13 @@ def add_money():
     cursor = conn.cursor()
     cursor.execute("INSERT INTO payments (username, amount, utr, status) VALUES (?, ?, ?, 'Pending')", 
                    (session["username"], amount, utr))
-    pay_id = cursor.lastrowid
     conn.commit()
     conn.close()
 
-    send_telegram_approval(pay_id, session["username"], amount, utr)
-    flash("⏳ Payment proof submitted! Check Telegram admin panel for approval.", "success")
-    return redirect(url_for("shop"))
+    send_telegram_alert(f"🔔 *New Payment Proof submitted on Xenon Store!*\n👤 User: `{session['username']}`\n💰 Amount: `₹{amount}`\n🔢 UTR: `{utr}`\n\n*Aap /admin panel me jaakar approve/reject karein.*")
 
-@app.route("/telegram-webhook", methods=["POST"])
-def telegram_webhook():
-    data = request.get_json()
-    if "callback_query" in data:
-        callback = data["callback_query"]
-        callback_data = callback["data"]
-        chat_id = callback["message"]["chat"]["id"]
-        message_id = callback["message"]["message_id"]
-        
-        parts = callback_data.split("_")
-        action = parts[0]
-        pay_id = parts[1]
-        
-        conn = sqlite3.connect('store.db')
-        cursor = conn.cursor()
-        if action == "app":
-            cursor.execute("SELECT username, amount FROM payments WHERE id = ? AND status = 'Pending'", (pay_id,))
-            pay_data = cursor.fetchone()
-            if pay_data:
-                uname, amt = pay_data
-                cursor.execute("UPDATE users SET balance = balance + ? WHERE username = ?", (amt, uname))
-                cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
-                conn.commit()
-                requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText", json={
-                    "chat_id": chat_id, "message_id": message_id,
-                    "text": f"✅ Payment ID #{pay_id} Approved Successfully! Balance ₹{amt} credited to {uname}."
-                })
-        elif action == "rej":
-            cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
-            conn.commit()
-            requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText", json={
-                "chat_id": chat_id, "message_id": message_id,
-                "text": f"❌ Payment ID #{pay_id} Rejected."
-            })
-        conn.close()
-    return "OK", 200
+    flash("⏳ Payment proof submitted! Admin will verify and approve soon.", "success")
+    return redirect(url_for("shop"))
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin_panel():
@@ -284,15 +224,30 @@ def admin_panel():
         elif action == "edit_product":
             pid = request.form.get("pid")
             price = float(request.form.get("price", 0))
-            cursor.execute("UPDATE products SET price = ? WHERE id = ?", (price, pid))
+            details = request.form.get("details")
+            cursor.execute("UPDATE products SET price = ?, details = ? WHERE id = ?", (price, details, pid))
         elif action == "delete_product":
             pid = request.form.get("pid")
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
+        elif action == "approve_payment":
+            pay_id = request.form.get("pay_id")
+            cursor.execute("SELECT username, amount FROM payments WHERE id = ?", (pay_id,))
+            pay_data = cursor.fetchone()
+            if pay_data:
+                uname, amt = pay_data
+                cursor.execute("UPDATE users SET balance = balance + ? WHERE username = ?", (amt, uname))
+                cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
+        elif action == "reject_payment":
+            pay_id = request.form.get("pay_id")
+            cursor.execute("SELECT status FROM payments WHERE id = ?", (pay_id,))
+            pay_status = cursor.fetchone()
+            if pay_status and pay_status[0] == 'Pending':
+                cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
         conn.commit()
 
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
-    cursor.execute("SELECT * FROM payments")
+    cursor.execute("SELECT * FROM payments ORDER BY id DESC")
     payments = cursor.fetchall()
     conn.close()
     return render_template("admin.html", products=products, payments=payments)
@@ -305,4 +260,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-            
+    
