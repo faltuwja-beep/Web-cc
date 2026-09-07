@@ -1,36 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>FF Player Info</title>
-
+<title>FF Player Info & Likes</title>
 <style>
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
     font-family:Arial,sans-serif;
 }
-
 body{
     background:#0b0614;
     color:white;
     min-height:100vh;
 }
-
-/* Instagram Follow Gate Modal */
 #insta-gate {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(11, 6, 20, 0.95);
     display: flex;
     justify-content: center;
@@ -38,7 +27,6 @@ body{
     z-index: 9999;
     padding: 20px;
 }
-
 .gate-box {
     background: #130b20;
     padding: 30px;
@@ -49,20 +37,8 @@ body{
     max-width: 400px;
     width: 100%;
 }
-
-.gate-box h2 {
-    color: #42d66d;
-    margin-bottom: 15px;
-    font-size: 22px;
-}
-
-.gate-box p {
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
-
+.gate-box h2 { color: #42d66d; margin-bottom: 15px; font-size: 22px; }
+.gate-box p { color: #aaa; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
 .gate-btn {
     display: block;
     width: 100%;
@@ -75,17 +51,8 @@ body{
     cursor: pointer;
     text-align: center;
 }
-
-.btn-follow {
-    background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    color: white;
-}
-
-.btn-unlock {
-    background: linear-gradient(90deg, #38d46b, #b7dc39);
-    color: #07100a;
-    border: none;
-}
+.btn-follow { background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+.btn-unlock { background: linear-gradient(90deg, #38d46b, #b7dc39); color: #07100a; border: none; }
 
 header{
     background:#120b20;
@@ -93,23 +60,14 @@ header{
     text-align:center;
     border-bottom:1px solid #43205c;
 }
-
-header h1{
-    color:#42d66d;
-    font-size:26px;
-}
-
-header p{
-    color:#aaa;
-    margin-top:7px;
-}
+header h1{ color:#42d66d; font-size:26px; }
+header p{ color:#aaa; margin-top:7px; }
 
 .container{
     max-width:650px;
     margin:auto;
     padding:20px;
 }
-
 .search-box{
     background:#130b20;
     padding:20px;
@@ -117,7 +75,6 @@ header p{
     border:1px solid #3e1e56;
     box-shadow:0 0 20px #000;
 }
-
 input{
     width:100%;
     padding:15px;
@@ -129,7 +86,6 @@ input{
     margin-bottom:12px;
     outline:none;
 }
-
 button{
     width:100%;
     padding:15px;
@@ -141,7 +97,6 @@ button{
     font-weight:bold;
     cursor:pointer;
 }
-
 .error{
     margin-top:20px;
     padding:15px;
@@ -150,7 +105,6 @@ button{
     border-radius:12px;
     color:#ff9ba5;
 }
-
 .profile{
     margin-top:20px;
     background:#130b20;
@@ -158,78 +112,44 @@ button{
     overflow:hidden;
     border:1px solid #3e1e56;
 }
-
 .profile-head{
     text-align:center;
     padding:30px;
     background: linear-gradient(135deg, #25103a, #102b1a);
 }
-
 .avatar{
-    width:80px;
-    height:80px;
+    width:80px; height:80px;
     margin:auto;
     border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:40px;
-    background:#10091b;
-    border:2px solid #42d66d;
+    display:flex; justify-content:center; align-items:center;
+    font-size:40px; background:#10091b; border:2px solid #42d66d;
 }
-
-.profile-head h2{
-    margin-top:12px;
-    color:#42d66d;
-}
-
-.uid{
-    margin-top:7px;
-    color:#bbb;
-}
-
-.info{
-    padding:20px;
-}
-
+.profile-head h2{ margin-top:12px; color:#42d66d; }
+.uid{ margin-top:7px; color:#bbb; }
+.info{ padding:20px; }
 .row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 0;
-    border-bottom: 1px solid #2d193c;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom: 1px solid #2d193c;
 }
+.row:last-child{ border:none; }
+.label{ color:#aaa; }
+.value{ color:#ffd21c; font-weight:bold; text-align:right; max-width:55%; word-break:break-word; }
 
-.row:last-child{
-    border:none;
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
-
-.label{
-    color:#aaa;
-}
-
-.value{
-    color:#ffd21c;
-    font-weight:bold;
-    text-align:right;
-    max-width:55%;
-    word-break:break-word;
-}
-
 footer{
     text-align:center;
     padding:25px;
     color:#777;
     font-size:13px;
 }
-
 </style>
-
 </head>
-
 <body>
 
-<!-- Instagram Follow Gate Popup -->
 <div id="insta-gate">
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
@@ -246,6 +166,31 @@ footer{
 
 <div class="container">
 
+{% if result %}
+<!-- Likes Success Result Card with Two Buttons -->
+<div class="profile">
+<div class="profile-head">
+<div class="avatar">🔥</div>
+<h2>{{ result.nickname }}</h2>
+<div class="uid">UID: {{ result.uid }}</div>
+</div>
+<div class="info">
+<div class="row"><span class="label">❤️ Likes Before</span><span class="value">{{ result.old_likes }}</span></div>
+<div class="row"><span class="label">🚀 Likes After</span><span class="value" style="color:#42d66d;">{{ result.new_likes }}</span></div>
+<div class="row"><span class="label">✨ Status</span><span class="value" style="color:#38d46b;">Success!</span></div>
+</div>
+</div>
+
+<div class="btn-group">
+    <a href="/" style="flex:1;"><button style="background:#42d66d; color:#07100a;">🏠 Home Page</button></a>
+    <form action="/" method="POST" style="flex:1;">
+        <input type="hidden" name="uid" value="{{ result.uid }}">
+        <button type="submit" style="background:#ff9900; color:white;">🔄 Send Again</button>
+    </form>
+</div>
+
+{% else %}
+
 <div class="search-box">
 <form method="POST">
 <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
@@ -254,15 +199,7 @@ footer{
 </div>
 
 {% if error %}
-<div class="error">
-{{ error }}
-</div>
-{% endif %}
-
-{% if like_message %}
-<div class="error" style="background: #102b1a; border-color: #38d46b; color: #38d46b;">
-    {{ like_message }}
-</div>
+<div class="error">{{ error }}</div>
 {% endif %}
 
 {% if player %}
@@ -286,14 +223,17 @@ footer{
 </div>
 </div>
 
-<!-- Send Likes Button Form -->
 <form action="/send-likes" method="POST" style="margin-top: 20px;">
     <input type="hidden" name="uid" value="{{ player.uid }}">
     <input type="hidden" name="region" value="{{ player.region }}">
+    <input type="hidden" name="old_likes" value="{{ player.likes }}">
+    <input type="hidden" name="nickname" value="{{ player.nickname }}">
     <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
         🔥 SEND LIKES
     </button>
 </form>
+{% endif %}
+
 {% endif %}
 
 </div>
@@ -308,7 +248,6 @@ window.onload = function() {
         document.getElementById('insta-gate').style.display = 'none';
     }
 };
-
 function unlockWebsite() {
     localStorage.setItem('insta_followed', 'true');
     document.getElementById('insta-gate').style.display = 'none';
