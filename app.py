@@ -26,25 +26,25 @@ def init_db():
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
     
-    # Create base tables
+    # Ensure users table exists with base columns first
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
                         password TEXT)''')
     
-    # Auto-add missing columns to prevent 500 errors if database already exists
-    columns_to_add = [
-        ("balance", "REAL DEFAULT 0.0"),
-        ("referral_code", "TEXT UNIQUE"),
-        ("referred_by", "TEXT"),
-        ("referral_count", "INTEGER DEFAULT 0"),
-        ("is_admin", "INTEGER DEFAULT 0")
-    ]
-    for col_name, col_type in columns_to_add:
-        try:
-            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-        except sqlite3.OperationalError:
-            pass # Column already exists
+    # Safely check and add missing columns one by one
+    existing_columns = [col[1] for col in cursor.execute("PRAGMA table_info(users)").fetchall()]
+    
+    if "balance" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN balance REAL DEFAULT 0.0")
+    if "referral_code" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN referral_code TEXT")
+    if "referred_by" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN referred_by TEXT")
+    if "referral_count" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
+    if "is_admin" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0")
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,6 +72,9 @@ def init_db():
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, balance, referral_code, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 1)")
+    else:
+        # Give referral code to admin if missing
+        cursor.execute("UPDATE users SET referral_code = 'ADMIN1' WHERE username = 'admin' AND (referral_code IS NULL OR referral_code = '')")
 
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
@@ -319,4 +322,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-            
+    
