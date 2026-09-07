@@ -31,32 +31,25 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # 1. Create base users table if not exists
+    # Check existing columns in users table if it exists
+    cursor.execute("PRAGMA table_info(users)")
+    columns = [row["name"] for row in cursor.fetchall()]
+    
+    # If table exists but lacks referral_code, drop it to recreate with proper schema safely
+    if columns and "referral_code" not in columns:
+        cursor.execute("DROP TABLE users")
+
+    # Create users table with all required columns natively
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
-                        password TEXT)''')
-    
-    # 2. Automatically ensure all required columns exist (Auto-Healing)
-    required_columns = {
-        "balance": "REAL DEFAULT 0.0",
-        "referral_code": "TEXT UNIQUE",
-        "referred_by": "TEXT",
-        "referral_count": "INTEGER DEFAULT 0",
-        "is_admin": "INTEGER DEFAULT 0"
-    }
-    
-    cursor.execute("PRAGMA table_info(users)")
-    existing_cols = [row["name"] for row in cursor.fetchall()]
-    
-    for col_name, col_type in required_columns.items():
-        if col_name not in existing_cols:
-            try:
-                cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-            except sqlite3.OperationalError:
-                pass
+                        password TEXT,
+                        balance REAL DEFAULT 0.0,
+                        referral_code TEXT UNIQUE,
+                        referred_by TEXT,
+                        referral_count INTEGER DEFAULT 0,
+                        is_admin INTEGER DEFAULT 0)''')
 
-    # 3. Create other tables
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT,
@@ -80,12 +73,10 @@ def init_db():
                         price REAL,
                         secret_data TEXT)''')
 
-    # 4. Insert default admin if not exists
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, balance, referral_code, referral_count, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 0, 1)")
 
-    # 5. Insert default products if empty
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
@@ -100,11 +91,6 @@ def init_db():
     conn.close()
 
 init_db()
-
-@app.before_request
-def before_request():
-    # Ensures database and columns are checked/repaired on every app wake up
-    init_db()
 
 @app.route("/")
 def home():
