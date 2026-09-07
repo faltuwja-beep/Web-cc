@@ -26,17 +26,26 @@ def init_db():
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
     
+    # Create base tables
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
-                        password TEXT,
-                        balance REAL DEFAULT 0.0,
-                        referral_code TEXT UNIQUE,
-                        referred_by TEXT,
-                        referral_count INTEGER DEFAULT 0,
-                        is_admin INTEGER DEFAULT 0)''')
+                        password TEXT)''')
     
-    # Checking and adding image_url column if not exists in products
+    # Auto-add missing columns to prevent 500 errors if database already exists
+    columns_to_add = [
+        ("balance", "REAL DEFAULT 0.0"),
+        ("referral_code", "TEXT UNIQUE"),
+        ("referred_by", "TEXT"),
+        ("referral_count", "INTEGER DEFAULT 0"),
+        ("is_admin", "INTEGER DEFAULT 0")
+    ]
+    for col_name, col_type in columns_to_add:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
+        except sqlite3.OperationalError:
+            pass # Column already exists
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT,
@@ -68,7 +77,7 @@ def init_db():
     if not cursor.fetchone():
         default_items = [
             ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026", "https://cdn-icons-png.flaticon.com/512/888/888857.png"),
-            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123", "https://cdn-icons-png.flaticon.com/512/349/349221.png"),
+            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123", "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"),
             ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456", "https://cdn-icons-png.flaticon.com/512/349/349228.png"),
             ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
         ]
@@ -102,7 +111,7 @@ def login():
 
         if user:
             session["username"] = user[1]
-            session["is_admin"] = user[7]
+            session["is_admin"] = user[7] if len(user) > 7 else 0
             return redirect(url_for("shop"))
         else:
             flash("❌ Invalid Username or Password", "error")
