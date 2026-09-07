@@ -4,7 +4,6 @@ import os
 import requests
 import random
 import string
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "xenon_store_secret_key"
@@ -68,8 +67,7 @@ def init_db():
                         username TEXT,
                         product_name TEXT,
                         price REAL,
-                        secret_data TEXT,
-                        purchase_date TEXT)''')
+                        secret_data TEXT)''')
 
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
@@ -81,7 +79,7 @@ def init_db():
             ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026", "https://cdn-icons-png.flaticon.com/512/888/888857.png"),
             ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123", "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"),
             ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456", "https://cdn-icons-png.flaticon.com/512/349/349228.png"),
-            ("Anime VIP Pass", "Anime VIP", 499.0, "Streaming Pass | HD Quality", "Username: anime_vip@xenon.com\nPassword: vip2026", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
+            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
         ]
         cursor.executemany("INSERT INTO products (name, category, price, description, secret_data, image_url) VALUES (?, ?, ?, ?, ?, ?)", default_items)
 
@@ -176,15 +174,11 @@ def shop():
 
     products = conn.execute("SELECT * FROM products").fetchall()
     my_payments = conn.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],)).fetchall()
-    my_purchases = conn.execute("SELECT id, product_name, price, secret_data, purchase_date FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
-    
-    today_date = datetime.now().strftime("%Y-%m-%d")
-    today_purchases = conn.execute("SELECT id, product_name, price, secret_data, purchase_date FROM purchases WHERE username = ? AND purchase_date LIKE ? ORDER BY id DESC", (session["username"], f"{today_date}%")).fetchall()
-
+    my_purchases = conn.execute("SELECT id, product_name, price, secret_data FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
     conn.close()
 
     referral_link = request.host_url + "register?ref=" + referral_code
-    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases, today_purchases=today_purchases)
+    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
 
 @app.route("/update-settings", methods=["POST"])
 def update_settings():
@@ -238,11 +232,10 @@ def buy_product(product_id):
         return redirect(url_for("shop"))
 
     p_name, p_price, secret_data = prod["name"], prod["price"], prod["secret_data"]
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if balance >= p_price:
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
-        cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data, purchase_date) VALUES (?, ?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data, current_time))
+        cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data))
         
         if referred_by:
             cursor.execute("UPDATE users SET balance = balance + 50.0, referral_count = referral_count + 1 WHERE username = ?", (referred_by,))
@@ -302,7 +295,7 @@ def admin_panel():
         cursor = conn.cursor()
         if action == "add_product":
             name = request.form.get("name")
-            category = request.form.get("category", "Redeem Code")
+            category = request.form.get("category")
             price = float(request.form.get("price", 0))
             description = request.form.get("description")
             secret_data = request.form.get("secret_data")
@@ -345,4 +338,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-        
+            
