@@ -81,7 +81,7 @@ def init_db():
             ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026", "https://cdn-icons-png.flaticon.com/512/888/888857.png"),
             ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123", "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"),
             ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456", "https://cdn-icons-png.flaticon.com/512/349/349228.png"),
-            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
+            ("Anime VIP Pass", "Anime VIP", 499.0, "Streaming Pass | HD Quality", "Username: anime_vip@xenon.com\nPassword: vip2026", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
         ]
         cursor.executemany("INSERT INTO products (name, category, price, description, secret_data, image_url) VALUES (?, ?, ?, ?, ?, ?)", default_items)
 
@@ -176,7 +176,6 @@ def shop():
 
     products = conn.execute("SELECT * FROM products").fetchall()
     my_payments = conn.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],)).fetchall()
-    
     my_purchases = conn.execute("SELECT id, product_name, price, secret_data, purchase_date FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
     
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -346,4 +345,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-    
+        
