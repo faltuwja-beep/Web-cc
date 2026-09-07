@@ -8,80 +8,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-body { background: #07030d; color: #f3f4f6; padding-bottom: 80px; overflow-x: hidden; }
+body { background: var(--bg-main, #07030d); color: var(--text-main, #f3f4f6); padding-bottom: 90px; overflow-x: hidden; transition: 0.3s; }
+
+/* Light & Dark Theme Variables */
+body.dark-theme { --bg-main: #07030d; --card-bg: linear-gradient(145deg, #11091d, #0d0617); --nav-bg: rgba(15, 9, 26, 0.9); --text-main: #f3f4f6; --modal-bg: linear-gradient(145deg, #130a21, #0a0414); --input-bg: #06020c; }
+body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #ffffff, #e5e7eb); --nav-bg: rgba(255, 255, 255, 0.9); --text-main: #111827; --modal-bg: linear-gradient(145deg, #ffffff, #f9fafb); --input-bg: #e5e7eb; }
 
 .live-ticker {
     background: linear-gradient(90deg, #0d2818, #05140b);
     border-bottom: 1px solid rgba(56, 212, 107, 0.3);
-    color: #4ade80;
-    padding: 10px 0;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.1);
+    color: #4ade80; padding: 10px 0; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden;
 }
 
 .buy-ticker-alert {
     background: linear-gradient(90deg, #2b1d0d, #140d05);
     border-bottom: 1px solid rgba(250, 204, 21, 0.4);
-    color: #facc15;
-    padding: 8px 0;
-    font-size: 11px;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
+    color: #facc15; padding: 8px 0; font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden;
 }
 
 .navbar { 
-    background: rgba(15, 9, 26, 0.85); 
-    backdrop-filter: blur(12px);
-    padding: 14px 18px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-    position: sticky; top: 0; z-index: 1000;
-}
-.nav-left { display: flex; align-items: center; gap: 12px; }
-.menu-btn { 
-    background: linear-gradient(135deg, #1e1136, #2d1852); 
-    border: 1px solid rgba(139, 92, 246, 0.4); 
-    color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 16px; cursor: pointer;
+    background: var(--nav-bg); backdrop-filter: blur(12px);
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; 
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2); position: sticky; top: 0; z-index: 1000;
 }
 .logo { 
     background: linear-gradient(135deg, #4ade80, #22c55e);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    font-size: 18px; font-weight: 800; 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; font-weight: 800; 
 }
 .nav-right { display: flex; align-items: center; gap: 10px; }
 .wallet-pill { 
     background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1)); 
-    border: 1px solid rgba(234, 179, 8, 0.4); 
-    padding: 6px 14px; border-radius: 30px; font-size: 13px; color: #facc15; font-weight: 700; 
+    border: 1px solid rgba(234, 179, 8, 0.4); padding: 6px 14px; border-radius: 30px; font-size: 13px; color: #facc15; font-weight: 700; 
 }
 
-#side-menu {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(3, 1, 7, 0.8); backdrop-filter: blur(8px); z-index: 9998;
+/* VIP Bottom Navigation Bar */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: var(--nav-bg); backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(139, 92, 246, 0.25);
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 10px 5px; z-index: 1000; box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
 }
-.menu-drawer {
-    width: 300px; height: 100%; background: #0f091a;
-    border-right: 1px solid rgba(139, 92, 246, 0.3); padding: 24px;
-    display: flex; flex-direction: column; gap: 12px;
+.nav-item {
+    background: none; border: none; color: var(--text-main); font-size: 10px; font-weight: 700;
+    display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; transition: 0.2s;
 }
-.menu-item {
-    background: linear-gradient(135deg, #150c24, #1b102f); color: #e5e7eb;
-    padding: 13px 16px; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.2);
-    cursor: pointer; font-weight: 600; font-size: 13px; text-decoration: none; display: block;
-}
+.nav-item span { font-size: 18px; }
+.nav-item:hover, .nav-item.active { color: #4ade80; transform: translateY(-2px); }
 
 .container { max-width: 700px; margin: auto; padding: 18px; }
 
 .welcome-banner { 
     background: linear-gradient(135deg, #112317, #0a170f); 
-    border: 1px solid rgba(74, 222, 128, 0.35); 
-    padding: 18px; border-radius: 16px; text-align: center; margin-bottom: 22px;
+    border: 1px solid rgba(74, 222, 128, 0.35); padding: 18px; border-radius: 16px; text-align: center; margin-bottom: 22px;
 }
 .welcome-banner h3 { color: #4ade80; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
 .welcome-banner p { color: #9ca3af; font-size: 12px; line-height: 1.5; }
@@ -89,26 +68,23 @@ body { background: #07030d; color: #f3f4f6; padding-bottom: 80px; overflow-x: hi
 .section-title { margin: 24px 0 12px 0; font-size: 16px; font-weight: 700; color: #4ade80; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(139,92,246,0.2); padding-bottom: 6px; }
 .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .product-card { 
-    background: linear-gradient(145deg, #11091d, #0d0617); 
-    border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 18px; overflow: hidden; 
-    display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s;
+    background: var(--card-bg); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 18px; overflow: hidden; 
+    display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 .product-card:hover { border-color: #4ade80; transform: translateY(-3px); }
 
 .card-banner { 
     height: 100px; background: radial-gradient(circle, #19102b 0%, #0e0717 100%); 
-    display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-    position: relative;
+    display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(139, 92, 246, 0.2); position: relative;
 }
 .card-banner img { max-height: 55px; max-width: 55px; object-fit: contain; }
 .card-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4);
+    position: absolute; top: 8px; right: 8px; background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4);
     color: #4ade80; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 6px;
 }
 
 .card-details { padding: 14px; }
-.card-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.card-name { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
 .card-desc { font-size: 11px; color: #9ca3af; margin-bottom: 6px; }
 .rating-stars { color: #facc15; font-size: 11px; margin-bottom: 8px; }
 .card-price { font-size: 15px; color: #facc15; font-weight: 800; margin-bottom: 10px; }
@@ -121,19 +97,19 @@ body { background: #07030d; color: #f3f4f6; padding-bottom: 80px; overflow-x: hi
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(3, 1, 7, 0.85); backdrop-filter: blur(10px);
-    justify-content: center; align-items: center; z-index: 9999; padding: 20px;
+    justify-content: center; align-items: center; z-index: 1001; padding: 20px;
 }
 .modal-box {
-    background: linear-gradient(145deg, #130a21, #0a0414); padding: 24px; border-radius: 22px;
+    background: var(--modal-bg); padding: 24px; border-radius: 22px;
     border: 1px solid rgba(139, 92, 246, 0.35); max-width: 400px; width: 100%; text-align: center; max-height: 85vh; overflow-y: auto;
 }
-input, textarea { width: 100%; padding: 13px; margin: 8px 0; background: #06020c; border: 1px solid rgba(139, 92, 246, 0.3); color: white; border-radius: 12px; outline: none; font-size: 13px; }
+input, select { width: 100%; padding: 13px; margin: 8px 0; background: var(--input-bg); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text-main); border-radius: 12px; outline: none; font-size: 13px; }
 button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px; cursor: pointer; }
 .flash-msg { background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; padding: 12px; margin-bottom: 18px; border-radius: 12px; text-align: center; font-size: 13px; }
 .flash-success { background: rgba(20, 83, 45, 0.4); border: 1px solid rgba(74, 222, 128, 0.5); color: #4ade80; padding: 12px; margin-bottom: 18px; border-radius: 12px; text-align: center; font-size: 13px; }
 </style>
 </head>
-<body>
+<body class="dark-theme">
 
 <div class="live-ticker">
     <marquee behavior="scroll" direction="left">🚀 Xenon Store is 100% Safe & Verified! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Instant Delivery Active! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 👥 Refer & Earn ₹50 per purchase active!</marquee>
@@ -145,7 +121,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 
 <div class="navbar">
     <div class="nav-left">
-        <button class="menu-btn" onclick="openMenu()">☰</button>
         <span class="logo">Xenon Store <span style="font-size:10px; background:rgba(139,92,246,0.2); padding:2px 6px; border-radius:6px; color:#c084fc;">#{{ user_id }}</span></span>
     </div>
     <div class="nav-right">
@@ -153,25 +128,16 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
         {% if is_admin == 1 %}
         <a href="/admin" style="background:linear-gradient(135deg, #ea580c, #c2410c); color:white; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:700;">Admin</a>
         {% endif %}
-        <a href="/logout" style="color:#f87171; font-size:12px; font-weight:600; text-decoration:none;">Logout</a>
     </div>
 </div>
 
-<div id="side-menu" onclick="closeMenu()">
-    <div class="menu-drawer" onclick="event.stopPropagation()">
-        <h3 style="color:#4ade80; font-size:16px; margin-bottom:5px;">⚡ VIP Menu</h3>
-        <p style="font-size:11px; color:#9ca3af; margin-bottom:10px;">User: <b style="color:#fff;">{{ username }}</b></p>
-        <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (Instant QR)</button>
-        <button class="menu-item" onclick="closeMenu(); openHistoryModal()">⏱️ Payment History</button>
-        <button class="menu-item" onclick="closeMenu(); openPurchasesModal()">🛍️ My Purchases & Codes</button>
-        <button class="menu-item" onclick="closeMenu(); openReferralModal()">👥 Refer & Earn (₹50)</button>
-        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#4ade80;">💬 Support: @Xenon_ask9</a>
-        {% if is_admin == 1 %}
-        <a href="/admin" class="menu-item" style="color:#facc15;">👑 Admin Dashboard</a>
-        {% endif %}
-        <a href="/logout" class="menu-item" style="color:#f87171; margin-top:auto;">🚪 Logout Account</a>
-        <button onclick="closeMenu()" style="background:rgba(239, 68, 68, 0.2); color:#fca5a5; padding:10px; width:100%; border-radius:10px;">Close</button>
-    </div>
+<!-- VIP Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <button class="nav-item active" onclick="window.location.href='/shop'"><span>🏠</span>Shop</button>
+    <button class="nav-item" onclick="openQRModal()"><span>💳</span>Add Money</button>
+    <button class="nav-item" onclick="openReferralModal()"><span>👥</span>Refer</button>
+    <button class="nav-item" onclick="openPurchasesModal()"><span>🛍️</span>Purchases</button>
+    <button class="nav-item" onclick="openSettingsModal()"><span>⚙️</span>Settings</button>
 </div>
 
 <div class="container">
@@ -186,7 +152,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 
     <div class="welcome-banner">
         <h3>🚀 Welcome to Xenon Store, {{ username }}!</h3>
-        <p>100% Secure & Automated Delivery. Share your referral link to earn ₹50 when your referred friend makes a purchase!</p>
+        <p>100% Secure & Automated Delivery. Use bottom navigation buttons for wallet, purchases, and settings!</p>
     </div>
 
     <!-- Section 1: Redeem Codes -->
@@ -257,11 +223,11 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 
 </div>
 
-<!-- Modals -->
+<!-- QR Modal -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money via QR (Sima Devi)</h3>
-        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 5px;">UPI ID: <b style="color:#fff;">sima6241@ptaxis</b></p>
+        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 5px;">UPI ID: <b style="color:var(--text-main);">sima6241@ptaxis</b></p>
         <div style="text-align: center; margin-bottom: 12px;">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 12px; border:2px solid rgba(139,92,246,0.4); padding:4px; background:#fff;">
         </div>
@@ -274,45 +240,28 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     </div>
 </div>
 
+<!-- Referral Modal -->
 <div id="referral-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 10px; font-size: 16px;">👥 Refer & Earn ₹50</h3>
         <p style="font-size: 12px; color: #9ca3af; margin-bottom: 12px;">Share your link. Jab aapka friend is link se register karke koi bhi item kharidega, tab aapko ₹50 ka bonus milega!</p>
         <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center; color:#4ade80;">
         <button onclick="copyRefLink()" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 5px;">📋 Copy Link</button>
-        <div style="margin-top: 15px; background: #06020c; padding: 12px; border-radius: 12px; font-size: 13px;">
+        <div style="margin-top: 15px; background: var(--input-bg); padding: 12px; border-radius: 12px; font-size: 13px;">
             Total Friends Referred: <b style="color: #facc15;">{{ referral_count }}</b>
         </div>
         <button onclick="closeReferralModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
     </div>
 </div>
 
-<div id="history-modal" class="modal">
-    <div class="modal-box">
-        <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⏱️ Payment History</h3>
-        <div style="max-height: 200px; overflow-y: auto; text-align: left;">
-            {% if my_payments %}
-                {% for pay in my_payments %}
-                <div style="background:#06020c; padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between;">
-                    <span>₹{{ pay[0] }} <br><span style="color:#9ca3af; font-size:10px;">UTR: {{ pay[1][:8] }}...</span></span>
-                    <span style="font-weight:700; color:{% if pay[2]=='Approved' %}#4ade80{% else %}#facc15{% endif %};">{{ pay[2] }}</span>
-                </div>
-                {% endfor %}
-            {% else %}
-                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No payment history.</p>
-            {% endif %}
-        </div>
-        <button onclick="closeHistoryModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
-    </div>
-</div>
-
+<!-- Purchases Modal -->
 <div id="purchases-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">🛍️ My Purchases</h3>
         <div style="max-height: 200px; overflow-y: auto; text-align: left;">
             {% if my_purchases %}
                 {% for pur in my_purchases %}
-                <div style="background:#06020c; padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
                     <div><strong style="color:#facc15;">{{ pur[1] }}</strong><br><span style="color:#9ca3af;">₹{{ pur[2] }}</span></div>
                     <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#4ade80; color:#030712; padding:6px 12px; font-size:11px; font-weight:700;">View</button>
                 </div>
@@ -325,6 +274,35 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     </div>
 </div>
 
+<!-- Settings Modal (Theme, Name, Password Change) -->
+<div id="settings-modal" class="modal">
+    <div class="modal-box">
+        <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⚙️ Account Settings</h3>
+        
+        <div style="text-align: left; margin-bottom: 12px;">
+            <label style="font-size: 11px; color: #9ca3af;">Select Theme:</label>
+            <select id="theme-selector" onchange="changeTheme(this.value)">
+                <option value="dark">Dark Theme (VIP)</option>
+                <option value="light">Light Theme</option>
+            </select>
+        </div>
+
+        <form action="/update-settings" method="POST" style="text-align: left;">
+            <label style="font-size: 11px; color: #9ca3af;">Change Username:</label>
+            <input type="text" name="new_username" value="{{ username }}" required>
+
+            <label style="font-size: 11px; color: #9ca3af; margin-top: 8px; display: block;">New Password (leave blank if not changing):</label>
+            <input type="password" name="new_password" placeholder="Enter new password">
+
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 10px;">Save Changes</button>
+        </form>
+
+        <a href="/logout"><button style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">🚪 Logout Account</button></a>
+        <button onclick="closeSettingsModal()" style="width: 100%; background: #374151; color: white; margin-top: 8px;">Close</button>
+    </div>
+</div>
+
+<!-- Credentials Details Modal -->
 <div id="details-modal" class="modal">
     <div class="modal-box" style="border: 2px solid #4ade80;">
         <h3 id="det-title" style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">💳 Credentials</h3>
@@ -334,16 +312,36 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 </div>
 
 <script>
-function openMenu() { document.getElementById('side-menu').style.display = 'block'; }
-function closeMenu() { document.getElementById('side-menu').style.display = 'none'; }
 function openQRModal() { document.getElementById('qr-modal').style.display = 'flex'; }
 function closeQRModal() { document.getElementById('qr-modal').style.display = 'none'; }
-function openHistoryModal() { document.getElementById('history-modal').style.display = 'flex'; }
-function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+
 function openPurchasesModal() { document.getElementById('purchases-modal').style.display = 'flex'; }
 function closePurchasesModal() { document.getElementById('purchases-modal').style.display = 'none'; }
+
 function openReferralModal() { document.getElementById('referral-modal').style.display = 'flex'; }
 function closeReferralModal() { document.getElementById('referral-modal').style.display = 'none'; }
+
+function openSettingsModal() { document.getElementById('settings-modal').style.display = 'flex'; }
+function closeSettingsModal() { document.getElementById('settings-modal').style.display = 'none'; }
+
+function changeTheme(mode) {
+    if(mode === 'light') {
+        document.body.className = 'light-theme';
+        localStorage.setItem('xenon_theme', 'light');
+    } else {
+        document.body.className = 'dark-theme';
+        localStorage.setItem('xenon_theme', 'dark');
+    }
+}
+
+// Load saved theme on startup
+window.onload = function() {
+    let savedTheme = localStorage.getItem('xenon_theme') || 'dark';
+    document.body.className = savedTheme + '-theme';
+    let selector = document.getElementById('theme-selector');
+    if(selector) selector.value = savedTheme;
+}
+
 function copyRefLink() {
     var copyText = document.getElementById("ref-link-input");
     copyText.select();
