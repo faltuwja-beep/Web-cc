@@ -15,7 +15,15 @@ body{
     background:#0b0614;
     color:white;
     min-height:100vh;
+    animation: fadeIn 0.8s ease-in-out;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Instagram Follow Gate Popup */
 #insta-gate {
     position: fixed;
     top: 0; left: 0;
@@ -36,9 +44,23 @@ body{
     text-align: center;
     max-width: 400px;
     width: 100%;
+    animation: scaleUp 0.4s ease;
 }
+
+@keyframes scaleUp {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
 .gate-box h2 { color: #42d66d; margin-bottom: 15px; font-size: 22px; }
 .gate-box p { color: #aaa; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
+
+.gate-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .gate-btn {
     display: block;
     width: 100%;
@@ -47,9 +69,13 @@ body{
     text-decoration: none;
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 12px;
     cursor: pointer;
     text-align: center;
+    transition: 0.3s;
+}
+.gate-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
 }
 .btn-follow { background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
 .btn-unlock { background: linear-gradient(90deg, #38d46b, #b7dc39); color: #07100a; border: none; }
@@ -96,6 +122,10 @@ button{
     font-size:16px;
     font-weight:bold;
     cursor:pointer;
+    transition: 0.3s;
+}
+button:hover {
+    opacity: 0.9;
 }
 .error{
     margin-top:20px;
@@ -111,6 +141,7 @@ button{
     border-radius:18px;
     overflow:hidden;
     border:1px solid #3e1e56;
+    animation: fadeIn 0.5s ease;
 }
 .profile-head{
     text-align:center;
@@ -150,50 +181,52 @@ footer{
 </head>
 <body>
 
+<!-- Instagram Follow Gate Popup -->
 <div id="insta-gate">
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
         <p>Website use karne ke liye pehle hamare Instagram account ko follow karein!</p>
-        <a href="https://www.instagram.com/sonu_9wx7?stkn=MXFzZmxnd2x0ejd2Mg==" target="_blank" class="gate-btn btn-follow">1. Follow On Instagram</a>
-        <button class="gate-btn btn-unlock" onclick="unlockWebsite()">2. Website Open Karein</button>
+        <div class="gate-btn-group">
+            <a href="https://www.instagram.com/sonu_9wx7?stkn=MXFzZmxnd2x0ejd2Mg==" target="_blank" class="gate-btn btn-follow">1. Follow On Instagram</a>
+            <button class="gate-btn btn-unlock" onclick="unlockWebsite()">2. Website Open Karein</button>
+        </div>
     </div>
 </div>
 
 <header>
 <h1>🎮 FF PLAYER INFO</h1>
-<p>Free Fire UID Information</p>
+<p>Free Fire UID Checker & Like Sender</p>
 </header>
 
 <div class="container">
 
-{% if result %}
+{% if result_data %}
+<!-- Likes Success Result Card -->
 <div class="profile">
 <div class="profile-head">
 <div class="avatar">🔥</div>
-<h2>{{ result.nickname }}</h2>
-<div class="uid">UID: {{ result.uid }}</div>
+<h2>{{ result_data.nickname }}</h2>
+<div class="uid">UID: {{ result_data.uid }}</div>
 </div>
 <div class="info">
-<div class="row"><span class="label">❤️ Likes Before</span><span class="value">{{ result.old_likes }}</span></div>
-<div class="row"><span class="label">🚀 Likes After</span><span class="value" style="color:#42d66d;">{{ result.new_likes }}</span></div>
-<div class="row"><span class="label">✨ Status</span><span class="value" style="color:#38d46b;">Likes Sent Successfully!</span></div>
+<div class="row"><span class="label">❤️ Likes Before</span><span class="value">{{ result_data.old_likes }}</span></div>
+<div class="row"><span class="label">🚀 Likes After</span><span class="value" style="color:#42d66d;">{{ result_data.new_likes }}</span></div>
+<div class="row"><span class="label">➕ Likes Added</span><span class="value" style="color:#ff9900;">+{{ result_data.added_likes }} Likes</span></div>
+<div class="row"><span class="label">✨ Status</span><span class="value" style="color:#38d46b;">Successfully Sent!</span></div>
 </div>
 </div>
 
 <div class="btn-group">
-    <a href="/" style="flex:1;"><button style="background:#42d66d; color:#07100a;">🏠 Home Page</button></a>
-    <form action="/" method="POST" style="flex:1;">
-        <input type="hidden" name="uid" value="{{ result.uid }}">
-        <button type="submit" style="background:#ff9900; color:white;">🔄 Send Again</button>
-    </form>
+    <a href="/" style="flex:1;"><button style="background:#42d66d; color:#07100a;">🏠 Check Another UID</button></a>
 </div>
 
 {% else %}
 
+<!-- UID Search Box -->
 <div class="search-box">
 <form method="POST">
 <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
-<button type="submit">🔍 SEARCH PLAYER</button>
+<button type="submit">🔍 CHECK UID</button>
 </form>
 </div>
 
@@ -222,13 +255,14 @@ footer{
 </div>
 </div>
 
+<!-- Separate Send Likes Form Button -->
 <form action="/send-likes" method="POST" style="margin-top: 20px;">
     <input type="hidden" name="uid" value="{{ player.uid }}">
     <input type="hidden" name="region" value="{{ player.region }}">
     <input type="hidden" name="old_likes" value="{{ player.likes }}">
     <input type="hidden" name="nickname" value="{{ player.nickname }}">
     <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
-        🔥 SEND LIKES
+        🔥 SEND 20 LIKES NOW
     </button>
 </form>
 {% endif %}
@@ -255,3 +289,4 @@ function unlockWebsite() {
 
 </body>
 </html>
+.
