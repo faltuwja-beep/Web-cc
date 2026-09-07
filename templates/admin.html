@@ -17,7 +17,7 @@ button { padding: 8px 12px; border: none; font-weight: bold; border-radius: 5px;
 <a href="/shop" style="color:#42d66d; text-decoration:none; font-weight:bold;">← Back to Shop</a> | <a href="/logout" style="color:#ff9ba5; text-decoration:none; font-weight:bold;">Logout</a>
 
 <div class="box" style="margin-top:20px;">
-    <h3>➕ Add Product & Formatted Delivery Details</h3>
+    <h3>➕ Add Product with Image URL & Details</h3>
     <form method="POST">
         <input type="hidden" name="action" value="add_product">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
@@ -26,17 +26,20 @@ button { padding: 8px 12px; border: none; font-weight: bold; border-radius: 5px;
         </div>
         <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
             <input type="number" step="0.01" name="price" placeholder="Selling Price (₹)" required>
-            <input type="text" name="description" placeholder="Store Display Description (e.g. Balance: ₹25,000 | 5412xxxx)" required>
+            <input type="text" name="description" placeholder="Store Display Description (e.g. Balance: ₹25,000)" required>
         </div>
-        <textarea name="secret_data" rows="3" placeholder="Secret Card/Code Info shown on Buy (e.g. Card Number: 5412...\nExpiry: 11/27\nCVV: 456)" required></textarea>
+        <div style="margin-bottom:10px;">
+            <input type="text" name="image_url" placeholder="Product Image Direct URL (e.g. https://.../image.png)" required>
+        </div>
+        <textarea name="secret_data" rows="3" placeholder="Secret Card/Code Info shown on Buy (e.g. Card Number, Expiry, CVV)" required></textarea>
         <button type="submit" style="background:#38d46b; color:#07100a; width:100%; margin-top:5px;">Add Product to Store</button>
     </form>
 </div>
 
 <div class="box">
-    <h3>📦 Manage Products, Prices & Delivery Data</h3>
+    <h3>📦 Manage Products, Prices, Images & Data</h3>
     <table>
-        <tr><th>ID</th><th>Name</th><th>Price</th><th>Display Description</th><th>Secret Data</th><th>Action</th></tr>
+        <tr><th>ID</th><th>Name</th><th>Price</th><th>Description</th><th>Image URL / Data</th><th>Action</th></tr>
         {% for p in products %}
         <tr>
             <form method="POST">
@@ -46,7 +49,10 @@ button { padding: 8px 12px; border: none; font-weight: bold; border-radius: 5px;
                 <td>{{ p[1] }}</td>
                 <td><input type="number" step="0.01" name="price" value="{{ p[3] }}" style="width:70px;"></td>
                 <td><input type="text" name="description" value="{{ p[4] }}"></td>
-                <td><textarea name="secret_data" rows="2">{{ p[5] }}</textarea></td>
+                <td>
+                    <input type="text" name="image_url" value="{{ p[6] }}" placeholder="Image URL" style="margin-bottom:5px;">
+                    <textarea name="secret_data" rows="2">{{ p[5] }}</textarea>
+                </td>
                 <td>
                     <button type="submit" style="background:#ff9900;">Update</button>
             </form>
@@ -70,7 +76,7 @@ button { padding: 8px 12px; border: none; font-weight: bold; border-radius: 5px;
             <td>{{ pay[0] }}</td>
             <td>{{ pay[1] }}</td>
             <td>₹{{ pay[2] }}</td>
-            <td>₹{{ pay[3] }}</td>
+            <td>{{ pay[3] }}</td>
             <td style="color:{% if pay[4]=='Approved' %}#38d46b{% elif pay[4]=='Rejected' %}#ff9ba5{% else %}#ffd21c{% endif %};">{{ pay[4] }}</td>
             <td>
                 {% if pay[4] == 'Pending' %}
