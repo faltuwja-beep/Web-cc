@@ -234,8 +234,8 @@ footer{
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
         <p>Website use karne ke liye pehle hamare Instagram account ko follow karein!</p>
-        <a href="https://www.instagram.com/sonu_9wx7?stkn=MXFzZmxnd2x0ejd2Mg==" target="_blank" class="gate-btn btn-follow" onclick="enableUnlock()">1. Follow On Instagram</a>
-        <button class="gate-btn btn-unlock" id="unlockBtn" onclick="unlockWebsite()">2. Website Open Karein</button>
+        <a href="https://www.instagram.com/sonu_9wx7?stkn=MXFzZmxnd2x0ejd2Mg==" target="_blank" class="gate-btn btn-follow">1. Follow On Instagram</a>
+        <button class="gate-btn btn-unlock" onclick="unlockWebsite()">2. Website Open Karein</button>
     </div>
 </div>
 
@@ -259,6 +259,12 @@ footer{
 </div>
 {% endif %}
 
+{% if like_message %}
+<div class="error" style="background: #102b1a; border-color: #38d46b; color: #38d46b;">
+    {{ like_message }}
+</div>
+{% endif %}
+
 {% if player %}
 <div class="profile">
 <div class="profile-head">
@@ -279,6 +285,15 @@ footer{
 <div class="row"><span class="label">🐾 Pet ID</span><span class="value">{{ player.pet }}</span></div>
 </div>
 </div>
+
+<!-- Send Likes Button Form -->
+<form action="/send-likes" method="POST" style="margin-top: 20px;">
+    <input type="hidden" name="uid" value="{{ player.uid }}">
+    <input type="hidden" name="region" value="{{ player.region }}">
+    <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
+        🔥 SEND LIKES
+    </button>
+</form>
 {% endif %}
 
 </div>
@@ -288,16 +303,11 @@ Created by Sonu
 </footer>
 
 <script>
-// Check if user already unlocked previously
 window.onload = function() {
     if(localStorage.getItem('insta_followed') === 'true') {
         document.getElementById('insta-gate').style.display = 'none';
     }
 };
-
-function enableUnlock() {
-    // Optional: can do something when follow is clicked
-}
 
 function unlockWebsite() {
     localStorage.setItem('insta_followed', 'true');
