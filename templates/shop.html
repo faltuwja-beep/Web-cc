@@ -159,7 +159,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
     <div class="welcome-banner">
         <h3>⚡ Welcome to Xenon Store!</h3>
-        <p>100% Secure & Instant Delivery. Share your referral link to earn ₹50 on every friend's purchase!</p>
+        <p>100% Secure & Instant Delivery. Share your referral link to earn ₹50 when your referred friend makes a purchase!</p>
         <p style="margin-top:8px; font-size:11px; color:#42d66d;">💬 Customer Support Telegram: <b>@Xenon_ask9</b></p>
     </div>
 
@@ -202,13 +202,15 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
-<!-- Referral System Modal -->
+<!-- Referral System Modal with Clear Terms -->
 <div id="referral-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #42d66d; margin-bottom: 10px;">👥 Refer & Earn ₹50</h3>
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Share your link. When your friend buys any item, you get <b>₹50</b> added instantly to your wallet!</p>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Share your link with friends. <b>Jab aapka friend is link se register karke koi bhi item kharidega (Buy karega), tab aapko ₹50 ka bonus turant aapke wallet me mil jayega!</b></p>
+        
         <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center;">
         <button onclick="copyRefLink()" style="width: 100%; background: #42d66d; color: #07100a; margin-top: 5px;">📋 Copy Referral Link</button>
+        
         <div style="margin-top: 15px; background: #09050f; padding: 10px; border-radius: 8px; font-size: 13px;">
             Total Friends Referred: <b style="color: #ffd21c;">{{ referral_count }}</b>
         </div>
