@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 import os
 import requests
+import random
+import string
 
 app = Flask(__name__)
 app.secret_key = "xenon_store_secret_key"
@@ -17,6 +19,9 @@ def send_telegram_alert(message):
     except Exception:
         pass
 
+def generate_referral_code():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
 def init_db():
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
@@ -26,6 +31,9 @@ def init_db():
                         username TEXT UNIQUE,
                         password TEXT,
                         balance REAL DEFAULT 0.0,
+                        referral_code TEXT UNIQUE,
+                        referred_by TEXT,
+                        referral_count INTEGER DEFAULT 0,
                         is_admin INTEGER DEFAULT 0)''')
     
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
@@ -33,7 +41,8 @@ def init_db():
                         name TEXT,
                         category TEXT,
                         price REAL,
-                        details TEXT)''')
+                        description TEXT,
+                        secret_data TEXT)''')
     
     cursor.execute('''CREATE TABLE IF NOT EXISTS payments (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,21 +56,21 @@ def init_db():
                         username TEXT,
                         product_name TEXT,
                         price REAL,
-                        details TEXT)''')
+                        secret_data TEXT)''')
 
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
-        cursor.execute("INSERT INTO users (username, password, balance, is_admin) VALUES ('admin', 'admin123', 0.0, 1)")
+        cursor.execute("INSERT INTO users (username, password, balance, referral_code, is_admin) VALUES ('admin', 'admin123', 0.0, 'ADMIN1', 1)")
 
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
-            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Code: GPR-9982-XYZ"),
-            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | 4532xxxx 09/28 123"),
-            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | 5412xxxx 11/27 456"),
-            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | 4000xxxx 05/29 789")
+            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026"),
+            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123"),
+            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456"),
+            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789")
         ]
-        cursor.executemany("INSERT INTO products (name, category, price, details) VALUES (?, ?, ?, ?)", default_items)
+        cursor.executemany("INSERT INTO products (name, category, price, description, secret_data) VALUES (?, ?, ?, ?, ?)", default_items)
 
     conn.commit()
     conn.close()
@@ -91,7 +100,7 @@ def login():
 
         if user:
             session["username"] = user[1]
-            session["is_admin"] = user[4]
+            session["is_admin"] = user[7]
             return redirect(url_for("shop"))
         else:
             flash("❌ Invalid Username or Password", "error")
@@ -99,28 +108,43 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    ref_code_param = request.args.get("ref", "").strip()
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
+        ref_input = request.form.get("ref_code", "").strip()
+
         if not username or not password:
             flash("❌ Please fill in all fields", "error")
-            return render_template("register.html")
+            return render_template("register.html", ref_code=ref_code_param)
 
+        my_ref = generate_referral_code()
         try:
             conn = sqlite3.connect('store.db')
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+
+            # Check if referral code is valid
+            referrer = None
+            if ref_input:
+                cursor.execute("SELECT username FROM users WHERE referral_code = ?", (ref_input,))
+                ref_user = cursor.fetchone()
+                if ref_user:
+                    referrer = ref_user[0]
+
+            cursor.execute("INSERT INTO users (username, password, referral_code, referred_by) VALUES (?, ?, ?, ?)", 
+                           (username, password, my_ref, referrer))
             user_id = cursor.lastrowid
             conn.commit()
             conn.close()
 
-            send_telegram_alert(f"👤 *New User Registered in Xenon Store!*\n🆔 User ID: `#{user_id}`\n📛 Username: `{username}`")
+            send_telegram_alert(f"👤 *New User Registered in Xenon Store!*\n🆔 User ID: `#{user_id}`\n📛 Username: `{username}`\n🔗 Referred By: `{referrer if referrer else 'Direct'}`")
 
             flash("✅ Account created successfully! Please login.", "success")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
             flash("❌ Username already taken! Choose another.", "error")
-    return render_template("register.html")
+            
+    return render_template("register.html", ref_code=ref_code_param)
 
 @app.route("/shop")
 def shop():
@@ -129,11 +153,14 @@ def shop():
     
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT id, balance, is_admin FROM users WHERE username = ?", (session["username"],))
+    cursor.execute("SELECT id, balance, referral_code, referral_count, is_admin FROM users WHERE username = ?", (session["username"],))
     user_data = cursor.fetchone()
+    
     user_id = user_data[0] if user_data else 0
     balance = user_data[1] if user_data else 0.0
-    is_admin = user_data[2] if user_data else 0
+    referral_code = user_data[2] if user_data else ""
+    referral_count = user_data[3] if user_data else 0
+    is_admin = user_data[4] if user_data else 0
 
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
@@ -141,12 +168,13 @@ def shop():
     cursor.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],))
     my_payments = cursor.fetchall()
 
-    cursor.execute("SELECT id, product_name, price, details FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],))
+    cursor.execute("SELECT id, product_name, price, secret_data FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],))
     my_purchases = cursor.fetchall()
 
     conn.close()
 
-    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
+    referral_link = request.host_url + "register?ref=" + referral_code
+    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
 
 @app.route("/buy/<int:product_id>")
 def buy_product(product_id):
@@ -155,12 +183,13 @@ def buy_product(product_id):
     
     conn = sqlite3.connect('store.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT id, balance FROM users WHERE username = ?", (session["username"],))
+    cursor.execute("SELECT id, balance, referred_by FROM users WHERE username = ?", (session["username"],))
     user_res = cursor.fetchone()
     user_id = user_res[0] if user_res else 0
     balance = user_res[1] if user_res else 0.0
+    referred_by = user_res[2] if user_res else None
 
-    cursor.execute("SELECT name, price, details FROM products WHERE id = ?", (product_id,))
+    cursor.execute("SELECT name, price, secret_data FROM products WHERE id = ?", (product_id,))
     prod = cursor.fetchone()
 
     if not prod:
@@ -168,17 +197,23 @@ def buy_product(product_id):
         flash("❌ Product not found!", "error")
         return redirect(url_for("shop"))
 
-    p_name, p_price, p_details = prod
+    p_name, p_price, secret_data = prod
 
     if balance >= p_price:
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
-        cursor.execute("INSERT INTO purchases (username, product_name, price, details) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, p_details))
+        cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data))
+        
+        # Referral commission check (First buy bonus or every buy? Giving ₹50 on purchase if referred)
+        if referred_by:
+            cursor.execute("UPDATE users SET balance = balance + 50.0, referral_count = referral_count + 1 WHERE username = ?", (referred_by,))
+            send_telegram_alert(f"💸 *Referral Commission Paid!*\n👤 Referrer: `{referred_by}` received ₹50 because their referral `{session['username']}` made a purchase!")
+
         conn.commit()
         conn.close()
 
-        send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
+        send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`")
 
-        flash("🎉 Purchase Successful! Check your Purchase History below to view details.", "success")
+        flash("🎉 Purchase Successful! Check 'My Purchases & Codes' to view your secure credentials.", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -231,13 +266,15 @@ def admin_panel():
             name = request.form.get("name")
             category = request.form.get("category")
             price = float(request.form.get("price", 0))
-            details = request.form.get("details")
-            cursor.execute("INSERT INTO products (name, category, price, details) VALUES (?, ?, ?, ?)", (name, category, price, details))
+            description = request.form.get("description")
+            secret_data = request.form.get("secret_data")
+            cursor.execute("INSERT INTO products (name, category, price, description, secret_data) VALUES (?, ?, ?, ?, ?)", (name, category, price, description, secret_data))
         elif action == "edit_product":
             pid = request.form.get("pid")
             price = float(request.form.get("price", 0))
-            details = request.form.get("details")
-            cursor.execute("UPDATE products SET price = ?, details = ? WHERE id = ?", (price, details, pid))
+            description = request.form.get("description")
+            secret_data = request.form.get("secret_data")
+            cursor.execute("UPDATE products SET price = ?, description = ?, secret_data = ? WHERE id = ?", (price, description, secret_data, pid))
         elif action == "delete_product":
             pid = request.form.get("pid")
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
@@ -269,3 +306,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+    
