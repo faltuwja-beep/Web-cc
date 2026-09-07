@@ -36,13 +36,15 @@ def init_db():
                         referral_count INTEGER DEFAULT 0,
                         is_admin INTEGER DEFAULT 0)''')
     
+    # Checking and adding image_url column if not exists in products
     cursor.execute('''CREATE TABLE IF NOT EXISTS products (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT,
                         category TEXT,
                         price REAL,
                         description TEXT,
-                        secret_data TEXT)''')
+                        secret_data TEXT,
+                        image_url TEXT)''')
     
     cursor.execute('''CREATE TABLE IF NOT EXISTS payments (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,12 +67,12 @@ def init_db():
     cursor.execute("SELECT * FROM products")
     if not cursor.fetchone():
         default_items = [
-            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026"),
-            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123"),
-            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456"),
-            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789")
+            ("Google Play Redeem Code", "Redeem Code", 699.0, "Balance: ₹5,000 | Instant Delivery", "Your Code: GPR-9982-XYZ-2026", "https://cdn-icons-png.flaticon.com/512/888/888857.png"),
+            ("Demo Visa Card", "CC Card", 399.0, "Balance: ₹10,000 | Working Test CC", "Card Number: 4532 8822 1048 2026\nExpiry Date: 09/28\nCVV: 123", "https://cdn-icons-png.flaticon.com/512/349/349221.png"),
+            ("Mastercard VIP", "CC Card", 1099.0, "Balance: ₹25,000 | High Balance Card", "Card Number: 5412 7161 5714 0099\nExpiry Date: 11/27\nCVV: 456", "https://cdn-icons-png.flaticon.com/512/349/349228.png"),
+            ("Blackmarket Visa", "CC Card", 499.0, "Balance: ₹15,000 | Bitcoin Visa Card", "Card Number: 4000 1234 5678 9010\nExpiry Date: 05/29\nCVV: 789", "https://cdn-icons-png.flaticon.com/512/349/349230.png")
         ]
-        cursor.executemany("INSERT INTO products (name, category, price, description, secret_data) VALUES (?, ?, ?, ?, ?)", default_items)
+        cursor.executemany("INSERT INTO products (name, category, price, description, secret_data, image_url) VALUES (?, ?, ?, ?, ?, ?)", default_items)
 
     conn.commit()
     conn.close()
@@ -266,13 +268,17 @@ def admin_panel():
             price = float(request.form.get("price", 0))
             description = request.form.get("description")
             secret_data = request.form.get("secret_data")
-            cursor.execute("INSERT INTO products (name, category, price, description, secret_data) VALUES (?, ?, ?, ?, ?)", (name, category, price, description, secret_data))
+            image_url = request.form.get("image_url", "").strip()
+            if not image_url:
+                image_url = "https://cdn-icons-png.flaticon.com/512/888/888857.png"
+            cursor.execute("INSERT INTO products (name, category, price, description, secret_data, image_url) VALUES (?, ?, ?, ?, ?, ?)", (name, category, price, description, secret_data, image_url))
         elif action == "edit_product":
             pid = request.form.get("pid")
             price = float(request.form.get("price", 0))
             description = request.form.get("description")
             secret_data = request.form.get("secret_data")
-            cursor.execute("UPDATE products SET price = ?, description = ?, secret_data = ? WHERE id = ?", (price, description, secret_data, pid))
+            image_url = request.form.get("image_url", "").strip()
+            cursor.execute("UPDATE products SET price = ?, description = ?, secret_data = ?, image_url = ? WHERE id = ?", (price, description, secret_data, image_url, pid))
         elif action == "delete_product":
             pid = request.form.get("pid")
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
@@ -304,4 +310,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-    
+            
