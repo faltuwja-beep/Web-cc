@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Admin Panel - YoYo Shop</title>
+<style>
+body { background: #0b0614; color: white; font-family: Arial; padding: 20px; }
+.box { background: #130b20; padding: 20px; border-radius: 12px; border: 1px solid #3e1e56; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #3e1e56; padding: 10px; text-align: left; font-size: 14px; }
+th { background: #1c102b; color: #42d66d; }
+input, select { padding: 8px; background: #09050f; border: 1px solid #492460; color: white; border-radius: 5px; margin: 5px 0; }
+button { padding: 8px 15px; background: #38d46b; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>👑 Admin Panel (YoYo Shop)</h1>
+<a href="/shop" style="color:#42d66d;">Go to Shop</a> | <a href="/logout" style="color:#ff9ba5;">Logout</a>
+
+<div class="box">
+    <h3>➕ Add New Product / Card</h3>
+    <form method="POST">
+        <input type="hidden" name="action" value="add_product">
+        <input type="text" name="name" placeholder="Product Name (e.g. Google Play Code)" required>
+        <input type="text" name="category" placeholder="Category (Redeem Code / CC)" required>
+        <input type="number" step="0.01" name="price" placeholder="Price (₹)" required>
+        <input type="text" name="details" placeholder="Details" required><br>
+        <button type="submit">Add Product</button>
+    </form>
+</div>
+
+<div class="box">
+    <h3>📦 Manage Products & Prices</h3>
+    <table>
+        <tr><th>ID</th><th>Name</th><th>Category</th><th>Price (₹)</th><th>Action</th></tr>
+        {% for p in products %}
+        <tr>
+            <form method="POST">
+                <input type="hidden" name="action" value="edit_product">
+                <input type="hidden" name="pid" value="{{ p[0] }}">
+                <td>{{ p[0] }}</td>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td><input type="number" step="0.01" name="price" value="{{ p[3] }}"></td>
+                <td>
+                    <button type="submit" style="background:#ff9900;">Update Price</button>
+            </form>
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="action" value="delete_product">
+                <input type="hidden" name="pid" value="{{ p[0] }}">
+                <button type="submit" style="background:#742331; color:white;">Delete</button>
+            </form>
+                </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="box">
+    <h3>📥 User Payment Approvals</h3>
+    <table>
+        <tr><th>ID</th><th>Username</th><th>Amount</th><th>UTR / Txn ID</th><th>Status</th><th>Action</th></tr>
+        {% for pay in payments %}
+        <tr>
+            <td>{{ pay[0] }}</td>
+            <td>{{ pay[1] }}</td>
+            <td>₹{{ pay[2] }}</td>
+            <td>{{ pay[3] }}</td>
+            <td style="color: {% if pay[4]=='Approved' %}#38d46b{% else %}#ffd21c{% endif %};">{{ pay[4] }}</td>
+            <td>
+                {% if pay[4] == 'Pending' %}
+                <form method="POST">
+                    <input type="hidden" name="action" value="approve_payment">
+                    <input type="hidden" name="pay_id" value="{{ pay[0] }}">
+                    <button type="submit" style="background:#38d46b;">Approve & Add Balance</button>
+                </form>
+                {% else %}
+                Done
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>
