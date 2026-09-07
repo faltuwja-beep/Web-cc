@@ -110,7 +110,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 <div class="navbar">
     <div class="nav-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <span class="logo">YoYo Shop</span>
+        <span class="logo">YoYo Shop (ID: #{{ user_id }})</span>
     </div>
     <div class="nav-right">
         <div class="wallet-pill">💰 ₹{{ balance }}</div>
@@ -145,7 +145,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     {% endwith %}
 
     <div class="notice-banner">
-        <h3>⚠️ IMPORTANT PAYMENT NOTICE</h3>
+        <h3>⚠️ Sima Devi (UPI: sima6241@ptaxis)</h3>
         <p>Website se payment karte waqt QR code par naam zaroor check karein. Naam match na ho toh payment na karein!</p>
     </div>
 
@@ -168,13 +168,14 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 </div>
 
+<!-- Updated QR Code using Sima Devi UPI (sima6241@ptaxis) -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR Code</h3>
-        <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Scan QR & pay, then submit UTR / Transaction ID below.</p>
+        <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR (Sima Devi)</h3>
+        <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">UPI: <b>sima6241@ptaxis</b></p>
         
         <div style="text-align: center; margin-bottom: 12px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
         </div>
         
         <form action="/add-money" method="POST">
