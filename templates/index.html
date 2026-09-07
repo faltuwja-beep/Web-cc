@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FF Player Info & Likes</title>
+<title>FF Player Info & Buy Likes</title>
 <style>
 *{
     margin:0;
@@ -23,7 +23,6 @@ body{
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Instagram Follow Gate Popup */
 #insta-gate {
     position: fixed;
     top: 0; left: 0;
@@ -172,6 +171,47 @@ button:hover {
     gap: 10px;
     margin-top: 20px;
 }
+
+/* Buy Likes Modal Style */
+#buy-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(11, 6, 20, 0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+.buy-box {
+    background: #130b20;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #3e1e56;
+    box-shadow: 0 0 30px #000;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    animation: scaleUp 0.4s ease;
+}
+.buy-box h2 { color: #ff9900; margin-bottom: 15px; }
+.plan-card {
+    background: #09050f;
+    border:: 1px solid #492460;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    text-align: left;
+    border: 1px solid #3e1e56;
+}
+.plan-card h3 { color: #42d66d; margin-bottom: 5px; font-size: 18px; }
+.plan-card p { color: #ccc; font-size: 14px; margin-bottom: 10px; }
+.close-btn {
+    background: #742331;
+    color: white;
+    margin-top: 10px;
+}
 footer{
     text-align:center;
     padding:25px;
@@ -182,7 +222,6 @@ footer{
 </head>
 <body>
 
-<!-- Instagram Follow Gate Popup (Sirf ek baar aayega agar already follow kar liya ho) -->
 <div id="insta-gate">
     <div class="gate-box">
         <h2>📸 Follow On Instagram</h2>
@@ -194,6 +233,28 @@ footer{
     </div>
 </div>
 
+<!-- Buy Likes Popup Modal -->
+<div id="buy-modal">
+    <div class="buy-box">
+        <h2>💎 VIP Like Plans</h2>
+        <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Plan buy karne ke liye Telegram par message karein!</p>
+        
+        <div class="plan-card">
+            <h3>Plan 1: ₹59</h3>
+            <p>⏳ 15 Days Plan<br>🔥 Daily 220 Likes</p>
+            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Buy via Telegram</button></a>
+        </div>
+
+        <div class="plan-card">
+            <h3>Plan 2: ₹120</h3>
+            <p>⏳ 30 Days Plan<br>🔥 Daily 220 Likes</p>
+            <a href="https://t.me/Xenon_ask9" target="_blank"><button style="padding:10px; font-size:14px; background:#0088cc; color:white;">✈️ Buy via Telegram</button></a>
+        </div>
+
+        <button class="close-btn" onclick="closeBuyModal()">❌ Close</button>
+    </div>
+</div>
+
 <header>
 <h1>🎮 FF PLAYER INFO</h1>
 <p>Free Fire UID Checker & Like Sender</p>
@@ -201,8 +262,12 @@ footer{
 
 <div class="container">
 
+<!-- Buy Likes Top Navigation Button -->
+<button onclick="openBuyModal()" style="margin-bottom: 20px; background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
+    💎 BUY VIP LIKES (PLANS)
+</button>
+
 {% if result_data %}
-<!-- Likes Success Result Card -->
 <div class="profile">
 <div class="profile-head">
 <div class="avatar">🔥</div>
@@ -223,7 +288,6 @@ footer{
 
 {% else %}
 
-<!-- UID Search Box -->
 <div class="search-box">
 <form method="POST">
 <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
@@ -250,13 +314,12 @@ footer{
 <div class="row"><span class="label">❤️ Likes</span><span class="value">{{ player.likes }}</span></div>
 <div class="row"><span class="label">🏆 BR Rank</span><span class="value">{{ player.rank }}</span></div>
 <div class="row"><span class="label">⚔️ CS Rank</span><span class="value">{{ player.cs_rank }}</span></div>
-<div class="row"><span class="label">📈 Experience</span><span class="value">{{ player.exp }}</span></div>
+<div class="key"><span class="label">📈 Experience</span><span class="value">{{ player.exp }}</span></div>
 <div class="row"><span class="label">👥 Guild</span><span class="value">{{ player.guild }}</span></div>
 <div class="row"><span class="label">🐾 Pet ID</span><span class="value">{{ player.pet }}</span></div>
 </div>
 </div>
 
-<!-- Separate Send Likes Form Button -->
 <form action="/send-likes" method="POST" style="margin-top: 20px;">
     <input type="hidden" name="uid" value="{{ player.uid }}">
     <input type="hidden" name="region" value="{{ player.region }}">
@@ -278,7 +341,6 @@ Created by Sonu
 
 <script>
 window.onload = function() {
-    // Agar user ne pehle follow kar liya hai toh popup hide rahega
     if(localStorage.getItem('insta_followed') === 'true') {
         document.getElementById('insta-gate').style.display = 'none';
     }
@@ -286,6 +348,12 @@ window.onload = function() {
 function unlockWebsite() {
     localStorage.setItem('insta_followed', 'true');
     document.getElementById('insta-gate').style.display = 'none';
+}
+function openBuyModal() {
+    document.getElementById('buy-modal').style.display = 'flex';
+}
+function closeBuyModal() {
+    document.getElementById('buy-modal').style.display = 'none';
 }
 </script>
 
