@@ -93,12 +93,21 @@ header p{ color:#aaa; margin-top:7px; }
     margin:auto;
     padding:20px;
 }
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
 .search-box{
     background:#130b20;
     padding:20px;
     border-radius:18px;
     border:1px solid #3e1e56;
     box-shadow:0 0 20px #000;
+    margin-bottom: 20px;
 }
 input{
     width:100%;
@@ -116,8 +125,6 @@ button{
     padding:15px;
     border:none;
     border-radius:10px;
-    background: linear-gradient(90deg, #38d46b, #b7dc39);
-    color:#07100a;
     font-size:16px;
     font-weight:bold;
     cursor:pointer;
@@ -166,10 +173,36 @@ button:hover {
 .label{ color:#aaa; }
 .value{ color:#ffd21c; font-weight:bold; text-align:right; max-width:55%; word-break:break-word; }
 
-.btn-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
+/* Loading Spinner Animation Overlay */
+#loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(11, 6, 20, 0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+}
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #3e1e56;
+    border-top: 5px solid #42d66d;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+#loading-overlay p {
+    color: #42d66d;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 /* Buy Likes Modal Style */
@@ -233,6 +266,12 @@ footer{
     </div>
 </div>
 
+<!-- Loading Animation Overlay -->
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Please Wait, Processing...</p>
+</div>
+
 <!-- Buy VIP Likes Modal -->
 <div id="buy-modal">
     <div class="buy-box">
@@ -262,10 +301,18 @@ footer{
 
 <div class="container">
 
-<!-- Button 3: Buy VIP Likes Plan Button -->
-<button onclick="openBuyModal()" style="margin-bottom: 20px; background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
-    💎 BUY VIP LIKES (PLANS)
-</button>
+<!-- 3 Main Action Buttons At Top/Front -->
+<div class="action-buttons">
+    <button onclick="showSection('check')" style="background: linear-gradient(90deg, #38d46b, #b7dc39); color: #07100a;">
+        🔍 Check UID
+    </button>
+    <button onclick="showSection('likes')" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">
+        🔥 Send 20 Likes
+    </button>
+    <button onclick="openBuyModal()" style="background: linear-gradient(90deg, #9c27b0, #673ab7); color: white;">
+        💎 Buy VIP Likes (Plans)
+    </button>
+</div>
 
 {% if result_data %}
 <!-- Real Likes Result View -->
@@ -279,29 +326,21 @@ footer{
 <div class="row"><span class="label">❤️ Likes Before</span><span class="value">{{ result_data.old_likes }}</span></div>
 <div class="row"><span class="label">🚀 Likes After</span><span class="value" style="color:#42d66d;">{{ result_data.new_likes }}</span></div>
 <div class="row"><span class="label">➕ Likes Added</span><span class="value" style="color:#ff9900;">+{{ result_data.added_likes }} Likes</span></div>
-<div class="row"><span class="label">✨ Status</span><span class="value" style="color:{% if result_data.success %}#38d46b{% else %}#ff9ba5{% endif %};">{% if result_data.success %}Real Likes Sent Successfully!{% else %}API Response Delayed / No Likes Added{% endif %}</span></div>
+<div class="row"><span class="label">✨ Status</span><span class="value" style="color:{% if result_data.success and result_data.added_likes > 0 %}#38d46b{% else %}#ff9ba5{% endif %};">{{ result_data.message }}</span></div>
 </div>
 </div>
 
-<div class="btn-group">
-    <a href="/" style="flex:1;"><button style="background:#42d66d; color:#07100a;">🏠 Check Another UID</button></a>
+<div class="action-buttons" style="margin-top:20px;">
+    <a href="/"><button style="background:#38d46b; color:#07100a;">🏠 Go To Home</button></a>
 </div>
 
-{% else %}
-
-<!-- Button 1: Check UID Search Box -->
-<div class="search-box">
-<form method="POST">
-<input type="text" name="uid" placeholder="Enter Free Fire UID" required>
-<button type="submit">🔍 CHECK UID</button>
-</form>
-</div>
-
-{% if error %}
+{% elif error %}
 <div class="error">{{ error }}</div>
-{% endif %}
+<div class="action-buttons" style="margin-top:20px;">
+    <a href="/"><button style="background:#38d46b; color:#07100a;">🏠 Go To Home</button></a>
+</div>
 
-{% if player %}
+{% elif player %}
 <div class="profile">
 <div class="profile-head">
 <div class="avatar">🎮</div>
@@ -322,17 +361,29 @@ footer{
 </div>
 </div>
 
-<!-- Button 2: Send 20 Likes Form Button -->
-<form action="/send-likes" method="POST" style="margin-top: 20px;">
-    <input type="hidden" name="uid" value="{{ player.uid }}">
-    <input type="hidden" name="region" value="{{ player.region }}">
-    <input type="hidden" name="old_likes" value="{{ player.likes }}">
-    <input type="hidden" name="nickname" value="{{ player.nickname }}">
-    <button type="submit" style="background: linear-gradient(90deg, #38d46b, #42d66d); color: #07100a;">
-        🔥 SEND 20 LIKES NOW
-    </button>
-</form>
-{% endif %}
+<div class="action-buttons" style="margin-top:20px;">
+    <a href="/"><button style="background:#38d46b; color:#07100a;">🏠 Search Another UID</button></a>
+</div>
+
+{% else %}
+
+<!-- Default Dynamic Forms Box -->
+<div id="check-section" class="search-box">
+    <h3 style="color:#38d46b; margin-bottom:12px;">🔍 Check Player UID Info</h3>
+    <form action="/check-uid" method="POST" onsubmit="showLoading()">
+        <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
+        <button type="submit" style="background:#38d46b; color:#07100a;">Search UID Info</button>
+    </form>
+</div>
+
+<div id="likes-section" class="search-box" style="display:none;">
+    <h3 style="color:#ff9900; margin-bottom:12px;">🔥 Send Free 20 Likes</h3>
+    <form action="/send-likes" method="POST" onsubmit="showLoading()">
+        <input type="text" name="uid" placeholder="Enter Free Fire UID" required>
+        <input type="hidden" name="region" value="ind">
+        <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white;">Send 20 Likes Now</button>
+    </form>
+</div>
 
 {% endif %}
 
@@ -357,6 +408,24 @@ function openBuyModal() {
 }
 function closeBuyModal() {
     document.getElementById('buy-modal').style.display = 'none';
+}
+function showLoading() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
+function showSection(type) {
+    const checkSec = document.getElementById('check-section');
+    const likesSec = document.getElementById('likes-section');
+    if(checkSec && likesSec) {
+        if(type === 'check') {
+            checkSec.style.display = 'block';
+            likesSec.style.display = 'none';
+        } else if(type === 'likes') {
+            checkSec.style.display = 'none';
+            likesSec.style.display = 'block';
+        }
+    } else {
+        window.location.href = '/';
+    }
 }
 </script>
 
