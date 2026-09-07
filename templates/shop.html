@@ -114,7 +114,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 <body>
 
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹299 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹699 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Instant Delivery & Balance Updates Active!</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹299 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹699 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Refer & Earn ₹50 per purchase active!</marquee>
 </div>
 
 <div class="navbar">
@@ -137,7 +137,8 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
         <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (QR)</button>
         <button class="menu-item" onclick="closeMenu(); openHistoryModal()">⏱️ Payment History</button>
         <button class="menu-item" onclick="closeMenu(); openPurchasesModal()">🛍️ My Purchases & Codes</button>
-        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#42d66d;">💬 Customer Support: @Xenon_ask9</a>
+        <button class="menu-item" onclick="closeMenu(); openReferralModal()">👥 Refer & Earn (₹50)</button>
+        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#42d66d;">💬 Support: @Xenon_ask9</a>
         {% if is_admin == 1 %}
         <a href="/admin" class="menu-item">👑 Admin Panel</a>
         {% endif %}
@@ -158,7 +159,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
     <div class="welcome-banner">
         <h3>⚡ Welcome to Xenon Store!</h3>
-        <p>100% Secure & Instant Delivery. Add money using the menu option to instantly buy redeem codes & CC cards!</p>
+        <p>100% Secure & Instant Delivery. Share your referral link to earn ₹50 on every friend's purchase!</p>
         <p style="margin-top:8px; font-size:11px; color:#42d66d;">💬 Customer Support Telegram: <b>@Xenon_ask9</b></p>
     </div>
 
@@ -201,6 +202,20 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
+<!-- Referral System Modal -->
+<div id="referral-modal" class="modal">
+    <div class="modal-box">
+        <h3 style="color: #42d66d; margin-bottom: 10px;">👥 Refer & Earn ₹50</h3>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Share your link. When your friend buys any item, you get <b>₹50</b> added instantly to your wallet!</p>
+        <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center;">
+        <button onclick="copyRefLink()" style="width: 100%; background: #42d66d; color: #07100a; margin-top: 5px;">📋 Copy Referral Link</button>
+        <div style="margin-top: 15px; background: #09050f; padding: 10px; border-radius: 8px; font-size: 13px;">
+            Total Friends Referred: <b style="color: #ffd21c;">{{ referral_count }}</b>
+        </div>
+        <button onclick="closeReferralModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+    </div>
+</div>
+
 <!-- Payment History Modal -->
 <div id="history-modal" class="modal">
     <div class="modal-box">
@@ -233,7 +248,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
                         <strong style="color:#ffd21c;">{{ pur[1] }}</strong><br>
                         <span style="color:#aaa;">Price: ₹{{ pur[2] }}</span>
                     </div>
-                    <button onclick="viewDetails('{{ pur[1] }}', '{{ pur[3] }}')" style="background:#38d46b; color:#07100a; padding:5px 10px; font-size:11px;">View</button>
+                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#38d46b; color:#07100a; padding:5px 10px; font-size:11px;">View Card</button>
                 </div>
                 {% endfor %}
             {% else %}
@@ -244,12 +259,12 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
-<!-- Details View Popup Modal -->
+<!-- Formatted Secret Credentials Details Modal -->
 <div id="details-modal" class="modal">
-    <div class="modal-box">
-        <h3 id="det-title" style="color: #42d66d; margin-bottom: 10px;">Product Details</h3>
-        <p id="det-content" style="background: #09050f; padding: 15px; border-radius: 8px; font-size: 13px; color: #fff; word-break: break-all; margin-bottom: 15px; border: 1px solid #3e1e56;"></p>
-        <button onclick="closeDetailsModal()" style="width: 100%; background: #38d46b; color: #07100a;">Back</button>
+    <div class="modal-box" style="border: 2px solid #38d46b; box-shadow: 0 0 25px rgba(56,212,107,0.3);">
+        <h3 id="det-title" style="color: #42d66d; margin-bottom: 10px;">💳 Secure Credentials</h3>
+        <div id="det-content" style="background: #09050f; padding: 15px; border-radius: 8px; font-size: 14px; color: #ffd21c; text-align: left; white-space: pre-wrap; word-break: break-all; margin-bottom: 15px; border: 1px dashed #38d46b; font-family: monospace;"></div>
+        <button onclick="closeDetailsModal()" style="width: 100%; background: #38d46b; color: #07100a;">Back to List</button>
     </div>
 </div>
 
@@ -266,8 +281,18 @@ function closeHistoryModal() { document.getElementById('history-modal').style.di
 function openPurchasesModal() { document.getElementById('purchases-modal').style.display = 'flex'; }
 function closePurchasesModal() { document.getElementById('purchases-modal').style.display = 'none'; }
 
+function openReferralModal() { document.getElementById('referral-modal').style.display = 'flex'; }
+function closeReferralModal() { document.getElementById('referral-modal').style.display = 'none'; }
+
+function copyRefLink() {
+    var copyText = document.getElementById("ref-link-input");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Copied referral link to clipboard!");
+}
+
 function viewDetails(name, details) {
-    document.getElementById('det-title').innerText = name;
+    document.getElementById('det-title').innerText = name + " (Details)";
     document.getElementById('det-content').innerText = details;
     document.getElementById('details-modal').style.display = 'flex';
 }
