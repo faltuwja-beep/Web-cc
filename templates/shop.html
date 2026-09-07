@@ -10,21 +10,22 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 body { background: var(--bg-main, #07030d); color: var(--text-main, #f3f4f6); padding-bottom: 90px; overflow-x: hidden; transition: 0.3s; }
 
-/* Light & Dark Theme Variables */
 body.dark-theme { --bg-main: #07030d; --card-bg: linear-gradient(145deg, #11091d, #0d0617); --nav-bg: rgba(15, 9, 26, 0.9); --text-main: #f3f4f6; --modal-bg: linear-gradient(145deg, #130a21, #0a0414); --input-bg: #06020c; }
 body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #ffffff, #e5e7eb); --nav-bg: rgba(255, 255, 255, 0.9); --text-main: #111827; --modal-bg: linear-gradient(145deg, #ffffff, #f9fafb); --input-bg: #e5e7eb; }
 
-.live-ticker {
+/* Fading Live Tickers */
+.live-ticker, .buy-ticker-alert {
     background: linear-gradient(90deg, #0d2818, #05140b);
     border-bottom: 1px solid rgba(56, 212, 107, 0.3);
-    color: #4ade80; padding: 10px 0; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden;
+    color: #4ade80; padding: 10px 0; font-size: 12px; font-weight: 600; text-align: center;
+    position: relative; overflow: hidden; height: 35px;
 }
-
-.buy-ticker-alert {
-    background: linear-gradient(90deg, #2b1d0d, #140d05);
-    border-bottom: 1px solid rgba(250, 204, 21, 0.4);
-    color: #facc15; padding: 8px 0; font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden;
+.buy-ticker-alert { background: linear-gradient(90deg, #2b1d0d, #140d05); border-bottom: 1px solid rgba(250, 204, 21, 0.4); color: #facc15; }
+.fade-ticker-item {
+    position: absolute; width: 100%; left: 0; top: 0; height: 100%; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.8s ease-in-out;
 }
+.fade-ticker-item.active { opacity: 1; }
 
 .navbar { 
     background: var(--nav-bg); backdrop-filter: blur(12px);
@@ -35,7 +36,6 @@ body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #fffff
     background: linear-gradient(135deg, #4ade80, #22c55e);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; font-weight: 800; 
 }
-.nav-right { display: flex; align-items: center; gap: 10px; }
 .wallet-pill { 
     background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1)); 
     border: 1px solid rgba(234, 179, 8, 0.4); padding: 6px 14px; border-radius: 30px; font-size: 13px; color: #facc15; font-weight: 700; 
@@ -94,15 +94,21 @@ body.light-theme { --bg-main: #f3f4f6; --card-bg: linear-gradient(145deg, #fffff
     color: #030712; font-weight: 700; font-size: 12px; border-radius: 10px; border: none; cursor: pointer;
 }
 
+/* Smooth Modal Animations */
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(3, 1, 7, 0.85); backdrop-filter: blur(10px);
     justify-content: center; align-items: center; z-index: 1001; padding: 20px;
+    opacity: 0; transition: opacity 0.3s ease;
 }
+.modal.show { display: flex; opacity: 1; }
 .modal-box {
     background: var(--modal-bg); padding: 24px; border-radius: 22px;
     border: 1px solid rgba(139, 92, 246, 0.35); max-width: 400px; width: 100%; text-align: center; max-height: 85vh; overflow-y: auto;
+    transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+.modal.show .modal-box { transform: scale(1); }
+
 input, select { width: 100%; padding: 13px; margin: 8px 0; background: var(--input-bg); border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text-main); border-radius: 12px; outline: none; font-size: 13px; }
 button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px; cursor: pointer; }
 .flash-msg { background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; padding: 12px; margin-bottom: 18px; border-radius: 12px; text-align: center; font-size: 13px; }
@@ -111,12 +117,18 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 </head>
 <body class="dark-theme">
 
+<!-- Main Fading Ticker -->
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🚀 Xenon Store is 100% Safe & Verified! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Instant Delivery Active! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 👥 Refer & Earn ₹50 per purchase active!</marquee>
+    <div class="fade-ticker-item active">🚀 Xenon Store is 100% Safe & Verified Instant Delivery Platform!</div>
+    <div class="fade-ticker-item">💎 Refer & Earn ₹50 Instant Wallet Bonus on Every Friend's Purchase!</div>
+    <div class="fade-ticker-item">⚡ 24x7 Automated UPI Payments & Secure Codes Delivery!</div>
 </div>
 
+<!-- Purchase Fading Ticker -->
 <div class="buy-ticker-alert">
-    <marquee behavior="scroll" direction="left" scrollamount="4">⚡ LIVE RECENT PURCHASES: Rahul just bought Google Play Code ₹699! &nbsp;&nbsp;&nbsp;🔥 Aman purchased Mastercard VIP ₹1099! &nbsp;&nbsp;&nbsp;💎 Priya unlocked Anime VIP Pass!</marquee>
+    <div class="fade-buy-item active">⚡ LIVE: Rahul just bought Google Play Code ₹699!</div>
+    <div class="fade-buy-item">🔥 LIVE: Aman purchased Mastercard VIP ₹1099!</div>
+    <div class="fade-buy-item">💎 LIVE: Priya unlocked Anime VIP Pass successfully!</div>
 </div>
 
 <div class="navbar">
@@ -134,10 +146,10 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 <!-- VIP Bottom Navigation Bar -->
 <div class="bottom-nav">
     <button class="nav-item active" onclick="window.location.href='/shop'"><span>🏠</span>Shop</button>
-    <button class="nav-item" onclick="openQRModal()"><span>💳</span>Add Money</button>
-    <button class="nav-item" onclick="openReferralModal()"><span>👥</span>Refer</button>
-    <button class="nav-item" onclick="openPurchasesModal()"><span>🛍️</span>Purchases</button>
-    <button class="nav-item" onclick="openSettingsModal()"><span>⚙️</span>Settings</button>
+    <button class="nav-item" onclick="openModal('qr-modal')"><span>💳</span>Add Money</button>
+    <button class="nav-item" onclick="openModal('referral-modal')"><span>👥</span>Refer</button>
+    <button class="nav-item" onclick="openModal('purchases-modal')"><span>🛍️</span>Purchases</button>
+    <button class="nav-item" onclick="openModal('settings-modal')"><span>⚙️</span>Settings</button>
 </div>
 
 <div class="container">
@@ -223,58 +235,93 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 
 </div>
 
-<!-- QR Modal -->
+<!-- QR Modal with Full Payment & UTR Guide -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money via QR (Sima Devi)</h3>
-        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 5px;">UPI ID: <b style="color:var(--text-main);">sima6241@ptaxis</b></p>
-        <div style="text-align: center; margin-bottom: 12px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 12px; border:2px solid rgba(139,92,246,0.4); padding:4px; background:#fff;">
+        <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money via QR</h3>
+        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 8px; text-align: left; line-height: 1.4;">
+            <b>Step 1:</b> Scan QR or pay to UPI: <b style="color:var(--text-main);">sima6241@ptaxis</b> (Name: Sima Devi).<br>
+            <b>Step 2:</b> Google Pay / PhonePe / Paytm se payment karne ke baad 12-digit ka **UTR / Reference / Transaction ID** copy karein.<br>
+            <b>Step 3:</b> Jitna amount pay kiya hai woh aur UTR neeche daal kar submit karein. Admin verification ke baad balance add ho jayega!
+        </p>
+        
+        <div style="text-align: center; margin-bottom: 10px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 12px; border:2px solid rgba(139,92,246,0.4); padding:4px; background:#fff;">
         </div>
+        
         <form action="/add-money" method="POST">
             <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
-            <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
+            <input type="text" name="utr" placeholder="Enter 12-digit UTR / Transaction ID" required>
             <button type="submit" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 5px;">Submit Payment Proof</button>
         </form>
-        <button onclick="closeQRModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">Close</button>
+        <button onclick="closeModal('qr-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">Close Window</button>
     </div>
 </div>
 
-<!-- Referral Modal -->
+<!-- Referral Modal with Full Guide & Stats -->
 <div id="referral-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #4ade80; margin-bottom: 10px; font-size: 16px;">👥 Refer & Earn ₹50</h3>
-        <p style="font-size: 12px; color: #9ca3af; margin-bottom: 12px;">Share your link. Jab aapka friend is link se register karke koi bhi item kharidega, tab aapko ₹50 ka bonus milega!</p>
+        <h3 style="color: #4ade80; margin-bottom: 8px; font-size: 16px;">👥 Refer & Earn ₹50</h3>
+        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 10px; text-align: left; line-height: 1.4;">
+            <b>Kaise kaam karta hai?</b><br>
+            1. Apna referral link niche se copy karein.<br>
+            2. Dosto ke sath share karein.<br>
+            3. Jab aapka friend is link se register karega aur pehli purchase karega, tab aapke wallet me turant **₹50** credit ho jayenge!
+        </p>
         <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center; color:#4ade80;">
-        <button onclick="copyRefLink()" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 5px;">📋 Copy Link</button>
-        <div style="margin-top: 15px; background: var(--input-bg); padding: 12px; border-radius: 12px; font-size: 13px;">
-            Total Friends Referred: <b style="color: #facc15;">{{ referral_count }}</b>
+        <button onclick="copyRefLink()" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 5px;">📋 Copy Referral Link</button>
+        
+        <div style="margin-top: 12px; background: var(--input-bg); padding: 10px; border-radius: 12px; font-size: 13px; text-align: left;">
+            Total Friends Referred: <b style="color: #facc15;">{{ referral_count }}</b><br>
+            Total Earnings: <b style="color: #4ade80;">₹{{ referral_count * 50 }}</b>
         </div>
-        <button onclick="closeReferralModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
+        <button onclick="closeModal('referral-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 12px;">Close Window</button>
     </div>
 </div>
 
-<!-- Purchases Modal -->
+<!-- Purchases Modal with Today Purchases & History -->
 <div id="purchases-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">🛍️ My Purchases</h3>
-        <div style="max-height: 200px; overflow-y: auto; text-align: left;">
-            {% if my_purchases %}
-                {% for pur in my_purchases %}
+        <h3 style="color: #4ade80; margin-bottom: 8px; font-size: 16px;">🛍️ My Purchases & Credentials</h3>
+        
+        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+            <button onclick="switchTab('today')" id="btn-today" style="flex:1; background:#4ade80; color:#030712; font-size:11px; padding:6px;">Today Purchases</button>
+            <button onclick="switchTab('all')" id="btn-all" style="flex:1; background:#374151; color:#fff; font-size:11px; padding:6px;">All History</button>
+        </div>
+
+        <!-- Today Purchases Tab -->
+        <div id="tab-today" style="max-height: 180px; overflow-y: auto; text-align: left;">
+            {% if today_purchases %}
+                {% for pur in today_purchases %}
                 <div style="background:var(--input-bg); padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><strong style="color:#facc15;">{{ pur[1] }}</strong><br><span style="color:#9ca3af;">₹{{ pur[2] }}</span></div>
-                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#4ade80; color:#030712; padding:6px 12px; font-size:11px; font-weight:700;">View</button>
+                    <div><strong style="color:#facc15;">{{ pur[1] }}</strong><br><span style="color:#9ca3af; font-size:10px;">₹{{ pur[2] }} | {{ pur[4] }}</span></div>
+                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#4ade80; color:#030712; padding:5px 10px; font-size:11px; font-weight:700;">View Card</button>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases yet.</p>
+                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases made today.</p>
             {% endif %}
         </div>
-        <button onclick="closePurchasesModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close</button>
+
+        <!-- All History Tab -->
+        <div id="tab-all" style="max-height: 180px; overflow-y: auto; text-align: left; display: none;">
+            {% if my_purchases %}
+                {% for pur in my_purchases %}
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong style="color:#facc15;">{{ pur[1] }}</strong><br><span style="color:#9ca3af; font-size:10px;">₹{{ pur[2] }} | {{ pur[4] }}</span></div>
+                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#4ade80; color:#030712; padding:5px 10px; font-size:11px; font-weight:700;">View Card</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchase history found.</p>
+            {% endif %}
+        </div>
+
+        <button onclick="closeModal('purchases-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 12px;">Close Window</button>
     </div>
 </div>
 
-<!-- Settings Modal (Theme, Name, Password Change) -->
+<!-- Settings Modal -->
 <div id="settings-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⚙️ Account Settings</h3>
@@ -297,64 +344,4 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
             <button type="submit" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 10px;">Save Changes</button>
         </form>
 
-        <a href="/logout"><button style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">🚪 Logout Account</button></a>
-        <button onclick="closeSettingsModal()" style="width: 100%; background: #374151; color: white; margin-top: 8px;">Close</button>
-    </div>
-</div>
-
-<!-- Credentials Details Modal -->
-<div id="details-modal" class="modal">
-    <div class="modal-box" style="border: 2px solid #4ade80;">
-        <h3 id="det-title" style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">💳 Credentials</h3>
-        <div id="det-content" style="background: #030712; padding: 15px; border-radius: 12px; font-size: 13px; color: #facc15; text-align: left; white-space: pre-wrap; word-break: break-all; margin-bottom: 15px; font-family: monospace;"></div>
-        <button onclick="closeDetailsModal()" style="width: 100%; background: #4ade80; color: #030712; font-weight: 700;">Back</button>
-    </div>
-</div>
-
-<script>
-function openQRModal() { document.getElementById('qr-modal').style.display = 'flex'; }
-function closeQRModal() { document.getElementById('qr-modal').style.display = 'none'; }
-
-function openPurchasesModal() { document.getElementById('purchases-modal').style.display = 'flex'; }
-function closePurchasesModal() { document.getElementById('purchases-modal').style.display = 'none'; }
-
-function openReferralModal() { document.getElementById('referral-modal').style.display = 'flex'; }
-function closeReferralModal() { document.getElementById('referral-modal').style.display = 'none'; }
-
-function openSettingsModal() { document.getElementById('settings-modal').style.display = 'flex'; }
-function closeSettingsModal() { document.getElementById('settings-modal').style.display = 'none'; }
-
-function changeTheme(mode) {
-    if(mode === 'light') {
-        document.body.className = 'light-theme';
-        localStorage.setItem('xenon_theme', 'light');
-    } else {
-        document.body.className = 'dark-theme';
-        localStorage.setItem('xenon_theme', 'dark');
-    }
-}
-
-// Load saved theme on startup
-window.onload = function() {
-    let savedTheme = localStorage.getItem('xenon_theme') || 'dark';
-    document.body.className = savedTheme + '-theme';
-    let selector = document.getElementById('theme-selector');
-    if(selector) selector.value = savedTheme;
-}
-
-function copyRefLink() {
-    var copyText = document.getElementById("ref-link-input");
-    copyText.select();
-    document.execCommand("copy");
-    alert("Copied referral link!");
-}
-function viewDetails(name, details) {
-    document.getElementById('det-title').innerText = name + " (Details)";
-    document.getElementById('det-content').innerText = details;
-    document.getElementById('details-modal').style.display = 'flex';
-}
-function closeDetailsModal() { document.getElementById('details-modal').style.display = 'none'; }
-</script>
-
-</body>
-</html>
+        <a href="/logout"><button style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">🚪 Log
