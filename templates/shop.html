@@ -3,98 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoYo Shop</title>
+<title>YoYo Shop & FF Tools</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 90px; }
+
+/* Live Ticker Bar */
+.live-ticker {
+    background: linear-gradient(90deg, #182b1c, #0e1e12);
+    border-bottom: 1px solid #38d46b;
+    color: #38d46b;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+.live-ticker marquee { width: 100%; }
+
 .navbar { background: #120b20; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
-.nav-left { display: flex; align-items: center; gap: 15px; }
 .logo { color: #42d66d; font-size: 20px; font-weight: bold; }
-.nav-right { display: flex; align-items: center; gap: 15px; }
 .wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 14px; border-radius: 20px; font-size: 14px; color: #ffd21c; font-weight: bold; }
-.admin-btn { background: #ff9900; color: white; padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: bold; }
 
-.notice-banner { background: linear-gradient(135deg, #182b1c, #0e1e12); border: 1px solid #38d46b; margin: 15px; padding: 15px; border-radius: 12px; text-align: center; }
-.notice-banner h3 { color: #38d46b; font-size: 15px; margin-bottom: 5px; }
-.notice-banner p { color: #aaa; font-size: 12px; line-height: 1.4; }
+.container { max-width: 650px; margin: auto; padding: 15px; }
 
-.section-title { margin: 20px 15px 10px 15px; font-size: 18px; color: #42d66d; }
-.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px; }
-.product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
-.card-banner { height: 90px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
-.card-details { padding: 12px; }
-.card-name { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 6px; }
-.card-price { font-size: 15px; color: #ffd21c; font-weight: bold; }
+.box { background: #130b20; padding: 20px; border-radius: 14px; border: 1px solid #3e1e56; margin-bottom: 20px; box-shadow: 0 0 20px #000; }
+input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
+button { padding: 12px 20px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-.deposit-box { background: #130b20; border: 1px solid #3e1e56; margin: 20px 15px; padding: 20px; border-radius: 14px; }
-.deposit-box input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+.card { background: #130b20; border: 1px solid #3e1e56; padding: 15px; border-radius: 12px; text-align: center; }
+.price { color: #ffd21c; font-size: 16px; font-weight: bold; margin: 8px 0; }
+
+/* QR Modal Popup */
+#qr-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(11, 6, 20, 0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+.qr-box {
+    background: #130b20;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #3e1e56;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    animation: scaleUp 0.3s ease;
+}
+@keyframes scaleUp {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
 
 .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #120b20; border-top: 1px solid #3e1e56; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-.view-bag-btn { background: linear-gradient(90deg, #ff9900, #ff3300); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
+.flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
 </style>
 </head>
 <body>
 
+<!-- Live Ticker Bar at Top -->
+<div class="live-ticker">
+    <marquee behavior="scroll" direction="left">🔥 200+ Redeem Codes & CC Cards Sold Today! | ⚡ Instant Admin Approval on UTR | 💎 Use Free Fire UID Checker & Likes Tool Now!</marquee>
+</div>
+
 <div class="navbar">
-    <div class="nav-left">
-        <span class="logo">YoYo Shop</span>
-    </div>
-    <div class="nav-right">
+    <div class="logo">YoYo Shop</div>
+    <div style="display:flex; gap:10px; align-items:center;">
         <div class="wallet-pill">💰 ₹{{ balance }}</div>
         {% if is_admin == 1 %}
-        <a href="/admin" class="admin-btn">👑 Admin</a>
+        <a href="/admin" style="background:#ff9900; color:white; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:bold;">Admin</a>
         {% endif %}
-        <a href="/logout" style="color: #ff9ba5; font-size: 13px; text-decoration: none;">Logout</a>
+        <a href="/logout" style="color:#ff9ba5; font-size:13px; text-decoration:none;">Logout</a>
     </div>
 </div>
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for msg in messages %}
-      <div class="flash-msg">{{ msg }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+<div class="container">
 
-<div class="notice-banner">
-    <h3>⚠️ IMPORTANT PAYMENT NOTICE</h3>
-    <p>Website se payment karte waqt QR code par naam zaroor check karein. Naam match na ho toh payment na karein!</p>
-</div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}<div class="flash-msg">{{ msg }}</div>{% endfor %}{% endif %}
+    {% endwith %}
 
-<div class="section-title">✨ Featured Cards & Redeem Codes</div>
-<div class="product-grid">
-    {% for p in products %}
-    <div class="product-card">
-        <div class="card-banner">
-            <span style="font-size: 14px; font-weight: bold; color: #42d66d;">{{ p[2] }}</span>
-        </div>
-        <div class="card-details">
-            <div class="card-name">{{ p[1] }}</div>
-            <div class="card-price">₹{{ p[3] }}</div>
-            <button onclick="alert('Please add balance using QR below to buy!')" style="width:100%; margin-top:8px; padding:8px; background:#38d46b; border:none; font-weight:bold; border-radius:6px; cursor:pointer; color:#07100a;">Buy Now</button>
+    <!-- Add Money Popup Modal -->
+    <div id="qr-modal">
+        <div class="qr-box">
+            <h3 style="color: #ff9900; margin-bottom: 10px;">💳 Add Money via QR Code</h3>
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">Scan QR & pay, then submit UTR / Transaction ID below.</p>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px;">
+            </div>
+            <form action="/add-money" method="POST">
+                <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
+                <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
+                <button type="submit" style="width: 100%; background: linear-gradient(90deg, #ff9900, #ff3300); color: white; margin-top: 10px;">Submit Proof</button>
+            </form>
+            <button onclick="closeQRModal()" style="width: 100%; background: #742331; color: white; margin-top: 8px;">Close</button>
         </div>
     </div>
-    {% endfor %}
-</div>
 
-<div class="deposit-box">
-    <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR Code</h3>
-    <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">Scan QR & pay, then submit your UTR / Transaction ID below.</p>
-    <div style="text-align: center; margin-bottom: 15px;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px;">
+    <!-- Stats Bar -->
+    <div style="display:flex; gap:12px; margin-bottom:20px;">
+        <div class="box" style="flex:1; text-align:center; padding:12px; margin:0;">📊 Checks: <b>{{ stats.total_checks }}</b></div>
+        <div class="box" style="flex:1; text-align:center; padding:12px; margin:0;">🔥 Likes Sent: <b>{{ stats.total_likes_sent }}</b></div>
     </div>
-    <form action="/add-money" method="POST">
-        <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
-        <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
-        <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(90deg, #ff9900, #ff3300); color: white; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 5px;">Submit Payment Proof</button>
-    </form>
+
+    <!-- Store Section -->
+    <h3 style="color:#42d66d; margin-bottom:10px;">🛍️ Digital Store (Redeem Codes & CC)</h3>
+    <div class="grid">
+        {% for p in products %}
+        <div class="card">
+            <h4>{{ p[1] }}</h4>
+            <p style="color:#aaa; font-size:11px; margin:5px 0;">{{ p[4] }}</p>
+            <div class="price">₹{{ p[3] }}</div>
+            <button onclick="alert('Insufficient balance! Please click Add Money below.')" style="width:100%; background:#38d46b; color:#07100a;">Buy Now</button>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
 
+<!-- Bottom Fixed Bar -->
 <div class="bottom-bar">
     <div style="font-size: 14px; color: #bbb; font-weight: bold;">User: {{ username }}</div>
-    <button class="view-bag-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">Back to Top ↑</button>
+    <button onclick="openQRModal()" style="background: linear-gradient(90deg, #ff9900, #ff3300); color: white; padding: 10px 20px;">💳 Add Money (QR)</button>
 </div>
+
+<script>
+function openQRModal() { document.getElementById('qr-modal').style.display = 'flex'; }
+function closeQRModal() { document.getElementById('qr-modal').style.display = 'none'; }
+</script>
 
 </body>
 </html>
