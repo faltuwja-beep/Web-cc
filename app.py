@@ -31,15 +31,11 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Check existing columns in users table if it exists
     cursor.execute("PRAGMA table_info(users)")
     columns = [row["name"] for row in cursor.fetchall()]
-    
-    # If table exists but lacks referral_code, drop it to recreate with proper schema safely
     if columns and "referral_code" not in columns:
         cursor.execute("DROP TABLE users")
 
-    # Create users table with all required columns natively
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE,
@@ -184,6 +180,37 @@ def shop():
     referral_link = request.host_url + "register?ref=" + referral_code
     return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
 
+@app.route("/update-settings", methods=["POST"])
+def update_settings():
+    if "username" not in session:
+        return redirect(url_for("login"))
+    
+    new_username = request.form.get("new_username", "").strip()
+    new_password = request.form.get("new_password", "").strip()
+    old_username = session["username"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        if new_username and new_username != old_username:
+            cursor.execute("UPDATE users SET username = ? WHERE username = ?", (new_username, old_username))
+            cursor.execute("UPDATE payments SET username = ? WHERE username = ?", (new_username, old_username))
+            cursor.execute("UPDATE purchases SET username = ? WHERE username = ?", (new_username, old_username))
+            session["username"] = new_username
+
+        if new_password:
+            cursor.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, session["username"]))
+
+        conn.commit()
+        conn.close()
+        flash("✅ Settings updated successfully!", "success")
+    except sqlite3.IntegrityError:
+        conn.close()
+        flash("❌ Username already taken! Choose another.", "error")
+
+    return redirect(url_for("shop"))
+
 @app.route("/buy/<int:product_id>")
 def buy_product(product_id):
     if "username" not in session:
@@ -219,7 +246,7 @@ def buy_product(product_id):
 
         send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`")
 
-        flash("🎉 Purchase Successful! Check 'My Purchases & Codes' to view your secure credentials.", "success")
+        flash("🎉 Purchase Successful! Check 'My Purchases' to view your secure credentials.", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -311,4 +338,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-    
+                
