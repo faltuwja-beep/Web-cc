@@ -6,9 +6,9 @@ from datetime import datetime
 app = Flask(__name__)
 
 API_URL = "https://ff-info-ro45.vercel.app/api"
+LIKE_API_BASE = "https://two0likeapifreebyzexxyh4x.onrender.com/like"
 
-# Daily limit track karne ke liye dictionary
-# Format: { "UID": "YYYY-MM-DD" }
+# Daily limit tracker: { "UID": "YYYY-MM-DD" }
 daily_limit_tracker = {}
 
 
@@ -77,51 +77,49 @@ def send_likes():
 
     today_date = datetime.now().strftime("%Y-%m-%d")
 
-    # Check karo ki kya is UID ko aaj already likes mil chuke hain
+    # 1 UID = 1 day limit check
     if daily_limit_tracker.get(uid) == today_date:
-        # Agar aaj le liya hai toh error ke sath wapas bhej do
-        error_msg = "⚠️ Is UID par aaj ke likes already bhej diye gaye hain! Aap ab kal (next day) hi dobara likes bhej sakte hain."
-        
-        # Player object wapas bana kar error dikhane ke liye
+        error_msg = "⚠️ Is UID par aaj ke free likes already bhej diye gaye hain! Aap ab kal dobara try karein."
         player = {
-            "nickname": nickname,
-            "uid": uid,
-            "region": region,
-            "likes": old_likes,
+            "nickname": nickname, "uid": uid, "region": region, "likes": old_likes,
             "level": "N/A", "rank": "N/A", "cs_rank": "N/A", "exp": "N/A", "guild": "N/A", "pet": "N/A"
         }
         return render_template("index.html", player=player, error=error_msg)
 
-    like_api = f"https://two0likeapifreebyzexxyh4x.onrender.com/like?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
+    like_api_url = f"{LIKE_API_BASE}?key=20LikeFreeApiByzexxyh4x&uid={uid}&region={region}"
 
     new_likes = old_likes
+    status_success = False
     
     try:
-        requests.get(like_api, timeout=20)
+        # Like API Hit karein
+        like_resp = requests.get(like_api_url, timeout=20)
         
-        # Mark kar do ki aaj ki limit poori ho gayi is UID ki
-        daily_limit_tracker[uid] = today_date
-
+        # Real likes check karne ke liye dobara profile fetch karein
         info_resp = requests.get(API_URL, params={"uid": uid, "key": "Anurag"}, timeout=20)
         if info_resp.status_code == 200:
             data = info_resp.json()
             basic = data.get("basicInfo", {})
-            fetched_likes = int(basic.get("liked", old_likes))
-            if fetched_likes <= old_likes:
-                new_likes = old_likes + 20  # Simulated/Fake increment backup
-            else:
-                new_likes = fetched_likes
+            new_likes = int(basic.get("liked", old_likes))
             nickname = basic.get("nickname", nickname)
+
+        # Agar real likes badhe hain ya API successfully hit ho gayi hai
+        if new_likes > old_likes or like_resp.status_code == 200:
+            status_success = True
+            daily_limit_tracker[uid] = today_date
+        else:
+            status_success = False
+
     except Exception:
-        new_likes = old_likes + 20
-        daily_limit_tracker[uid] = today_date
+        status_success = False
 
     result_data = {
         "uid": uid,
         "nickname": nickname,
         "old_likes": old_likes,
         "new_likes": new_likes,
-        "added_likes": new_likes - old_likes
+        "added_likes": new_likes - old_likes if new_likes >= old_likes else 0,
+        "success": status_success
     }
 
     return render_template("index.html", result_data=result_data)
