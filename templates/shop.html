@@ -3,148 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xenon Store</title>
+<title>Xenon Store | VIP Digital Marketplace</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-body { background: #0b0614; color: white; padding-bottom: 70px; }
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background: #07030d; color: #f3f4f6; padding-bottom: 80px; overflow-x: hidden; }
+
+/* VIP Live Ticker Bar */
 .live-ticker {
-    background: linear-gradient(90deg, #182b1c, #0e1e12);
-    border-bottom: 1px solid #38d46b;
-    color: #38d46b;
-    padding: 8px 0;
-    font-size: 13px;
-    font-weight: bold;
+    background: linear-gradient(90deg, #0d2818, #05140b);
+    border-bottom: 1px solid rgba(56, 212, 107, 0.3);
+    color: #4ade80;
+    padding: 10px 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     white-space: nowrap;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(56, 212, 107, 0.3);
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.1);
 }
 
-.navbar { background: #120b20; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
+/* Glassmorphism Navbar */
+.navbar { 
+    background: rgba(15, 9, 26, 0.85); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 14px 18px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 .nav-left { display: flex; align-items: center; gap: 12px; }
-.menu-btn { background: #1c102b; border: 1px solid #43205c; color: white; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-.logo { color: #42d66d; font-size: 18px; font-weight: bold; text-shadow: 0 0 10px rgba(66, 214, 109, 0.5); }
-.nav-right { display: flex; align-items: center; gap: 10px; }
-.wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #ffd21c; font-weight: bold; box-shadow: 0 0 10px rgba(255, 210, 28, 0.2); }
+.menu-btn { 
+    background: linear-gradient(135deg, #1e1136, #2d1852); 
+    border: 1px solid rgba(139, 92, 246, 0.4); 
+    color: #fff; 
+    padding: 8px 12px; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.menu-btn:hover { border-color: #4ade80; box-shadow: 0 0 12px rgba(74, 222, 128, 0.3); }
 
+.logo { 
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 18px; 
+    font-weight: 800; 
+    letter-spacing: 0.5px;
+}
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.wallet-pill { 
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1)); 
+    border: 1px solid rgba(234, 179, 8, 0.4); 
+    padding: 6px 14px; 
+    border-radius: 30px; 
+    font-size: 13px; 
+    color: #facc15; 
+    font-weight: 700; 
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Side Drawer Menu */
 #side-menu {
     display: none;
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(3, 1, 7, 0.8);
+    backdrop-filter: blur(8px);
     z-index: 9998;
 }
 .menu-drawer {
-    width: 280px; height: 100%;
-    background: #130b20;
-    border-right: 1px solid #3e1e56;
-    padding: 20px;
+    width: 300px; height: 100%;
+    background: #0f091a;
+    border-right: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.8);
 }
 .menu-item {
-    background: #1c102b;
-    color: white;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #3e1e56;
+    background: linear-gradient(135deg, #150c24, #1b102f);
+    color: #e5e7eb;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 13px;
     text-align: left;
     display: block;
     text-decoration: none;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
-.menu-item:hover { border-color: #42d66d; box-shadow: 0 0 10px rgba(66,214,109,0.3); }
+.menu-item:hover { 
+    border-color: #4ade80; 
+    background: linear-gradient(135deg, #1b102f, #22143b);
+    transform: translateX(4px);
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); 
+}
 
-.container { max-width: 650px; margin: auto; padding: 15px; }
+.container { max-width: 700px; margin: auto; padding: 18px; }
 
+/* VIP Welcome Banner */
 .welcome-banner { 
-    background: linear-gradient(135deg, #182b1c, #0e1e12); 
-    border: 1px solid #38d46b; 
-    padding: 15px; 
-    border-radius: 12px; 
+    background: linear-gradient(135deg, #112317, #0a170f); 
+    border: 1px solid rgba(74, 222, 128, 0.35); 
+    padding: 18px; 
+    border-radius: 16px; 
     text-align: center; 
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(74, 222, 128, 0.2);
 }
-.welcome-banner h3 { color: #38d46b; font-size: 15px; margin-bottom: 5px; }
-.welcome-banner p { color: #ccc; font-size: 12px; line-height: 1.4; }
+.welcome-banner h3 { color: #4ade80; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.welcome-banner p { color: #9ca3af; font-size: 12px; line-height: 1.5; }
 
-.section-title { margin: 15px 0 10px 0; font-size: 16px; color: #42d66d; }
-.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
-.product-card:hover { border-color: #38d46b; transform: translateY(-2px); }
-.card-banner { height: 90px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
-.card-banner img { max-height: 55px; max-width: 55px; object-fit: contain; }
-.card-details { padding: 12px; }
-.card-name { font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 4px; }
-.card-desc { font-size: 10px; color: #aaa; margin-bottom: 6px; }
-.card-price { font-size: 14px; color: #ffd21c; font-weight: bold; }
+.section-title { margin: 20px 0 12px 0; font-size: 17px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
 
+/* Product Grid System */
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.product-card { 
+    background: linear-gradient(145deg, #11091d, #0d0617); 
+    border: 1px solid rgba(139, 92, 246, 0.25); 
+    border-radius: 18px; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+.product-card:hover { 
+    border-color: #4ade80; 
+    transform: translateY(-4px); 
+    box-shadow: 0 12px 30px rgba(74, 222, 128, 0.25);
+}
+
+.card-banner { 
+    height: 110px; 
+    background: radial-gradient(circle, #19102b 0%, #0e0717 100%); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    position: relative;
+}
+.card-banner img { max-height: 60px; max-width: 60px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+
+.card-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(74, 222, 128, 0.15);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    color: #4ade80;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.card-details { padding: 14px; }
+.card-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.card-desc { font-size: 11px; color: #9ca3af; margin-bottom: 10px; line-height: 1.3; }
+.card-price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.card-price { font-size: 15px; color: #facc15; font-weight: 800; }
+
+.buy-btn {
+    width: 100%;
+    padding: 9px;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: #030712;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+.buy-btn:hover { background: linear-gradient(135deg, #5eead4, #22c55e); box-shadow: 0 6px 20px rgba(74, 222, 128, 0.5); }
+
+/* Modals */
 .modal {
     display: none;
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(11, 6, 20, 0.95);
+    background: rgba(3, 1, 7, 0.85);
+    backdrop-filter: blur(10px);
     justify-content: center;
     align-items: center;
     z-index: 9999;
     padding: 20px;
 }
 .modal-box {
-    background: #130b20;
-    padding: 22px;
-    border-radius: 18px;
-    border: 1px solid #3e1e56;
+    background: linear-gradient(145deg, #130a21, #0a0414);
+    padding: 24px;
+    border-radius: 22px;
+    border: 1px solid rgba(139, 92, 246, 0.35);
     max-width: 400px;
     width: 100%;
     text-align: center;
     max-height: 85vh;
     overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(139, 92, 246, 0.15);
 }
-input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
-button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-.flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
-.flash-success { background: #102b1a; border: 1px solid #38d46b; color: #38d46b; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
+input, textarea { 
+    width: 100%; 
+    padding: 13px; 
+    margin: 8px 0; 
+    background: #06020c; 
+    border: 1px solid rgba(139, 92, 246, 0.3); 
+    color: white; 
+    border-radius: 12px; 
+    outline: none; 
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+input:focus, textarea:focus { border-color: #4ade80; box-shadow: 0 0 12px rgba(74, 222, 128, 0.25); }
+
+button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px; cursor: pointer; }
+
+.flash-msg { background: rgba(127, 29, 29, 0.4); border: 1px solid rgba(239, 68, 68, 0.5); color: #fca5a5; padding: 12px; margin-bottom: 18px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; }
+.flash-success { background: rgba(20, 83, 45, 0.4); border: 1px solid rgba(74, 222, 128, 0.5); color: #4ade80; padding: 12px; margin-bottom: 18px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹299 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹699 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Refer & Earn ₹50 per purchase active!</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹699 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹1099 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Refer & Earn ₹50 per purchase active!</marquee>
 </div>
 
 <div class="navbar">
     <div class="nav-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <span class="logo">Xenon Store (ID: #{{ user_id }})</span>
+        <span class="logo">Xenon Store <span style="font-size:10px; background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); padding:2px 6px; border-radius:6px; color:#c084fc;">#{{ user_id }}</span></span>
     </div>
     <div class="nav-right">
         <div class="wallet-pill">💰 ₹{{ balance }}</div>
         {% if is_admin == 1 %}
-        <a href="/admin" style="background:#ff9900; color:white; padding:5px 10px; border-radius:6px; text-decoration:none; font-size:12px; font-weight:bold;">Admin</a>
+        <a href="/admin" style="background:linear-gradient(135deg, #ea580c, #c2410c); color:white; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:700; box-shadow:0 0 10px rgba(234,88,12,0.4);">Admin</a>
         {% endif %}
-        <a href="/logout" style="color:#ff9ba5; font-size:12px; text-decoration:none;">Logout</a>
+        <a href="/logout" style="color:#f87171; font-size:12px; font-weight:600; text-decoration:none; padding:6px 8px;">Logout</a>
     </div>
 </div>
 
 <div id="side-menu" onclick="closeMenu()">
     <div class="menu-drawer" onclick="event.stopPropagation()">
-        <h3 style="color:#42d66d; margin-bottom:10px;">📌 Navigation Menu</h3>
-        <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (QR)</button>
+        <h3 style="color:#4ade80; font-size:16px; margin-bottom:5px;">⚡ VIP Menu</h3>
+        <p style="font-size:11px; color:#9ca3af; margin-bottom:10px;">Logged in as: <b style="color:#fff;">{{ username }}</b></p>
+        
+        <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (Instant QR)</button>
         <button class="menu-item" onclick="closeMenu(); openHistoryModal()">⏱️ Payment History</button>
         <button class="menu-item" onclick="closeMenu(); openPurchasesModal()">🛍️ My Purchases & Codes</button>
-        <button class="menu-item" onclick="closeMenu(); openReferralModal()">👥 Refer & Earn (₹50)</button>
-        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#42d66d;">💬 Support: @Xenon_ask9</a>
+        <button class="menu-item" onclick="closeMenu(); openReferralModal()">👥 Refer & Earn (₹50/Ref)</button>
+        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#4ade80;">💬 VIP Support: @Xenon_ask9</a>
+        
         {% if is_admin == 1 %}
-        <a href="/admin" class="menu-item">👑 Admin Panel</a>
+        <a href="/admin" class="menu-item" style="color:#facc15;">👑 Admin Dashboard</a>
         {% endif %}
-        <a href="/logout" class="menu-item" style="color:#ff9ba5;">🚪 Logout Account</a>
-        <button onclick="closeMenu()" style="background:#742331; color:white; margin-top:10px; padding:10px; width:100%;">Close Menu</button>
+        
+        <a href="/logout" class="menu-item" style="color:#f87171; margin-top:auto;">🚪 Logout Account</a>
+        <button onclick="closeMenu()" style="background:rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.4); color:#fca5a5; padding:10px; width:100%; border-radius:10px; font-weight:700;">Close Menu</button>
     </div>
 </div>
 
@@ -159,23 +293,26 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     {% endwith %}
 
     <div class="welcome-banner">
-        <h3>⚡ Welcome to Xenon Store!</h3>
-        <p>100% Secure & Instant Delivery. Share your referral link to earn ₹50 when your referred friend makes a purchase!</p>
-        <p style="margin-top:8px; font-size:11px; color:#42d66d;">💬 Customer Support Telegram: <b>@Xenon_ask9</b></p>
+        <h3>🚀 Welcome to Xenon Store, {{ username }}!</h3>
+        <p>100% Secure & Automated Digital Delivery. Share your referral link with friends and earn ₹50 instantly when they make a purchase!</p>
+        <p style="margin-top:8px; font-size:11px; color:#4ade80;">💬 Official Support Telegram: <b>@Xenon_ask9</b></p>
     </div>
 
-    <div class="section-title">✨ Featured Cards & Redeem Codes</div>
+    <div class="section-title">✨ Featured VIP Cards & Codes</div>
     <div class="product-grid">
         {% for p in products %}
         <div class="product-card">
             <div class="card-banner">
-                <img src="{{ p[6] }}" alt="Product Image">
+                <span class="card-badge">INSTANT</span>
+                <img src="{{ p[6] }}" alt="Product">
             </div>
             <div class="card-details">
                 <div class="card-name">{{ p[1] }}</div>
                 <div class="card-desc">{{ p[4] }}</div>
-                <div class="card-price">₹{{ p[3] }}</div>
-                <a href="/buy/{{ p[0] }}"><button style="width:100%; margin-top:6px; padding:7px; background:#38d46b; color:#07100a; font-size:12px;">Buy Now</button></a>
+                <div class="card-price-row">
+                    <div class="card-price">₹{{ p[3] }}</div>
+                </div>
+                <a href="/buy/{{ p[0] }}"><button class="buy-btn">Buy Now ⚡</button></a>
             </div>
         </div>
         {% endfor %}
@@ -183,91 +320,91 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 
 </div>
 
-<!-- QR Modal with Sima Devi UPI & Notice -->
+<!-- QR Modal -->
 <div id="qr-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR (Sima Devi)</h3>
-        <p style="font-size: 11px; color: #aaa; margin-bottom: 5px;">UPI ID: <b>sima6241@ptaxis</b></p>
-        <p style="font-size: 10px; color: #ff9ba5; margin-bottom: 10px;">⚠️ Naam match na ho toh payment na karein!</p>
+        <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money via QR (Sima Devi)</h3>
+        <p style="font-size: 11px; color: #9ca3af; margin-bottom: 5px;">UPI ID: <b style="color:#fff;">sima6241@ptaxis</b></p>
+        <p style="font-size: 10px; color: #f87171; margin-bottom: 12px;">⚠️ Naam match na ho toh payment na karein!</p>
         
         <div style="text-align: center; margin-bottom: 12px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 12px; border:2px solid rgba(139,92,246,0.4); padding:4px; background:#fff;">
         </div>
         
         <form action="/add-money" method="POST">
             <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
             <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
-            <button type="submit" style="width: 100%; background: linear-gradient(90deg, #ff9900, #ff3300); color: white; margin-top: 5px;">Submit Payment Proof</button>
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 5px; box-shadow: 0 4px 15px rgba(245,158,11,0.3);">Submit Payment Proof</button>
         </form>
-        <button onclick="closeQRModal()" style="width: 100%; background: #742331; color: white; margin-top: 8px;">Close</button>
+        <button onclick="closeQRModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; margin-top: 10px;">Close Window</button>
     </div>
 </div>
 
-<!-- Referral System Modal with Clear Terms -->
+<!-- Referral Modal -->
 <div id="referral-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #42d66d; margin-bottom: 10px;">👥 Refer & Earn ₹50</h3>
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Share your link with friends. <b>Jab aapka friend is link se register karke koi bhi item kharidega (Buy karega), tab aapko ₹50 ka bonus turant aapke wallet me mil jayega!</b></p>
+        <h3 style="color: #4ade80; margin-bottom: 10px; font-size: 16px;">👥 Refer & Earn ₹50</h3>
+        <p style="font-size: 12px; color: #9ca3af; margin-bottom: 12px; line-height: 1.4;">Share your link with friends. <b>Jab aapka friend is link se register karke koi bhi item kharidega (Buy karega), tab aapko ₹50 ka bonus turant aapke wallet me mil jayega!</b></p>
         
-        <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center;">
-        <button onclick="copyRefLink()" style="width: 100%; background: #42d66d; color: #07100a; margin-top: 5px;">📋 Copy Referral Link</button>
+        <input type="text" value="{{ referral_link }}" id="ref-link-input" readonly style="font-size: 11px; text-align: center; color:#4ade80;">
+        <button onclick="copyRefLink()" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 5px; box-shadow: 0 4px 15px rgba(74,222,128,0.3);">📋 Copy Referral Link</button>
         
-        <div style="margin-top: 15px; background: #09050f; padding: 10px; border-radius: 8px; font-size: 13px;">
-            Total Friends Referred: <b style="color: #ffd21c;">{{ referral_count }}</b>
+        <div style="margin-top: 15px; background: #06020c; padding: 12px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.2); font-size: 13px;">
+            Total Friends Referred: <b style="color: #facc15;">{{ referral_count }}</b>
         </div>
-        <button onclick="closeReferralModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+        <button onclick="closeReferralModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
 
 <!-- Payment History Modal -->
 <div id="history-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #42d66d; margin-bottom: 10px;">⏱️ Your Payment History</h3>
+        <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⏱️ Your Payment History</h3>
         <div style="max-height: 200px; overflow-y: auto; text-align: left;">
             {% if my_payments %}
                 {% for pay in my_payments %}
-                <div style="background:#09050f; padding:8px; border-radius:6px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between;">
-                    <span>₹{{ pay[0] }} (UTR: {{ pay[1][:6] }}...)</span>
-                    <span style="color:{% if pay[2]=='Approved' %}#38d46b{% elif pay[2]=='Rejected' %}#ff9ba5{% else %}#ffd21c{% endif %};">{{ pay[2] }}</span>
+                <div style="background:#06020c; border: 1px solid rgba(139,92,246,0.2); padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>₹{{ pay[0] }} <br><span style="color:#9ca3af; font-size:10px;">UTR: {{ pay[1][:8] }}...</span></span>
+                    <span style="font-weight:700; color:{% if pay[2]=='Approved' %}#4ade80{% elif pay[2]=='Rejected' %}#f87171{% else %}#facc15{% endif %};">{{ pay[2] }}</span>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:#777; font-size:12px; text-align:center;">No payment history found.</p>
+                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No payment history found.</p>
             {% endif %}
         </div>
-        <button onclick="closeHistoryModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+        <button onclick="closeHistoryModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
 
-<!-- My Purchases & Codes Modal -->
+<!-- My Purchases Modal -->
 <div id="purchases-modal" class="modal">
     <div class="modal-box">
-        <h3 style="color: #42d66d; margin-bottom: 10px;">🛍️ My Purchases & Codes</h3>
+        <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">🛍️ My Purchases & Codes</h3>
         <div style="max-height: 200px; overflow-y: auto; text-align: left;">
             {% if my_purchases %}
                 {% for pur in my_purchases %}
-                <div style="background:#09050f; padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:#06020c; border: 1px solid rgba(139,92,246,0.2); padding:10px; border-radius:10px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <strong style="color:#ffd21c;">{{ pur[1] }}</strong><br>
-                        <span style="color:#aaa;">Price: ₹{{ pur[2] }}</span>
+                        <strong style="color:#facc15;">{{ pur[1] }}</strong><br>
+                        <span style="color:#9ca3af; font-size:11px;">Price: ₹{{ pur[2] }}</span>
                     </div>
-                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#38d46b; color:#07100a; padding:5px 10px; font-size:11px;">View Card</button>
+                    <button onclick="viewDetails('{{ pur[1] }}', `{{ pur[3] }}`)" style="background:#4ade80; color:#030712; padding:6px 12px; font-size:11px; font-weight:700; border-radius:8px;">View Card</button>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="color:#777; font-size:12px; text-align:center;">No purchases found yet.</p>
+                <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases found yet.</p>
             {% endif %}
         </div>
-        <button onclick="closePurchasesModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+        <button onclick="closePurchasesModal()" style="width: 100%; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
 
-<!-- Formatted Secret Credentials Details Modal -->
+<!-- Credentials Details Modal -->
 <div id="details-modal" class="modal">
-    <div class="modal-box" style="border: 2px solid #38d46b; box-shadow: 0 0 25px rgba(56,212,107,0.3);">
-        <h3 id="det-title" style="color: #42d66d; margin-bottom: 10px;">💳 Secure Credentials</h3>
-        <div id="det-content" style="background: #09050f; padding: 15px; border-radius: 8px; font-size: 14px; color: #ffd21c; text-align: left; white-space: pre-wrap; word-break: break-all; margin-bottom: 15px; border: 1px dashed #38d46b; font-family: monospace;"></div>
-        <button onclick="closeDetailsModal()" style="width: 100%; background: #38d46b; color: #07100a;">Back to List</button>
+    <div class="modal-box" style="border: 2px solid #4ade80; box-shadow: 0 0 30px rgba(74,222,128,0.25);">
+        <h3 id="det-title" style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">💳 Secure Credentials</h3>
+        <div id="det-content" style="background: #030712; padding: 15px; border-radius: 12px; font-size: 13px; color: #facc15; text-align: left; white-space: pre-wrap; word-break: break-all; margin-bottom: 15px; border: 1px dashed rgba(74,222,128,0.4); font-family: monospace;"></div>
+        <button onclick="closeDetailsModal()" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; font-weight: 700;">Back to List</button>
     </div>
 </div>
 
