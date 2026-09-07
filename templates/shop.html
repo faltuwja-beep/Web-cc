@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoYo Shop - Digital Store</title>
+<title>YoYo Shop</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 70px; }
 
-/* Live Buyer Ticker Bar */
+/* Live Ticker Bar */
 .live-ticker {
     background: linear-gradient(90deg, #182b1c, #0e1e12);
     border-bottom: 1px solid #38d46b;
@@ -20,48 +20,124 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     overflow: hidden;
 }
 
-.navbar { background: #120b20; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
-.logo { color: #42d66d; font-size: 20px; font-weight: bold; }
-.wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 14px; border-radius: 20px; font-size: 14px; color: #ffd21c; font-weight: bold; }
+/* Navbar */
+.navbar { background: #120b20; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3e1e56; }
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.menu-btn { background: #1c102b; border: 1px solid #43205c; color: white; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+.logo { color: #42d66d; font-size: 18px; font-weight: bold; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.wallet-pill { background: #1d1230; border: 1px solid #43205c; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #ffd21c; font-weight: bold; }
+
+/* Sidebar Menu Drawer */
+#side-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+}
+.menu-drawer {
+    width: 280px; height: 100%;
+    background: #130b20;
+    border-right: 1px solid #3e1e56;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.menu-item {
+    background: #1c102b;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #3e1e56;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    display: block;
+    text-decoration: none;
+}
+.menu-item:hover { border-color: #42d66d; }
 
 .container { max-width: 650px; margin: auto; padding: 15px; }
 
+/* Notice Banner */
 .notice-banner { background: linear-gradient(135deg, #182b1c, #0e1e12); border: 1px solid #38d46b; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-.notice-banner h3 { color: #38d46b; font-size: 15px; margin-bottom: 5px; }
-.notice-banner p { color: #aaa; font-size: 12px; line-height: 1.4; }
+.notice-banner h3 { color: #38d46b; font-size: 14px; margin-bottom: 5px; }
+.notice-banner p { color: #aaa; font-size: 11px; line-height: 1.4; }
 
-.section-title { margin: 20px 0 10px 0; font-size: 18px; color: #42d66d; }
+.section-title { margin: 15px 0 10px 0; font-size: 16px; color: #42d66d; }
 .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-.card-banner { height: 90px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
+.card-banner { height: 85px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
 .card-details { padding: 12px; }
-.card-name { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 4px; }
-.card-desc { font-size: 11px; color: #aaa; margin-bottom: 6px; }
-.card-price { font-size: 15px; color: #ffd21c; font-weight: bold; }
+.card-name { font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+.card-desc { font-size: 10px; color: #aaa; margin-bottom: 6px; }
+.card-price { font-size: 14px; color: #ffd21c; font-weight: bold; }
 
-.box { background: #130b20; border: 1px solid #3e1e56; padding: 20px; border-radius: 14px; margin-top: 20px; }
+/* Popups */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(11, 6, 20, 0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+.modal-box {
+    background: #130b20;
+    padding: 22px;
+    border-radius: 18px;
+    border: 1px solid #3e1e56;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    max-height: 85vh;
+    overflow-y: auto;
+}
 input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
-button { padding: 12px 20px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
+button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-.bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #120b20; border-top: 1px solid #3e1e56; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
 .flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
 </style>
 </head>
 <body>
 
-<!-- Live Purchase Ticker -->
+<!-- Live Ticker Bar -->
 <div class="live-ticker">
-    <marquee behavior="scroll" direction="left">🔥 Rohit Sharma purchased Google Play Redeem Code ₹699 (Balance ₹5,000) just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Aman Verma bought VIP Mastercard (Balance ₹25,000) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Karan Singh got Demo Visa Card &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Instant Admin Approval Active!</marquee>
+    <marquee behavior="scroll" direction="left">🔥 Rohit Sharma purchased Google Play Redeem Code ₹699 (Balance ₹5,000) just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Aman Verma bought VIP Mastercard (Balance ₹25,000) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Telegram Admin Instant Alerts Active!</marquee>
 </div>
 
+<!-- Navbar with 3-Lines Menu Icon -->
 <div class="navbar">
-    <div class="logo">YoYo Shop</div>
-    <div style="display:flex; gap:10px; align-items:center;">
+    <div class="nav-left">
+        <button class="menu-btn" onclick="openMenu()">☰</button>
+        <span class="logo">YoYo Shop</span>
+    </div>
+    <div class="nav-right">
         <div class="wallet-pill">💰 ₹{{ balance }}</div>
         {% if is_admin == 1 %}
-        <a href="/admin" style="background:#ff9900; color:white; padding:6px 12px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:bold;">Admin</a>
+        <a href="/admin" style="background:#ff9900; color:white; padding:5px 10px; border-radius:6px; text-decoration:none; font-size:12px; font-weight:bold;">Admin</a>
         {% endif %}
-        <a href="/logout" style="color:#ff9ba5; font-size:13px; text-decoration:none;">Logout</a>
+        <a href="/logout" style="color:#ff9ba5; font-size:12px; text-decoration:none;">Logout</a>
+    </div>
+</div>
+
+<!-- Sidebar Menu Drawer -->
+<div id="side-menu" onclick="closeMenu()">
+    <div class="menu-drawer" onclick="event.stopPropagation()">
+        <h3 style="color:#42d66d; margin-bottom:10px;">📌 Navigation Menu</h3>
+        <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (QR)</button>
+        <button class="menu-item" onclick="closeMenu(); openHistoryModal()">⏱️ Payment History</button>
+        {% if is_admin == 1 %}
+        <a href="/admin" class="menu-item">👑 Admin Panel</a>
+        {% endif %}
+        <a href="/logout" class="menu-item" style="color:#ff9ba5;">🚪 Logout Account</a>
+        <button onclick="closeMenu()" style="background:#742331; color:white; margin-top:20px; padding:10px; width:100%;">Close Menu</button>
     </div>
 </div>
 
@@ -81,38 +157,70 @@ button { padding: 12px 20px; border: none; font-weight: bold; border-radius: 8px
         {% for p in products %}
         <div class="product-card">
             <div class="card-banner">
-                <span style="font-size: 13px; font-weight: bold; color: #42d66d;">{{ p[2] }}</span>
+                <span style="font-size: 12px; font-weight: bold; color: #42d66d;">{{ p[2] }}</span>
             </div>
             <div class="card-details">
                 <div class="card-name">{{ p[1] }}</div>
                 <div class="card-desc">{{ p[4] }}</div>
                 <div class="card-price">₹{{ p[3] }}</div>
-                <button onclick="alert('Insufficient balance! Please add money using the QR section below.')" style="width:100%; margin-top:8px; padding:8px; background:#38d46b; color:#07100a;">Buy Now</button>
+                <button onclick="openQRModal()" style="width:100%; margin-top:6px; padding:7px; background:#38d46b; color:#07100a; font-size:12px;">Buy Now</button>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Separate Add Money & QR Section -->
-    <div class="box">
+</div>
+
+<!-- QR Code Add Money Modal -->
+<div id="qr-modal" class="modal">
+    <div class="modal-box">
         <h3 style="color: #ff9900; margin-bottom: 5px;">💳 Add Money via QR Code</h3>
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">Scan QR & pay, then submit your UTR / Transaction ID below for approval.</p>
-        <div style="text-align: center; margin-bottom: 15px;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
+        <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">Scan QR & pay, then submit UTR / Transaction ID below.</p>
+        
+        <div style="text-align: center; margin-bottom: 12px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px; border:2px solid #3e1e56;">
         </div>
+        
         <form action="/add-money" method="POST">
             <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
             <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
             <button type="submit" style="width: 100%; background: linear-gradient(90deg, #ff9900, #ff3300); color: white; margin-top: 5px;">Submit Payment Proof</button>
         </form>
+        <button onclick="closeQRModal()" style="width: 100%; background: #742331; color: white; margin-top: 8px;">Close</button>
     </div>
-
 </div>
 
-<div class="bottom-bar">
-    <div style="font-size: 14px; color: #bbb; font-weight: bold;">User: {{ username }}</div>
-    <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" style="color: #42d66d; text-decoration: none; font-size: 13px; font-weight: bold;">Back to Top ↑</a>
+<!-- Payment History Modal -->
+<div id="history-modal" class="modal">
+    <div class="modal-box">
+        <h3 style="color: #42d66d; margin-bottom: 10px;">⏱️ Your Payment History</h3>
+        <div style="max-height: 200px; overflow-y: auto; text-align: left;">
+            {% if my_payments %}
+                {% for pay in my_payments %}
+                <div style="background:#09050f; padding:8px; border-radius:6px; margin-bottom:6px; font-size:12px; display:flex; justify-content:space-between;">
+                    <span>₹{{ pay[0] }} (UTR: {{ pay[1][:6] }}...)</span>
+                    <span style="color:{% if pay[2]=='Approved' %}#38d46b{% else %}#ffd21c{% endif %};">{{ pay[2] }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:#777; font-size:12px; text-align:center;">No payment history found.</p>
+            {% endif %}
+        </div>
+        <button onclick="closeHistoryModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+    </div>
 </div>
+
+<script>
+function openMenu() { document.getElementById('side-menu').style.display = 'block'; }
+function closeMenu() { document.getElementById('side-menu').style.display = 'none'; }
+
+function openQRModal() { document.getElementById('qr-modal').style.display = 'flex'; }
+function closeQRModal() { document.getElementById('qr-modal').style.display = 'none'; }
+
+function openHistoryModal() { document.getElementById('history-modal').style.display = 'flex'; }
+function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+</script>
 
 </body>
 </html>
+
