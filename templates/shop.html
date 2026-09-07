@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>YoYo Shop & FF Tools</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+body { background: #0b0614; color: white; padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; background: #120b20; padding: 15px; border-radius: 12px; border: 1px solid #3e1e56; }
+.wallet { background: #1d1230; padding: 8px 15px; border-radius: 20px; color: #ffd21c; font-weight: bold; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+.card { background: #130b20; border: 1px solid #3e1e56; padding: 20px; border-radius: 12px; text-align: center; }
+.price { color: #ffd21c; font-size: 18px; font-weight: bold; margin: 10px 0; }
+button { padding: 10px 20px; background: #38d46b; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; color: #07100a; width: 100%; }
+.box { background: #120b20; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #3e1e56; }
+input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
+.row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d193c; }
+.label { color: #aaa; }
+.value { color: #ffd21c; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="header">
+    <h3>🛒 Welcome, {{ username }}</h3>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <div class="wallet">💰 ₹{{ balance }}</div>
+        {% if is_admin == 1 %}
+        <a href="/admin" style="background:#ff9900; color:white; padding:8px 12px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:bold;">👑 Admin Panel</a>
+        {% endif %}
+        <a href="/logout" style="color: #ff9ba5; font-size:14px; text-decoration:none;">Logout</a>
+    </div>
+</div>
+
+<!-- Admin Stats Bar -->
+<div style="display:flex; gap:15px; margin-top:20px;">
+    <div class="box" style="flex:1; text-align:center; padding:12px;">📊 Total Checks: <b>{{ stats.total_checks }}</b></div>
+    <div class="box" style="flex:1; text-align:center; padding:12px;">🔥 Likes Sent: <b>{{ stats.total_likes_sent }}</b></div>
+</div>
+
+<!-- Free Fire UID & Like Sender Section -->
+<div class="box" style="margin-top:20px;">
+    <h3 style="color:#42d66d; margin-bottom:10px;">🎮 Free Fire UID Checker & Like Sender</h3>
+    <form action="/check-uid" method="POST" style="display:flex; gap:10px;">
+        <input type="text" name="uid" placeholder="Enter Free Fire UID" required style="margin:0;">
+        <button type="submit" style="width:160px; background:#42d66d; color:#07100a;">🔍 Check UID</button>
+    </form>
+
+    {% if error %}<p style="color:#ff9ba5; margin-top:10px;">{{ error }}</p>{% endif %}
+
+    {% if player %}
+    <div style="background:#09050f; padding:15px; border-radius:10px; margin-top:15px; border:1px solid #3e1e56;">
+        <h4 style="color:#42d66d; text-align:center; margin-bottom:10px;">{{ player.nickname }} (UID: {{ player.uid }})</h4>
+        <div class="row"><span class="label">Region</span><span class="value">{{ player.region }}</span></div>
+        <div class="row"><span class="label">Level</span><span class="value">{{ player.level }}</span></div>
+        <div class="row"><span class="label">Likes</span><span class="value">{{ player.likes }}</span></div>
+        <div class="row"><span class="label">BR Rank</span><span class="value">{{ player.rank }}</span></div>
+        
+        <form action="/send-likes" method="POST" style="margin-top:15px;">
+            <input type="hidden" name="uid" value="{{ player.uid }}">
+            <input type="hidden" name="region" value="{{ player.region }}">
+            <button type="submit" style="background: linear-gradient(90deg, #ff9900, #ff3300); color:white;">🔥 Send 20 Likes Now</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if result_data %}
+    <div style="background:#09050f; padding:15px; border-radius:10px; margin-top:15px; border:1px solid #3e1e56;">
+        <h4 style="color:#ff9900; text-align:center;">Result for {{ result_data.nickname }}</h4>
+        <div class="row"><span class="label">Before Likes</span><span class="value">{{ result_data.old_likes }}</span></div>
+        <div class="row"><span class="label">After Likes</span><span class="value" style="color:#38d46b;">{{ result_data.new_likes }}</span></div>
+        <div class="row"><span class="label">Added</span><span class="value">+{{ result_data.added_likes }} Likes</span></div>
+        <p style="text-align:center; margin-top:10px; color:{% if result_data.success %}#38d46b{% else %}#ff9ba5{% endif %};">{{ result_data.message }}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Shop Products Section -->
+<h2>🛍️ Store Items (Redeem Codes & CC Cards)</h2>
+<div class="grid">
+    {% for p in products %}
+    <div class="card">
+        <h4>{{ p[1] }}</h4>
+        <p style="color:#aaa; font-size:12px; margin:5px 0;">{{ p[4] }}</p>
+        <div class="price">₹{{ p[3] }}</div>
+        <button onclick="alert('Balance sufficient nahi hai!')">Buy Now</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Add Money Section -->
+<div class="box" style="max-width:400px;">
+    <h3>💳 Add Money via QR Code</h3>
+    <div style="text-align: center; margin: 10px 0;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=sunaina2012@fam" alt="QR" style="border-radius: 8px;">
+    </div>
+    <form action="/add-money" method="POST">
+        <input type="number" name="amount" placeholder="Amount Paid (₹)" required>
+        <input type="text" name="utr" placeholder="UTR / Transaction ID" required>
+        <button type="submit" style="background:#ff9900; color:white;">Submit Proof</button>
+    </form>
+</div>
+</body>
+</html>
