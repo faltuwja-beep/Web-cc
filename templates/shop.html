@@ -76,7 +76,8 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
 .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .product-card { background: #130b20; border: 1px solid #3e1e56; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
 .product-card:hover { border-color: #38d46b; transform: translateY(-2px); }
-.card-banner { height: 85px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
+.card-banner { height: 90px; background: #1b102b; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #3e1e56; }
+.card-banner img { max-height: 55px; max-width: 55px; object-fit: contain; }
 .card-details { padding: 12px; }
 .card-name { font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 4px; }
 .card-desc { font-size: 10px; color: #aaa; margin-bottom: 6px; }
@@ -168,7 +169,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
         {% for p in products %}
         <div class="product-card">
             <div class="card-banner">
-                <span style="font-size: 12px; font-weight: bold; color: #42d66d;">{{ p[2] }}</span>
+                <img src="{{ p[6] }}" alt="Product Image">
             </div>
             <div class="card-details">
                 <div class="card-name">{{ p[1] }}</div>
