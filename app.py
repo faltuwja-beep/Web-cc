@@ -166,7 +166,7 @@ def buy_product(product_id):
 
         send_telegram_alert(f"🛍️ *Product Purchased on Xenon Store!*\n🆔 User ID: `#{user_id}`\n👤 User: `{session['username']}`\n📦 Item: `{p_name}`\n💵 Price: `₹{p_price}`\n🔑 Details: `{p_details}`")
 
-        flash(f"🎉 Successfully Purchased {p_name}! Your Details/Code: {p_details}", "success")
+        flash(f"🎉 Purchased {p_name}! Details / Code: {p_details}", "success")
     else:
         conn.close()
         shortfall = p_price - balance
@@ -224,8 +224,7 @@ def admin_panel():
         elif action == "edit_product":
             pid = request.form.get("pid")
             price = float(request.form.get("price", 0))
-            details = request.form.get("details")
-            cursor.execute("UPDATE products SET price = ?, details = ? WHERE id = ?", (price, details, pid))
+            cursor.execute("UPDATE products SET price = ? WHERE id = ?", (price, pid))
         elif action == "delete_product":
             pid = request.form.get("pid")
             cursor.execute("DELETE FROM products WHERE id = ?", (pid,))
@@ -239,10 +238,7 @@ def admin_panel():
                 cursor.execute("UPDATE payments SET status = 'Approved' WHERE id = ?", (pay_id,))
         elif action == "reject_payment":
             pay_id = request.form.get("pay_id")
-            cursor.execute("SELECT status FROM payments WHERE id = ?", (pay_id,))
-            pay_status = cursor.fetchone()
-            if pay_status and pay_status[0] == 'Pending':
-                cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
+            cursor.execute("UPDATE payments SET status = 'Rejected' WHERE id = ?", (pay_id,))
         conn.commit()
 
     cursor.execute("SELECT * FROM products")
