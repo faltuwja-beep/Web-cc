@@ -8,7 +8,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 body { background: #0b0614; color: white; padding-bottom: 70px; }
 
-/* Live Fake Buyers Ticker */
 .live-ticker {
     background: linear-gradient(90deg, #182b1c, #0e1e12);
     border-bottom: 1px solid #38d46b;
@@ -62,7 +61,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
 
 .container { max-width: 650px; margin: auto; padding: 15px; }
 
-/* Welcome Notice Animation */
 .welcome-banner { 
     background: linear-gradient(135deg, #182b1c, #0e1e12); 
     border: 1px solid #38d46b; 
@@ -70,12 +68,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     border-radius: 12px; 
     text-align: center; 
     margin-bottom: 20px;
-    animation: pulseGlow 2s infinite;
-}
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 5px rgba(56, 212, 107, 0.2); }
-    50% { box-shadow: 0 0 20px rgba(56, 212, 107, 0.6); }
-    100% { box-shadow: 0 0 5px rgba(56, 212, 107, 0.2); }
 }
 .welcome-banner h3 { color: #38d46b; font-size: 15px; margin-bottom: 5px; }
 .welcome-banner p { color: #ccc; font-size: 12px; line-height: 1.4; }
@@ -113,7 +105,6 @@ body { background: #0b0614; color: white; padding-bottom: 70px; }
     overflow-y: auto;
 }
 input { width: 100%; padding: 12px; margin: 8px 0; background: #09050f; border: 1px solid #492460; color: white; border-radius: 8px; outline: none; }
-input:focus { border-color: #38d46b; }
 button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
 .flash-msg { background: #35101a; border: 1px solid #742331; color: #ff9ba5; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-size: 13px; }
@@ -122,7 +113,6 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
 </head>
 <body>
 
-<!-- Live Fake Buyers Ticker -->
 <div class="live-ticker">
     <marquee behavior="scroll" direction="left">🔥 Mohan bought Google Play Redeem Code ₹299 just now! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ⚡ Rache purchased Mastercard VIP ₹699 card! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 💎 Aman got Blackmarket Visa ₹499! &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🚀 Instant Delivery & Balance Updates Active!</marquee>
 </div>
@@ -146,11 +136,13 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
         <h3 style="color:#42d66d; margin-bottom:10px;">📌 Navigation Menu</h3>
         <button class="menu-item" onclick="closeMenu(); openQRModal()">💳 Add Money (QR)</button>
         <button class="menu-item" onclick="closeMenu(); openHistoryModal()">⏱️ Payment History</button>
+        <button class="menu-item" onclick="closeMenu(); openPurchasesModal()">🛍️ My Purchases & Codes</button>
+        <a href="https://t.me/Xenon_ask9" target="_blank" class="menu-item" style="color:#42d66d;">💬 Customer Support: @Xenon_ask9</a>
         {% if is_admin == 1 %}
         <a href="/admin" class="menu-item">👑 Admin Panel</a>
         {% endif %}
         <a href="/logout" class="menu-item" style="color:#ff9ba5;">🚪 Logout Account</a>
-        <button onclick="closeMenu()" style="background:#742331; color:white; margin-top:20px; padding:10px; width:100%;">Close Menu</button>
+        <button onclick="closeMenu()" style="background:#742331; color:white; margin-top:10px; padding:10px; width:100%;">Close Menu</button>
     </div>
 </div>
 
@@ -164,10 +156,10 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
       {% endif %}
     {% endwith %}
 
-    <!-- Glowing Animated Welcome Notice -->
     <div class="welcome-banner">
         <h3>⚡ Welcome to Xenon Store!</h3>
-        <p>100% Secure & Instant Delivery. Add money using the QR option in the menu to instantly buy redeem codes & CC cards!</p>
+        <p>100% Secure & Instant Delivery. Add money using the menu option to instantly buy redeem codes & CC cards!</p>
+        <p style="margin-top:8px; font-size:11px; color:#42d66d;">💬 Customer Support Telegram: <b>@Xenon_ask9</b></p>
     </div>
 
     <div class="section-title">✨ Featured Cards & Redeem Codes</div>
@@ -209,6 +201,7 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
+<!-- Payment History Modal -->
 <div id="history-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #42d66d; margin-bottom: 10px;">⏱️ Your Payment History</h3>
@@ -228,6 +221,38 @@ button { padding: 10px 15px; border: none; font-weight: bold; border-radius: 8px
     </div>
 </div>
 
+<!-- My Purchases & Codes Modal -->
+<div id="purchases-modal" class="modal">
+    <div class="modal-box">
+        <h3 style="color: #42d66d; margin-bottom: 10px;">🛍️ My Purchases & Codes</h3>
+        <div style="max-height: 200px; overflow-y: auto; text-align: left;">
+            {% if my_purchases %}
+                {% for pur in my_purchases %}
+                <div style="background:#09050f; padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:#ffd21c;">{{ pur[1] }}</strong><br>
+                        <span style="color:#aaa;">Price: ₹{{ pur[2] }}</span>
+                    </div>
+                    <button onclick="viewDetails('{{ pur[1] }}', '{{ pur[3] }}')" style="background:#38d46b; color:#07100a; padding:5px 10px; font-size:11px;">View</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color:#777; font-size:12px; text-align:center;">No purchases found yet.</p>
+            {% endif %}
+        </div>
+        <button onclick="closePurchasesModal()" style="width: 100%; background: #742331; color: white; margin-top: 15px;">Close Window</button>
+    </div>
+</div>
+
+<!-- Details View Popup Modal -->
+<div id="details-modal" class="modal">
+    <div class="modal-box">
+        <h3 id="det-title" style="color: #42d66d; margin-bottom: 10px;">Product Details</h3>
+        <p id="det-content" style="background: #09050f; padding: 15px; border-radius: 8px; font-size: 13px; color: #fff; word-break: break-all; margin-bottom: 15px; border: 1px solid #3e1e56;"></p>
+        <button onclick="closeDetailsModal()" style="width: 100%; background: #38d46b; color: #07100a;">Back</button>
+    </div>
+</div>
+
 <script>
 function openMenu() { document.getElementById('side-menu').style.display = 'block'; }
 function closeMenu() { document.getElementById('side-menu').style.display = 'none'; }
@@ -237,6 +262,16 @@ function closeQRModal() { document.getElementById('qr-modal').style.display = 'n
 
 function openHistoryModal() { document.getElementById('history-modal').style.display = 'flex'; }
 function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+
+function openPurchasesModal() { document.getElementById('purchases-modal').style.display = 'flex'; }
+function closePurchasesModal() { document.getElementById('purchases-modal').style.display = 'none'; }
+
+function viewDetails(name, details) {
+    document.getElementById('det-title').innerText = name;
+    document.getElementById('det-content').innerText = details;
+    document.getElementById('details-modal').style.display = 'flex';
+}
+function closeDetailsModal() { document.getElementById('details-modal').style.display = 'none'; }
 </script>
 
 </body>
