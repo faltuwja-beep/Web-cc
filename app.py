@@ -4,6 +4,7 @@ import os
 import requests
 import random
 import string
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "xenon_store_secret_key"
@@ -67,7 +68,8 @@ def init_db():
                         username TEXT,
                         product_name TEXT,
                         price REAL,
-                        secret_data TEXT)''')
+                        secret_data TEXT,
+                        purchase_date TEXT)''')
 
     cursor.execute("SELECT * FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
@@ -174,11 +176,16 @@ def shop():
 
     products = conn.execute("SELECT * FROM products").fetchall()
     my_payments = conn.execute("SELECT amount, utr, status FROM payments WHERE username = ? ORDER BY id DESC LIMIT 5", (session["username"],)).fetchall()
-    my_purchases = conn.execute("SELECT id, product_name, price, secret_data FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
+    
+    my_purchases = conn.execute("SELECT id, product_name, price, secret_data, purchase_date FROM purchases WHERE username = ? ORDER BY id DESC", (session["username"],)).fetchall()
+    
+    today_date = datetime.now().strftime("%Y-%m-%d")
+    today_purchases = conn.execute("SELECT id, product_name, price, secret_data, purchase_date FROM purchases WHERE username = ? AND purchase_date LIKE ? ORDER BY id DESC", (session["username"], f"{today_date}%")).fetchall()
+
     conn.close()
 
     referral_link = request.host_url + "register?ref=" + referral_code
-    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases)
+    return render_template("shop.html", user_id=user_id, username=session["username"], balance=balance, referral_code=referral_code, referral_count=referral_count, referral_link=referral_link, is_admin=is_admin, products=products, my_payments=my_payments, my_purchases=my_purchases, today_purchases=today_purchases)
 
 @app.route("/update-settings", methods=["POST"])
 def update_settings():
@@ -232,10 +239,11 @@ def buy_product(product_id):
         return redirect(url_for("shop"))
 
     p_name, p_price, secret_data = prod["name"], prod["price"], prod["secret_data"]
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if balance >= p_price:
         cursor.execute("UPDATE users SET balance = balance - ? WHERE username = ?", (p_price, session["username"]))
-        cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data) VALUES (?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data))
+        cursor.execute("INSERT INTO purchases (username, product_name, price, secret_data, purchase_date) VALUES (?, ?, ?, ?, ?)", (session["username"], p_name, p_price, secret_data, current_time))
         
         if referred_by:
             cursor.execute("UPDATE users SET balance = balance + 50.0, referral_count = referral_count + 1 WHERE username = ?", (referred_by,))
@@ -295,7 +303,7 @@ def admin_panel():
         cursor = conn.cursor()
         if action == "add_product":
             name = request.form.get("name")
-            category = request.form.get("category")
+            category = request.form.get("category", "Redeem Code")
             price = float(request.form.get("price", 0))
             description = request.form.get("description")
             secret_data = request.form.get("secret_data")
