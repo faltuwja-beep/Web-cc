@@ -157,7 +157,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     <div class="section-title">🎁 Google Play & Redeem Codes</div>
     <div class="product-grid">
         {% for p in products %}
-            {% if "Redeem Code" in p[2] or "Redeem" in p[2] or "Code" in p[2] %}
+            {% if "Redeem" in p[2] or "Code" in p[2] %}
             <div class="product-card">
                 <div class="card-banner">
                     <span class="card-badge">INSTANT</span>
@@ -179,7 +179,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     <div class="section-title">💳 Visa & Master Credit Cards (CC)</div>
     <div class="product-grid">
         {% for p in products %}
-            {% if "CC Card" in p[2] or "CC" in p[2] or "Card" in p[2] or "Visa" in p[2] %}
+            {% if "CC" in p[2] or "Card" in p[2] or "Visa" in p[2] %}
             <div class="product-card">
                 <div class="card-banner">
                     <span class="card-badge" style="background:rgba(234,179,8,0.15); border-color:rgba(234,179,8,0.4); color:#facc15;">VIP CC</span>
@@ -201,7 +201,7 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
     <div class="section-title">🍥 Anime & Other VIP Digital Assets</div>
     <div class="product-grid">
         {% for p in products %}
-            {% if not ("Redeem Code" in p[2] or "Redeem" in p[2] or "Code" in p[2] or "CC Card" in p[2] or "CC" in p[2] or "Card" in p[2] or "Visa" in p[2]) %}
+            {% if not ("Redeem" in p[2] or "Code" in p[2] or "CC" in p[2] or "Card" in p[2] or "Visa" in p[2]) %}
             <div class="product-card">
                 <div class="card-banner">
                     <span class="card-badge" style="background:rgba(236,72,153,0.15); border-color:rgba(236,72,153,0.4); color:#ec4899;">VIP ASSET</span>
@@ -225,22 +225,18 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 <div id="qr-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #facc15; margin-bottom: 5px; font-size: 16px;">💳 Add Money & Payment History</h3>
-        
         <div style="background: var(--input-bg); padding: 10px; border-radius: 12px; margin-bottom: 12px; text-align: left; font-size: 11px; color: #9ca3af; line-height: 1.4;">
             <b>UPI ID:</b> <b style="color:#fff;">sima6241@ptaxis</b> (Name: Sima Devi)<br>
             Pay karne ke baad 12-digit ka **UTR / Transaction ID** niche dalein.
         </div>
-
         <div style="text-align: center; margin-bottom: 10px;">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=upi://pay?pa=sima6241@ptaxis&pn=Sima%20Devi" alt="QR" style="border-radius: 12px; border:2px solid rgba(139,92,246,0.4); padding:4px; background:#fff;">
         </div>
-        
         <form action="/add-money" method="POST">
             <input type="number" name="amount" placeholder="Enter Amount Paid (₹)" required>
             <input type="text" name="utr" placeholder="Enter UTR / Transaction ID" required>
             <button type="submit" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; margin-top: 5px;">Submit Payment Proof</button>
         </form>
-
         <div style="margin-top: 15px; border-top: 1px solid rgba(139,92,246,0.3); padding-top: 10px; text-align: left;">
             <h4 style="font-size: 12px; color: #4ade80; margin-bottom: 6px;">⏱️ Recent Payments Status:</h4>
             <div style="max-height: 120px; overflow-y: auto;">
@@ -256,7 +252,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                 {% endif %}
             </div>
         </div>
-
         <button onclick="closeModal('qr-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">Close Window</button>
     </div>
 </div>
@@ -279,12 +274,10 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 <div id="purchases-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">🛍️ My Purchases</h3>
-        
         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
             <button onclick="switchTab('today')" id="btn-today" style="flex:1; background:#4ade80; color:#030712; font-size:11px; padding:6px;">Today Purchases</button>
             <button onclick="switchTab('all')" id="btn-all" style="flex:1; background:#374151; color:#fff; font-size:11px; padding:6px;">All History</button>
         </div>
-
         <div id="tab-today" style="max-height: 180px; overflow-y: auto; text-align: left;">
             {% if today_purchases %}
                 {% for pur in today_purchases %}
@@ -297,7 +290,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                 <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases today.</p>
             {% endif %}
         </div>
-
         <div id="tab-all" style="max-height: 180px; overflow-y: auto; text-align: left; display: none;">
             {% if my_purchases %}
                 {% for pur in my_purchases %}
@@ -310,7 +302,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                 <p style="color:#777; font-size:12px; text-align:center; padding: 20px;">No purchases history.</p>
             {% endif %}
         </div>
-
         <button onclick="closeModal('purchases-modal')" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 15px;">Close Window</button>
     </div>
 </div>
@@ -319,7 +310,6 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
 <div id="settings-modal" class="modal">
     <div class="modal-box">
         <h3 style="color: #4ade80; margin-bottom: 12px; font-size: 16px;">⚙️ Account Settings</h3>
-        
         <div style="text-align: left; margin-bottom: 12px;">
             <label style="font-size: 11px; color: #9ca3af;">Select Theme:</label>
             <select id="theme-selector" onchange="changeTheme(this.value)">
@@ -327,16 +317,17 @@ button { padding: 11px 16px; border: none; font-weight: 700; border-radius: 12px
                 <option value="light">Light Theme</option>
             </select>
         </div>
-
         <form action="/update-settings" method="POST" style="text-align: left;">
             <label style="font-size: 11px; color: #9ca3af;">Change Username:</label>
             <input type="text" name="new_username" value="{{ username }}" required>
-
-            <label style="font-size: 11px; color: #9ca3af; margin-top: 8px; display: block;">New Password (leave blank if not changing):</label>
+            <label style="font-size: 11px; color: #9ca3af; margin-top: 8px; display: block;">New Password:</label>
             <input type="password" name="new_password" placeholder="Enter new password">
-
             <button type="submit" style="width: 100%; background: linear-gradient(135deg, #4ade80, #16a34a); color: #030712; margin-top: 10px;">Save Changes</button>
         </form>
-
         <a href="/logout"><button style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin-top: 10px;">🚪 Logout Account</button></a>
-        <button onclick="closeModal(
+        <button onclick="closeModal('settings-modal')" style="width: 100%; background: #374151; color: white; margin-top: 8px;">Close Window</button>
+    </div>
+</div>
+
+<!-- Credentials Details Modal -->
+    
