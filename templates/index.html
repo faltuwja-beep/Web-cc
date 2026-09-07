@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>FF Player Info</title>
 
@@ -23,6 +22,69 @@ body{
     background:#0b0614;
     color:white;
     min-height:100vh;
+}
+
+/* Instagram Follow Gate Modal */
+#insta-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 6, 20, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.gate-box {
+    background: #130b20;
+    padding: 30px;
+    border-radius: 18px;
+    border: 1px solid #3e1e56;
+    box-shadow: 0 0 30px #000;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.gate-box h2 {
+    color: #42d66d;
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.gate-box p {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.gate-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-follow {
+    background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+}
+
+.btn-unlock {
+    background: linear-gradient(90deg, #38d46b, #b7dc39);
+    color: #07100a;
+    border: none;
 }
 
 header{
@@ -49,457 +111,199 @@ header p{
 }
 
 .search-box{
-
     background:#130b20;
-
     padding:20px;
-
     border-radius:18px;
-
     border:1px solid #3e1e56;
-
     box-shadow:0 0 20px #000;
-
 }
 
 input{
-
     width:100%;
-
     padding:15px;
-
     border-radius:10px;
-
     border:1px solid #492460;
-
     background:#09050f;
-
     color:white;
-
     font-size:16px;
-
     margin-bottom:12px;
-
     outline:none;
-
 }
 
 button{
-
     width:100%;
-
     padding:15px;
-
     border:none;
-
     border-radius:10px;
-
-    background:
-    linear-gradient(
-        90deg,
-        #38d46b,
-        #b7dc39
-    );
-
+    background: linear-gradient(90deg, #38d46b, #b7dc39);
     color:#07100a;
-
     font-size:16px;
-
     font-weight:bold;
-
     cursor:pointer;
-
 }
 
 .error{
-
     margin-top:20px;
-
     padding:15px;
-
     background:#35101a;
-
     border:1px solid #742331;
-
     border-radius:12px;
-
     color:#ff9ba5;
-
 }
 
 .profile{
-
     margin-top:20px;
-
     background:#130b20;
-
     border-radius:18px;
-
     overflow:hidden;
-
     border:1px solid #3e1e56;
-
 }
 
 .profile-head{
-
     text-align:center;
-
     padding:30px;
-
-    background:
-    linear-gradient(
-        135deg,
-        #25103a,
-        #102b1a
-    );
-
+    background: linear-gradient(135deg, #25103a, #102b1a);
 }
 
 .avatar{
-
     width:80px;
-
     height:80px;
-
     margin:auto;
-
     border-radius:50%;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     font-size:40px;
-
     background:#10091b;
-
     border:2px solid #42d66d;
-
 }
 
 .profile-head h2{
-
     margin-top:12px;
-
     color:#42d66d;
-
 }
 
 .uid{
-
     margin-top:7px;
-
     color:#bbb;
-
 }
 
 .info{
-
     padding:20px;
-
 }
 
 .row{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     padding:14px 0;
-
-    border-bottom:
-    1px solid #2d193c;
-
+    border-bottom: 1px solid #2d193c;
 }
 
 .row:last-child{
-
     border:none;
-
 }
 
 .label{
-
     color:#aaa;
-
 }
 
 .value{
-
     color:#ffd21c;
-
     font-weight:bold;
-
     text-align:right;
-
     max-width:55%;
-
     word-break:break-word;
-
 }
 
 footer{
-
     text-align:center;
-
     padding:25px;
-
     color:#777;
-
     font-size:13px;
-
 }
 
 </style>
 
 </head>
 
-
 <body>
 
+<!-- Instagram Follow Gate Popup -->
+<div id="insta-gate">
+    <div class="gate-box">
+        <h2>📸 Follow On Instagram</h2>
+        <p>Website use karne ke liye pehle hamare Instagram account ko follow karein!</p>
+        <a href="https://www.instagram.com/sonu_9wx7?stkn=MXFzZmxnd2x0ejd2Mg==" target="_blank" class="gate-btn btn-follow" onclick="enableUnlock()">1. Follow On Instagram</a>
+        <button class="gate-btn btn-unlock" id="unlockBtn" onclick="unlockWebsite()">2. Website Open Karein</button>
+    </div>
+</div>
 
 <header>
-
-<h1>
-🎮 FF PLAYER INFO
-</h1>
-
-<p>
-Free Fire UID Information
-</p>
-
+<h1>🎮 FF PLAYER INFO</h1>
+<p>Free Fire UID Information</p>
 </header>
-
-
 
 <div class="container">
 
-
 <div class="search-box">
-
 <form method="POST">
-
-<input
-
-type="text"
-
-name="uid"
-
-placeholder="Enter Free Fire UID"
-
-required
-
->
-
-
-<button type="submit">
-
-🔍 SEARCH PLAYER
-
-</button>
-
-
+<input type="text" name="uid" placeholder="Enter Free Fire UID" required>
+<button type="submit">🔍 SEARCH PLAYER</button>
 </form>
-
 </div>
-
-
 
 {% if error %}
-
 <div class="error">
-
 {{ error }}
-
 </div>
-
 {% endif %}
-
-
 
 {% if player %}
-
 <div class="profile">
-
-
 <div class="profile-head">
-
-
-<div class="avatar">
-
-🎮
-
+<div class="avatar">🎮</div>
+<h2>{{ player.nickname }}</h2>
+<div class="uid">UID: {{ player.uid }}</div>
 </div>
-
-
-<h2>
-
-{{ player.nickname }}
-
-</h2>
-
-
-<div class="uid">
-
-UID: {{ player.uid }}
-
-</div>
-
-
-</div>
-
-
 
 <div class="info">
-
-
-<div class="row">
-
-<span class="label">
-🆔 UID
-</span>
-
-<span class="value">
-{{ player.uid }}
-</span>
-
+<div class="row"><span class="label">🆔 UID</span><span class="value">{{ player.uid }}</span></div>
+<div class="row"><span class="label">🌍 Region</span><span class="value">{{ player.region }}</span></div>
+<div class="row"><span class="label">⭐ Level</span><span class="value">{{ player.level }}</span></div>
+<div class="row"><span class="label">❤️ Likes</span><span class="value">{{ player.likes }}</span></div>
+<div class="row"><span class="label">🏆 BR Rank</span><span class="value">{{ player.rank }}</span></div>
+<div class="row"><span class="label">⚔️ CS Rank</span><span class="value">{{ player.cs_rank }}</span></div>
+<div class="row"><span class="label">📈 Experience</span><span class="value">{{ player.exp }}</span></div>
+<div class="row"><span class="label">👥 Guild</span><span class="value">{{ player.guild }}</span></div>
+<div class="row"><span class="label">🐾 Pet ID</span><span class="value">{{ player.pet }}</span></div>
 </div>
-
-
-
-<div class="row">
-
-<span class="label">
-🌍 Region
-</span>
-
-<span class="value">
-{{ player.region }}
-</span>
-
 </div>
-
-
-
-<div class="row">
-
-<span class="label">
-⭐ Level
-</span>
-
-<span class="value">
-{{ player.level }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-❤️ Likes
-</span>
-
-<span class="value">
-{{ player.likes }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-🏆 BR Rank
-</span>
-
-<span class="value">
-{{ player.rank }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-⚔️ CS Rank
-</span>
-
-<span class="value">
-{{ player.cs_rank }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-📈 Experience
-</span>
-
-<span class="value">
-{{ player.exp }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-👥 Guild
-</span>
-
-<span class="value">
-{{ player.guild }}
-</span>
-
-</div>
-
-
-
-<div class="row">
-
-<span class="label">
-🐾 Pet ID
-</span>
-
-<span class="value">
-{{ player.pet }}
-</span>
-
-</div>
-
-
-</div>
-
-</div>
-
 {% endif %}
 
-
 </div>
 
-
 <footer>
-
-© FF Player Info Website
-
+Created by Sonu
 </footer>
 
+<script>
+// Check if user already unlocked previously
+window.onload = function() {
+    if(localStorage.getItem('insta_followed') === 'true') {
+        document.getElementById('insta-gate').style.display = 'none';
+    }
+};
+
+function enableUnlock() {
+    // Optional: can do something when follow is clicked
+}
+
+function unlockWebsite() {
+    localStorage.setItem('insta_followed', 'true');
+    document.getElementById('insta-gate').style.display = 'none';
+}
+</script>
 
 </body>
-
 </html>
