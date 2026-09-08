@@ -3,246 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>Xenon Shop Admin</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:
-    radial-gradient(circle at top,#24143f 0,#09080f 45%);
-  color:#fff;
-  padding-bottom:50px;
+margin:0;
+font-family:Arial,sans-serif;
+background:#09080f;
+color:#fff;
+padding-bottom:40px
 }
 
 header{
-  position:sticky;
-  top:0;
-  z-index:10;
-  padding:17px 20px;
-  background:#11101aeF;
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid #302a40;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+padding:18px 20px;
+background:#12101c;
+border-bottom:1px solid #292535;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:10
 }
 
 .logo{
-  font-size:25px;
-  font-weight:900;
+font-size:25px;
+font-weight:900
 }
 
 .logo span{
-  color:#9b5cff;
+color:#9b5cff
 }
 
 .container{
-  max-width:1050px;
-  margin:auto;
-  padding:25px 15px;
+max-width:1100px;
+margin:auto;
+padding:25px 16px
 }
 
 .card{
-  background:#13111c;
-  border:1px solid #2d283b;
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:18px;
-  box-shadow:0 15px 45px #0006;
-}
-
-.login-card{
-  max-width:500px;
-  margin:70px auto;
+background:#13111c;
+border:1px solid #2b2737;
+border-radius:18px;
+padding:20px;
+margin-bottom:18px;
+box-shadow:0 10px 30px #0005
 }
 
 h1,h2,h3{
-  margin-top:0;
+margin-top:0
 }
 
-input,
-textarea{
-  width:100%;
-  padding:15px;
-  margin:7px 0 13px;
-  border-radius:13px;
-  border:1px solid #3a3449;
-  background:#1b1924;
-  color:#fff;
-  font-size:15px;
-  outline:none;
+input,textarea{
+width:100%;
+padding:14px;
+margin:7px 0 12px;
+border-radius:12px;
+border:1px solid #393444;
+background:#1c1925;
+color:#fff;
+font-size:15px;
+outline:none
 }
 
-input:focus,
-textarea:focus{
-  border-color:#985cff;
-  box-shadow:0 0 0 3px #985cff22;
+input:focus,textarea:focus{
+border-color:#9b5cff
 }
 
 textarea{
-  min-height:110px;
-  resize:vertical;
+min-height:100px;
+resize:vertical
 }
 
 button{
-  border:0;
-  border-radius:13px;
-  padding:13px 18px;
-  font-weight:800;
-  cursor:pointer;
-  background:linear-gradient(135deg,#9b5cff,#6c28e8);
-  color:#fff;
-  margin:4px;
+border:0;
+border-radius:12px;
+padding:13px 18px;
+font-weight:800;
+cursor:pointer;
+background:#8b4dff;
+color:#fff;
+margin:4px
 }
 
 button:hover{
-  transform:translateY(-1px);
-  opacity:.93;
+opacity:.9
 }
 
 .danger{
-  background:#d9365f;
+background:#e54268
 }
 
 .success{
-  background:#159c65;
+background:#18a66b
 }
 
 .secondary{
-  background:#302b3d;
+background:#302b3c
 }
 
 .hidden{
-  display:none!important;
+display:none!important
 }
 
 .msg{
-  padding:13px;
-  border-radius:12px;
-  margin-top:12px;
-  background:#251d30;
-  color:#ffb6c7;
+padding:12px;
+border-radius:10px;
+margin:10px 0;
+background:#211d2b;
+color:#ffb4c5
 }
 
 .ok{
-  color:#69e6a4;
-  padding:10px 0;
+color:#65e6a0;
+padding:10px 0
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px
 }
 
-.stat{
-  background:#1a1724;
-  border:1px solid #302a3e;
-  padding:18px;
-  border-radius:16px;
-}
-
-.stat b{
-  display:block;
-  font-size:27px;
-  color:#bd8bff;
-  margin-bottom:5px;
-}
-
-.product{
-  overflow:hidden;
-}
-
-.product img{
-  width:100%;
-  height:180px;
-  object-fit:cover;
-  border-radius:14px;
-  background:#211e29;
-  display:block;
-  margin-bottom:15px;
-}
-
-.product-icon{
-  height:180px;
-  border-radius:14px;
-  background:#211e29;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:65px;
-  margin-bottom:15px;
-}
-
-.price{
-  font-size:23px;
-  font-weight:900;
-  color:#bd86ff;
-  margin:10px 0;
+.stats{
+font-size:26px;
+font-weight:900
 }
 
 .small{
-  color:#aaa5b6;
-  font-size:13px;
-  line-height:1.5;
+color:#aaa5b6;
+font-size:13px
 }
 
-.delivery{
-  margin-top:12px;
-  padding:12px;
-  background:#0e0c14;
-  border:1px solid #302b3d;
-  border-radius:12px;
-  white-space:pre-wrap;
-  color:#ddd;
+.product img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:12px;
+background:#222
+}
+
+.price{
+font-size:21px;
+font-weight:900;
+color:#b47aff;
+margin:10px 0
 }
 
 .deposit{
-  border:1px solid #332e40;
-  border-radius:15px;
-  padding:16px;
-  margin:10px 0;
-  background:#17141f;
+border:1px solid #332e40;
+border-radius:14px;
+padding:15px;
+margin:10px 0
 }
 
 .badge{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:20px;
-  background:#352c47;
-  font-size:12px;
-  margin-top:7px;
+display:inline-block;
+padding:5px 9px;
+border-radius:20px;
+background:#332b42;
+font-size:12px
 }
 
-.section-title{
-  margin-top:28px;
+.delivery{
+background:#0e0c15;
+border:1px solid #302b3c;
+border-radius:12px;
+padding:12px;
+margin-top:12px;
+white-space:pre-wrap;
+word-break:break-word
 }
 
-label{
-  display:block;
-  font-weight:800;
-  margin-top:5px;
-  color:#ddd;
-}
-
-@media(max-width:600px){
-  .container{
-    padding:18px 12px;
-  }
-
-  .card{
-    padding:16px;
-  }
-
-  header{
-    padding:15px;
-  }
+hr{
+border:0;
+border-top:1px solid #292535;
+margin:20px 0
 }
 </style>
 </head>
@@ -251,961 +189,1022 @@ label{
 
 <header>
 
-  <div class="logo">
-    XENON<span>SHOP</span>
-  </div>
+<div class="logo">
+XENON<span>SHOP</span>
+</div>
 
-  <button
-    id="logout"
-    class="secondary hidden"
-  >
-    Logout
-  </button>
+<button
+id="logout"
+class="secondary hidden">
+Logout
+</button>
 
 </header>
 
-
 <div class="container">
-
 
 <!-- LOGIN -->
 
 <section
-  id="loginBox"
-  class="card login-card"
->
+id="loginBox"
+class="card">
 
-  <h1>Admin Login 🔐</h1>
+<h1>Admin Login 🔐</h1>
 
-  <p class="small">
-    Xenon Shop Administration Panel
-  </p>
+<p class="small">
+Xenon Shop administration panel
+</p>
 
-  <label>Email</label>
+<input
+id="email"
+type="email"
+placeholder="Admin Email">
 
-  <input
-    id="email"
-    type="email"
-    placeholder="Admin Email"
-  >
+<input
+id="password"
+type="password"
+placeholder="Admin Password">
 
-  <label>Password</label>
+<button onclick="adminLogin()">
+LOGIN TO ADMIN
+</button>
 
-  <input
-    id="password"
-    type="password"
-    placeholder="Admin Password"
-  >
-
-  <button
-    onclick="adminLogin()"
-    style="width:100%;margin:5px 0"
-  >
-    LOGIN TO ADMIN
-  </button>
-
-  <div id="loginMsg"></div>
+<div id="loginMsg"></div>
 
 </section>
 
 
-
-<!-- ADMIN PANEL -->
+<!-- PANEL -->
 
 <section
-  id="panel"
-  class="hidden"
->
+id="panel"
+class="hidden">
 
-  <div class="card">
+<!-- STATS -->
 
-    <h1>
-      Welcome, Admin 👑
-    </h1>
+<div class="card">
 
-    <p class="small">
-      Yahan se products aur money requests manage karo.
-    </p>
+<h1>Dashboard 👑</h1>
 
-    <div class="grid">
+<div class="grid">
 
-      <div class="stat">
-        <b id="users">0</b>
-        <span class="small">Users</span>
-      </div>
+<div>
+<div
+id="users"
+class="stats">
+0
+</div>
+<div class="small">
+Users
+</div>
+</div>
 
-      <div class="stat">
-        <b id="productsCount">0</b>
-        <span class="small">Products</span>
-      </div>
+<div>
+<div
+id="productsCount"
+class="stats">
+0
+</div>
+<div class="small">
+Products
+</div>
+</div>
 
-      <div class="stat">
-        <b id="deposits">0</b>
-        <span class="small">Pending Deposits</span>
-      </div>
+<div>
+<div
+id="deposits"
+class="stats">
+0
+</div>
+<div class="small">
+Money Requests
+</div>
+</div>
 
-      <div class="stat">
-        <b id="sales">0</b>
-        <span class="small">Purchases</span>
-      </div>
+<div>
+<div
+id="sales"
+class="stats">
+0
+</div>
+<div class="small">
+Purchases
+</div>
+</div>
 
-    </div>
+</div>
 
-  </div>
-
-
-
-  <!-- ADD PRODUCT -->
-
-  <div class="card">
-
-    <h2>
-      ➕ Add New Product
-    </h2>
-
-    <p class="small">
-      Product ki complete information yahan bharo.
-    </p>
-
-    <label>
-      Product Name
-    </label>
-
-    <input
-      id="pname"
-      placeholder="Example: Premium Pack"
-    >
+</div>
 
 
-    <label>
-      Price
-    </label>
+<!-- ADD PRODUCT -->
 
-    <input
-      id="pprice"
-      type="number"
-      min="1"
-      placeholder="Example: 399"
-    >
+<div class="card">
 
+<h2>➕ Add New Product</h2>
 
-    <label>
-      Description
-    </label>
+<p class="small">
+Product ki sari information yahan bharo.
+</p>
 
-    <textarea
-      id="pdescription"
-      placeholder="Product ke bare me description..."
-    ></textarea>
+<label>Product Name</label>
 
+<input
+id="pname"
+placeholder="Example: Free Fire ID">
 
-    <label>
-      Product Image URL
-    </label>
+<label>Price</label>
 
-    <input
-      id="pimage"
-      placeholder="https://example.com/image.jpg"
-    >
+<input
+id="pprice"
+type="number"
+min="1"
+placeholder="Example: 399">
 
+<label>Product Description</label>
 
-    <label>
-      🛍️ Buy karne ke baad user ko kya milega?
-    </label>
+<textarea
+id="pdescription"
+placeholder="Product ke bare me detail likho..."></textarea>
 
-    <textarea
-      id="pdelivery"
-      placeholder="Example:
+<label>Product Image URL</label>
 
-Activation Key: XXXX-XXXX-XXXX
+<input
+id="pimage"
+placeholder="https://example.com/image.jpg">
 
-Instructions:
-1. Website open karo.
-2. Key enter karo.
-3. Product activate karo."
-    ></textarea>
+<label>
+🎁 Buy karne ke baad user ko kya milega?
+</label>
 
+<textarea
+id="pdelivery"
+placeholder="Example:
+User ko purchase ke baad ye details milengi...
+ID: XXXXX
+Password: XXXXX
+Ya koi download/link/detail yahan likho."></textarea>
 
-    <button
-      onclick="addProduct()"
-    >
-      ➕ ADD PRODUCT
-    </button>
+<button onclick="addProduct()">
+➕ ADD PRODUCT
+</button>
 
-    <div id="productMsg"></div>
+<div id="productMsg"></div>
 
-  </div>
+</div>
 
 
+<!-- PRODUCTS -->
 
-  <!-- PRODUCTS -->
+<div class="card">
 
-  <div class="card">
+<h2>📦 Products</h2>
 
-    <h2>
-      📦 Your Products
-    </h2>
+<div
+id="productList"
+class="grid">
 
-    <div
-      id="productList"
-      class="grid"
-    >
-      Loading...
-    </div>
+Loading...
 
-  </div>
+</div>
+
+</div>
 
 
+<!-- DEPOSITS -->
 
-  <!-- DEPOSITS -->
+<div class="card">
 
-  <div class="card">
+<h2>💰 Money Requests</h2>
 
-    <h2>
-      💰 Money Requests
-    </h2>
+<div id="depositList">
+Loading...
+</div>
 
-    <div id="depositList">
-      Loading...
-    </div>
-
-  </div>
+</div>
 
 </section>
 
 </div>
 
 
-
 <script>
 
 let adminToken =
-  localStorage.getItem("xenon_admin_token") || "";
+localStorage.getItem(
+"xenon_admin_token"
+) || "";
 
 
-
-function showPanel(){
-
-  document
-    .getElementById("loginBox")
-    .classList.add("hidden");
-
-  document
-    .getElementById("panel")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("logout")
-    .classList.remove("hidden");
-
-  loadAll();
-}
-
-
-
-function showLogin(){
-
-  document
-    .getElementById("loginBox")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("panel")
-    .classList.add("hidden");
-
-  document
-    .getElementById("logout")
-    .classList.add("hidden");
-}
-
-
+/* =========================
+   LOGIN
+========================= */
 
 async function adminLogin(){
 
-  const email =
-    document
-      .getElementById("email")
-      .value
-      .trim();
+const email =
+document
+.getElementById("email")
+.value
+.trim();
 
-  const password =
-    document
-      .getElementById("password")
-      .value;
+const password =
+document
+.getElementById("password")
+.value;
 
-  const msg =
-    document.getElementById("loginMsg");
+const msg =
+document.getElementById(
+"loginMsg"
+);
 
-  if(!email || !password){
+if(!email || !password){
 
-    msg.innerHTML =
-      '<div class="msg">Email aur password dono bharo.</div>';
+msg.innerHTML =
+'<div class="msg">Email aur password dono bharo.</div>';
 
-    return;
-  }
+return;
+}
 
-  msg.innerHTML =
-    '<div class="small">Login checking...</div>';
+msg.innerHTML =
+'<div class="small">Checking...</div>';
 
-  try{
+try{
 
-    const response =
-      await fetch(
-        "/api/admin/login",
-        {
-          method:"POST",
+const response =
+await fetch(
+"/api/admin/login",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+email:email,
+password:password
+})
+}
+);
 
-          headers:{
-            "Content-Type":"application/json"
-          },
+const data =
+await response.json();
 
-          body:JSON.stringify({
-            email:email,
-            password:password
-          })
-        }
-      );
+if(!response.ok){
 
-    const data =
-      await response.json();
+msg.innerHTML =
+'<div class="msg">'+
+safe(data.error ||
+"Login failed")+
+'</div>';
 
-    if(!response.ok){
+return;
+}
 
-      msg.innerHTML =
-        '<div class="msg">' +
-        safe(data.error || "Invalid admin login") +
-        '</div>';
+adminToken =
+data.token;
 
-      return;
-    }
+localStorage.setItem(
+"xenon_admin_token",
+adminToken
+);
 
-    adminToken =
-      data.token;
+msg.innerHTML="";
 
-    localStorage.setItem(
-      "xenon_admin_token",
-      adminToken
-    );
+showPanel();
 
-    msg.innerHTML = "";
+}catch(error){
 
-    showPanel();
+msg.innerHTML =
+'<div class="msg">Server se connection nahi hua.</div>';
 
-  }catch(error){
-
-    msg.innerHTML =
-      '<div class="msg">Server se connection nahi hua.</div>';
-
-  }
+}
 
 }
 
 
+/* =========================
+   SHOW PANEL
+========================= */
 
-async function api(url,options={}){
+function showPanel(){
 
-  options.headers =
-    Object.assign(
-      {},
-      options.headers || {},
-      {
-        "Authorization":
-          "Bearer " + adminToken,
+document
+.getElementById("loginBox")
+.classList.add("hidden");
 
-        "Content-Type":
-          "application/json"
-      }
-    );
+document
+.getElementById("panel")
+.classList.remove("hidden");
 
-  const response =
-    await fetch(url,options);
+document
+.getElementById("logout")
+.classList.remove("hidden");
 
-  let data = {};
-
-  try{
-    data = await response.json();
-  }catch(e){}
-
-  if(
-    response.status === 401 ||
-    response.status === 403
-  ){
-
-    localStorage.removeItem(
-      "xenon_admin_token"
-    );
-
-    adminToken = "";
-
-    showLogin();
-
-    throw new Error(
-      data.error || "Admin login required"
-    );
-  }
-
-  if(!response.ok){
-
-    throw new Error(
-      data.error || "Request failed"
-    );
-  }
-
-  return data;
-}
-
-
-
-async function loadAll(){
-
-  await Promise.all([
-    loadStats(),
-    loadProducts(),
-    loadDeposits()
-  ]);
+loadAll();
 
 }
 
 
+/* =========================
+   SHOW LOGIN
+========================= */
+
+function showLogin(){
+
+document
+.getElementById("loginBox")
+.classList.remove("hidden");
+
+document
+.getElementById("panel")
+.classList.add("hidden");
+
+document
+.getElementById("logout")
+.classList.add("hidden");
+
+}
+
+
+/* =========================
+   API HELPER
+========================= */
+
+async function api(
+url,
+options={}
+){
+
+options.headers =
+Object.assign(
+{},
+options.headers || {},
+{
+"Authorization":
+"Bearer " +
+adminToken,
+
+"Content-Type":
+"application/json"
+}
+);
+
+const response =
+await fetch(
+url,
+options
+);
+
+const data =
+await response.json();
+
+if(
+response.status === 401 ||
+response.status === 403
+){
+
+localStorage.removeItem(
+"xenon_admin_token"
+);
+
+adminToken="";
+
+showLogin();
+
+throw new Error(
+data.error ||
+"Login required"
+);
+
+}
+
+if(!response.ok){
+
+throw new Error(
+data.error ||
+"Request failed"
+);
+
+}
+
+return data;
+
+}
+
+
+/* =========================
+   LOAD ALL
+========================= */
+
+function loadAll(){
+
+loadStats();
+loadProducts();
+loadDeposits();
+
+}
+
+
+/* =========================
+   STATS
+========================= */
 
 async function loadStats(){
 
-  try{
+try{
 
-    const data =
-      await api(
-        "/api/admin/stats"
-      );
+const data =
+await api(
+"/api/admin/stats"
+);
 
-    document
-      .getElementById("users")
-      .innerText =
-        data.users || 0;
+document
+.getElementById("users")
+.innerText =
+data.users || 0;
 
-    document
-      .getElementById("productsCount")
-      .innerText =
-        data.products || 0;
+document
+.getElementById("productsCount")
+.innerText =
+data.products || 0;
 
-    document
-      .getElementById("deposits")
-      .innerText =
-        data.pendingDeposits || 0;
+document
+.getElementById("deposits")
+.innerText =
+data.deposits || 0;
 
-    document
-      .getElementById("sales")
-      .innerText =
-        data.purchases || 0;
+document
+.getElementById("sales")
+.innerText =
+data.purchases || 0;
 
-  }catch(e){
+}catch(error){
 
-    console.log(e);
+console.log(error);
 
-  }
+}
 
 }
 
 
+/* =========================
+   ADD PRODUCT
+========================= */
 
 async function addProduct(){
 
-  const name =
-    document
-      .getElementById("pname")
-      .value
-      .trim();
+const name =
+document
+.getElementById("pname")
+.value
+.trim();
 
-  const price =
-    Number(
-      document
-        .getElementById("pprice")
-        .value
-    );
+const price =
+Number(
+document
+.getElementById("pprice")
+.value
+);
 
-  const description =
-    document
-      .getElementById("pdescription")
-      .value
-      .trim();
+const description =
+document
+.getElementById("pdescription")
+.value
+.trim();
 
-  const image =
-    document
-      .getElementById("pimage")
-      .value
-      .trim();
+const image =
+document
+.getElementById("pimage")
+.value
+.trim();
 
-  const delivery =
-    document
-      .getElementById("pdelivery")
-      .value
-      .trim();
+const delivery =
+document
+.getElementById("pdelivery")
+.value
+.trim();
 
-  const msg =
-    document.getElementById(
-      "productMsg"
-    );
-
-
-  if(!name){
-
-    msg.innerHTML =
-      '<div class="msg">Product name likho.</div>';
-
-    return;
-  }
+const msg =
+document.getElementById(
+"productMsg"
+);
 
 
-  if(
-    !Number.isFinite(price) ||
-    price <= 0
-  ){
+if(!name){
 
-    msg.innerHTML =
-      '<div class="msg">Valid price likho.</div>';
+msg.innerHTML =
+'<div class="msg">Product name likho.</div>';
 
-    return;
-  }
-
-
-  if(!delivery){
-
-    msg.innerHTML =
-      '<div class="msg">Buy ke baad user ko kya milega wo likho.</div>';
-
-    return;
-  }
-
-
-  msg.innerHTML =
-    '<div class="small">Product adding...</div>';
-
-
-  try{
-
-    await api(
-      "/api/admin/products",
-      {
-        method:"POST",
-
-        body:JSON.stringify({
-
-          name:name,
-
-          price:price,
-
-          description:description,
-
-          image:image,
-
-          delivery:delivery
-
-        })
-      }
-    );
-
-
-    document
-      .getElementById("pname")
-      .value = "";
-
-    document
-      .getElementById("pprice")
-      .value = "";
-
-    document
-      .getElementById("pdescription")
-      .value = "";
-
-    document
-      .getElementById("pimage")
-      .value = "";
-
-    document
-      .getElementById("pdelivery")
-      .value = "";
-
-
-    msg.innerHTML =
-      '<div class="ok">✅ Product successfully added.</div>';
-
-
-    await loadAll();
-
-  }catch(e){
-
-    msg.innerHTML =
-      '<div class="msg">' +
-      safe(e.message) +
-      '</div>';
-
-  }
-
+return;
 }
 
-
-
-async function loadProducts(){
-
-  const box =
-    document.getElementById(
-      "productList"
-    );
-
-  try{
-
-    const products =
-      await api(
-        "/api/products"
-      );
-
-
-    if(
-      !Array.isArray(products) ||
-      products.length === 0
-    ){
-
-      box.innerHTML =
-        '<p class="small">Abhi koi product nahi hai.</p>';
-
-      return;
-    }
-
-
-    box.innerHTML =
-      products.map(function(p){
-
-        return `
-
-          <div class="card product">
-
-            ${
-              p.image
-              ?
-              `
-              <img
-                src="${safe(p.image)}"
-                onerror="this.style.display='none'"
-                alt=""
-              >
-              `
-              :
-              `
-              <div class="product-icon">
-                📦
-              </div>
-              `
-            }
-
-
-            <h3>
-              ${safe(p.name)}
-            </h3>
-
-
-            <div class="price">
-              ₹${Number(p.price)}
-            </div>
-
-
-            <p class="small">
-              ${safe(
-                p.description ||
-                "No description"
-              )}
-            </p>
-
-
-            <div class="delivery">
-
-              <b>
-                🎁 Customer Gets:
-              </b>
-
-              <br><br>
-
-              ${safe(
-                p.delivery ||
-                "Delivery information not set."
-              )}
-
-            </div>
-
-
-            <br>
-
-
-            <button
-              class="danger"
-              onclick="deleteProduct('${safe(p.id)}')"
-            >
-              🗑️ DELETE
-            </button>
-
-          </div>
-
-        `;
-
-      }).join("");
-
-  }catch(e){
-
-    box.innerHTML =
-      '<div class="msg">' +
-      safe(e.message) +
-      '</div>';
-
-  }
-
-}
-
-
-
-async function deleteProduct(productId){
-
-  if(
-    !confirm(
-      "Kya ye product delete karna hai?"
-    )
-  ){
-
-    return;
-  }
-
-
-  try{
-
-    await api(
-      "/api/admin/products/" +
-      encodeURIComponent(productId),
-      {
-        method:"DELETE"
-      }
-    );
-
-
-    await loadAll();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
-}
-
-
-
-async function loadDeposits(){
-
-  const box =
-    document.getElementById(
-      "depositList"
-    );
-
-  try{
-
-    const deposits =
-      await api(
-        "/api/admin/deposits"
-      );
-
-
-    if(
-      !Array.isArray(deposits) ||
-      deposits.length === 0
-    ){
-
-      box.innerHTML =
-        '<p class="small">Koi money request nahi hai.</p>';
-
-      return;
-    }
-
-
-    box.innerHTML =
-      deposits.map(function(d){
-
-        return `
-
-          <div class="deposit">
-
-            <b>
-              ₹${Number(d.amount)}
-            </b>
-
-            <br><br>
-
-            <span class="small">
-              User:
-              ${safe(d.userName || "Unknown")}
-            </span>
-
-            <br>
-
-            <span class="small">
-              Email:
-              ${safe(d.userEmail || "")}
-            </span>
-
-            <br>
-
-            <span class="small">
-              UTR:
-              ${safe(d.utr)}
-            </span>
-
-            <br>
-
-            <span class="badge">
-              ${safe(d.status)}
-            </span>
-
-            <br><br>
-
-
-            ${
-              d.status === "PENDING"
-              ?
-              `
-
-              <button
-                class="success"
-                onclick="depositAction(
-                  '${safe(d.id)}',
-                  'APPROVED'
-                )"
-              >
-                ✅ APPROVE
-              </button>
-
-
-              <button
-                class="danger"
-                onclick="depositAction(
-                  '${safe(d.id)}',
-                  'REJECTED'
-                )"
-              >
-                ❌ REJECT
-              </button>
-
-              `
-              :
-              ""
-            }
-
-          </div>
-
-        `;
-
-      }).join("");
-
-  }catch(e){
-
-    box.innerHTML =
-      '<div class="msg">' +
-      safe(e.message) +
-      '</div>';
-
-  }
-
-}
-
-
-
-async function depositAction(
-  id,
-  status
+if(
+!Number.isFinite(price) ||
+price <= 0
 ){
 
-  try{
+msg.innerHTML =
+'<div class="msg">Valid price likho.</div>';
 
-    await api(
-      "/api/admin/deposits/" +
-      encodeURIComponent(id),
-      {
-        method:"POST",
+return;
+}
 
-        body:JSON.stringify({
-          status:status
-        })
-      }
-    );
+if(!delivery){
 
+msg.innerHTML =
+'<div class="msg">Buy ke baad user ko kya milega, wo likho.</div>';
 
-    await loadAll();
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
-
+return;
 }
 
 
+msg.innerHTML =
+'<div class="small">Product add ho raha hai...</div>';
 
-function safe(value){
 
-  return String(
-    value ?? ""
-  )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
-  );
+try{
 
+await api(
+"/api/admin/products",
+{
+method:"POST",
+
+body:
+JSON.stringify({
+
+name:name,
+
+price:price,
+
+description:
+description,
+
+image:image,
+
+delivery:
+delivery
+
+})
 }
-
+);
 
 
 document
-  .getElementById("logout")
-  .addEventListener(
-    "click",
-    function(){
+.getElementById("pname")
+.value="";
 
-      localStorage.removeItem(
-        "xenon_admin_token"
-      );
+document
+.getElementById("pprice")
+.value="";
 
-      adminToken = "";
+document
+.getElementById("pdescription")
+.value="";
 
-      showLogin();
+document
+.getElementById("pimage")
+.value="";
 
-    }
-  );
+document
+.getElementById("pdelivery")
+.value="";
 
 
+msg.innerHTML =
+'<div class="ok">Product successfully add ho gaya ✅</div>';
+
+
+loadAll();
+
+
+}catch(error){
+
+msg.innerHTML =
+'<div class="msg">'+
+safe(error.message)+
+'</div>';
+
+}
+
+}
+
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+
+async function loadProducts(){
+
+const box =
+document.getElementById(
+"productList"
+);
+
+try{
+
+const products =
+await api(
+"/api/products"
+);
+
+if(
+!Array.isArray(products) ||
+products.length === 0
+){
+
+box.innerHTML =
+'<p class="small">Abhi koi product nahi hai.</p>';
+
+return;
+}
+
+
+box.innerHTML =
+products
+.map(function(p){
+
+return `
+
+<div class="card product">
+
+${
+p.image
+?
+`
+<img
+src="${safe(p.image)}"
+alt="${safe(p.name)}"
+onerror="this.style.display='none'">
+`
+:
+`
+<div
+style="
+font-size:60px;
+text-align:center;
+padding:40px">
+📦
+</div>
+`
+}
+
+<h3>
+${safe(p.name)}
+</h3>
+
+<div class="price">
+₹${Number(p.price)}
+</div>
+
+<p class="small">
+${safe(
+p.description ||
+"No description"
+)}
+</p>
+
+<div class="delivery">
+
+<b>🎁 Buyer ko milega:</b>
+
+<br><br>
+
+${safe(
+p.delivery ||
+"Delivery details nahi hain."
+)}
+
+</div>
+
+<br>
+
+<button
+class="danger"
+onclick="deleteProduct('${safe(p.id)}')">
+
+🗑️ DELETE
+
+</button>
+
+</div>
+
+`;
+
+})
+.join("");
+
+
+}catch(error){
+
+box.innerHTML =
+'<div class="msg">'+
+safe(error.message)+
+'</div>';
+
+}
+
+}
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+async function deleteProduct(
+productId
+){
+
+if(
+!confirm(
+"Ye product delete karna hai?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+await api(
+"/api/admin/products/" +
+encodeURIComponent(
+productId
+),
+{
+method:"DELETE"
+}
+);
+
+loadAll();
+
+}catch(error){
+
+alert(
+error.message
+);
+
+}
+
+}
+
+
+/* =========================
+   LOAD DEPOSITS
+========================= */
+
+async function loadDeposits(){
+
+const box =
+document.getElementById(
+"depositList"
+);
+
+try{
+
+const deposits =
+await api(
+"/api/admin/deposits"
+);
+
+if(
+!Array.isArray(deposits) ||
+deposits.length === 0
+){
+
+box.innerHTML =
+'<p class="small">Koi money request nahi hai.</p>';
+
+return;
+}
+
+
+box.innerHTML =
+deposits
+.map(function(d){
+
+return `
+
+<div class="deposit">
+
+<b>
+Amount: ₹${Number(d.amount)}
+</b>
+
+<br><br>
+
+<span class="small">
+User:
+${safe(
+d.userName ||
+"Unknown"
+)}
+</span>
+
+<br>
+
+<span class="small">
+Email:
+${safe(
+d.userEmail ||
+""
+)}
+</span>
+
+<br>
+
+<span class="small">
+UTR:
+${safe(
+d.utr
+)}
+</span>
+
+<br><br>
+
+<span class="badge">
+${safe(
+d.status
+)}
+</span>
+
+<br><br>
+
+${
+d.status === "PENDING"
+?
+`
+
+<button
+class="success"
+onclick="depositAction(
+'${safe(d.id)}',
+'APPROVED'
+)">
+✅ APPROVE
+</button>
+
+<button
+class="danger"
+onclick="depositAction(
+'${safe(d.id)}',
+'REJECTED'
+)">
+❌ REJECT
+</button>
+
+`
+:
+""
+}
+
+</div>
+
+`;
+
+})
+.join("");
+
+
+}catch(error){
+
+box.innerHTML =
+'<div class="msg">'+
+safe(error.message)+
+'</div>';
+
+}
+
+}
+
+
+/* =========================
+   DEPOSIT ACTION
+========================= */
+
+async function depositAction(
+id,
+status
+){
+
+const text =
+status === "APPROVED"
+?
+"Deposit approve karna hai?"
+:
+"Deposit reject karna hai?";
+
+
+if(!confirm(text)){
+
+return;
+
+}
+
+
+try{
+
+await api(
+"/api/admin/deposits/" +
+encodeURIComponent(id),
+{
+method:"POST",
+
+body:
+JSON.stringify({
+status:status
+})
+}
+);
+
+loadAll();
+
+}catch(error){
+
+alert(
+error.message
+);
+
+}
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function safe(value){
+
+return String(
+value == null
+? ""
+: value
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document
+.getElementById("logout")
+.addEventListener(
+"click",
+function(){
+
+localStorage.removeItem(
+"xenon_admin_token"
+);
+
+adminToken="";
+
+showLogin();
+
+}
+);
+
+
+/* =========================
+   START
+========================= */
 
 if(adminToken){
 
-  showPanel();
+showPanel();
 
 }else{
 
-  showLogin();
+showLogin();
 
 }
 
