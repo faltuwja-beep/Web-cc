@@ -2,303 +2,235 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Xenon Shop Admin</title>
 
 <style>
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  min-height:100vh;
-  font-family:Arial,sans-serif;
-  background:#070914;
-  color:#fff;
-  padding:20px;
+margin:0;
+font-family:Arial,sans-serif;
+background:#09080f;
+color:#fff;
+padding-bottom:40px
 }
-
-.container{
-  max-width:900px;
-  margin:auto;
+header{
+padding:18px 20px;
+background:#12101c;
+border-bottom:1px solid #292535;
+display:flex;
+justify-content:space-between;
+align-items:center
 }
-
-.box{
-  background:#111528;
-  border:1px solid #292f4d;
-  border-radius:22px;
-  padding:25px;
-  margin-top:30px;
-}
-
 .logo{
-  font-size:28px;
-  font-weight:900;
+font-size:25px;
+font-weight:900
 }
-
-.logo span{
-  color:#8055ff;
+.logo span{color:#9b5cff}
+.container{
+max-width:1000px;
+margin:auto;
+padding:25px 16px
 }
-
+.card{
+background:#13111c;
+border:1px solid #2b2737;
+border-radius:18px;
+padding:20px;
+margin-bottom:18px;
+box-shadow:0 10px 30px #0005
+}
+h1,h2,h3{margin-top:0}
 input,textarea{
-  width:100%;
-  padding:14px;
-  margin-top:8px;
-  border-radius:12px;
-  border:1px solid #303752;
-  background:#080b18;
-  color:white;
-  font-size:16px;
-  outline:none;
+width:100%;
+padding:14px;
+margin:7px 0 12px;
+border-radius:12px;
+border:1px solid #393444;
+background:#1c1925;
+color:#fff;
+font-size:15px;
+outline:none
 }
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-label{
-  display:block;
-  margin-top:18px;
-  color:#bfc4d8;
-}
-
+textarea{min-height:100px;resize:vertical}
 button{
-  border:0;
-  border-radius:12px;
-  padding:14px 18px;
-  background:#7952ff;
-  color:white;
-  font-weight:bold;
-  font-size:15px;
-  cursor:pointer;
-  margin-top:18px;
+border:0;
+border-radius:12px;
+padding:13px 18px;
+font-weight:800;
+cursor:pointer;
+background:#8b4dff;
+color:#fff;
+margin:4px
 }
-
-button.secondary{
-  background:#292e43;
+button:hover{opacity:.9}
+.danger{background:#e54268}
+.success{background:#18a66b}
+.secondary{background:#302b3c}
+.hidden{display:none}
+.msg{
+padding:12px;
+border-radius:10px;
+margin:10px 0;
+background:#211d2b;
+color:#ffb4c5
 }
-
-button.danger{
-  background:#b52b4b;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:15px
 }
-
-.message{
-  display:none;
-  margin-top:15px;
-  padding:12px;
-  border-radius:10px;
-  background:#321b29;
-  color:#ff9ab8;
-}
-
-#panel{
-  display:none;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:12px;
-  margin-top:20px;
-}
-
-.stat{
-  background:#080b18;
-  border:1px solid #292f4d;
-  border-radius:15px;
-  padding:18px;
-}
-
-.stat b{
-  display:block;
-  font-size:27px;
-  margin-top:7px;
-}
-
-.product{
-  background:#080b18;
-  border:1px solid #292f4d;
-  border-radius:15px;
-  padding:18px;
-  margin-top:12px;
-}
-
 .product img{
-  width:100%;
-  max-height:220px;
-  object-fit:cover;
-  border-radius:12px;
+width:100%;
+height:170px;
+object-fit:cover;
+border-radius:12px;
+background:#222
 }
-
-.deposit{
-  background:#080b18;
-  border:1px solid #292f4d;
-  border-radius:15px;
-  padding:18px;
-  margin-top:12px;
+.price{
+font-size:21px;
+font-weight:900;
+color:#b47aff;
+margin:10px 0
 }
-
-.row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.row button{
-  flex:1;
-}
-
 .small{
-  color:#9298b3;
-  font-size:14px;
+color:#aaa5b6;
+font-size:13px
+}
+.deposit{
+border:1px solid #332e40;
+border-radius:14px;
+padding:15px;
+margin:10px 0
+}
+.badge{
+display:inline-block;
+padding:5px 9px;
+border-radius:20px;
+background:#332b42;
+font-size:12px
 }
 </style>
 </head>
 
 <body>
 
+<header>
+<div class="logo">XENON<span>SHOP</span></div>
+<button id="logout" class="secondary hidden">Logout</button>
+</header>
+
 <div class="container">
-
-<div class="box">
-
-<div class="logo">
-XENON<span>SHOP</span>
-</div>
 
 <!-- LOGIN -->
 
-<div id="loginBox">
+<section id="loginBox" class="card">
 
-<h2>Admin Login</h2>
+<h1>Admin Login 🔐</h1>
 
 <p class="small">
-Xenon Shop Administrator
+Xenon Shop administration panel
 </p>
-
-<label>Email</label>
 
 <input
 id="email"
 type="email"
-value="admin@xenon.shop"
+placeholder="Admin Email"
 >
-
-<label>Password</label>
 
 <input
 id="password"
 type="password"
-placeholder="Admin password"
+placeholder="Admin Password"
 >
 
-<button
-onclick="login()"
->
-🔐 Login
+<button onclick="adminLogin()">
+LOGIN TO ADMIN
 </button>
 
-<div
-id="message"
-class="message"
-></div>
+<div id="loginMsg"></div>
 
-</div>
+</section>
 
 
 <!-- PANEL -->
 
-<div id="panel">
+<section id="panel" class="hidden">
 
-<h2>Admin Panel</h2>
+<div class="card">
 
-<div class="stats">
+<h1>Welcome, Admin 👑</h1>
 
-<div class="stat">
-Users
+<div class="grid">
+
+<div>
 <b id="users">0</b>
+<div class="small">Users</div>
 </div>
 
-<div class="stat">
-Products
-<b id="products">0</b>
+<div>
+<b id="productsCount">0</b>
+<div class="small">Products</div>
 </div>
 
-<div class="stat">
-Pending Deposits
-<b id="pending">0</b>
+<div>
+<b id="deposits">0</b>
+<div class="small">Deposits</div>
 </div>
 
-<div class="stat">
-Purchases
-<b id="purchases">0</b>
+<div>
+<b id="sales">0</b>
+<div class="small">Purchases</div>
 </div>
 
 </div>
 
+</div>
 
-<!-- PRODUCT -->
 
-<div class="box">
+<!-- ADD PRODUCT -->
 
-<h2>Add Product</h2>
+<div class="card">
 
-<label>Product Name</label>
+<h2>➕ Add Product</h2>
 
 <input
-id="productName"
-placeholder="Example: Premium Account"
+id="pname"
+placeholder="Product name"
 >
 
-<label>Price</label>
-
 <input
-id="productPrice"
+id="pprice"
 type="number"
-placeholder="99"
+placeholder="Price ₹"
 >
-
-<label>Description</label>
 
 <textarea
-id="productDescription"
-placeholder="Product ke bare me likho..."
+id="pdescription"
+placeholder="Product ke bare me description likho..."
 ></textarea>
 
-<label>Image URL</label>
-
 <input
-id="productImage"
-placeholder="https://..."
+id="pimage"
+placeholder="Product image URL"
 >
 
-<label>Icon</label>
-
-<input
-id="productIcon"
-value="📦"
->
-
-<button
-onclick="addProduct()"
->
-➕ Add Product
+<button onclick="addProduct()">
+ADD PRODUCT
 </button>
 
-<div
-id="productMessage"
-class="message"
-></div>
+<div id="productMsg"></div>
 
 </div>
 
 
 <!-- PRODUCTS -->
 
-<div class="box">
+<div class="card">
 
-<h2>Products</h2>
+<h2>📦 Products</h2>
 
-<div id="productList">
+<div id="productList" class="grid">
 Loading...
 </div>
 
@@ -307,9 +239,9 @@ Loading...
 
 <!-- DEPOSITS -->
 
-<div class="box">
+<div class="card">
 
-<h2>Pending Deposits</h2>
+<h2>💰 Money Requests</h2>
 
 <div id="depositList">
 Loading...
@@ -317,72 +249,66 @@ Loading...
 
 </div>
 
-
-<button
-class="secondary"
-onclick="logout()"
->
-Logout
-</button>
-
-</div>
-
-</div>
+</section>
 
 </div>
 
 
 <script>
 
-let token =
-localStorage.getItem("xenon_admin_token");
+let adminToken = localStorage.getItem("xenon_admin_token") || "";
 
+function showPanel(){
 
-function showMessage(id,text){
+document.getElementById("loginBox")
+.classList.add("hidden");
 
-const box =
-document.getElementById(id);
+document.getElementById("panel")
+.classList.remove("hidden");
 
-box.innerText=text;
-box.style.display="block";
+document.getElementById("logout")
+.classList.remove("hidden");
+
+loadAll();
 
 }
 
 
-async function login(){
+function showLogin(){
+
+document.getElementById("loginBox")
+.classList.remove("hidden");
+
+document.getElementById("panel")
+.classList.add("hidden");
+
+document.getElementById("logout")
+.classList.add("hidden");
+
+}
+
+
+async function adminLogin(){
 
 const email =
-document.getElementById("email")
-.value
-.trim();
+document.getElementById("email").value.trim();
 
 const password =
-document.getElementById("password")
-.value;
+document.getElementById("password").value;
 
+const msg =
+document.getElementById("loginMsg");
 
-if(!email || !password){
-
-showMessage(
-"message",
-"Email aur password bharo."
-);
-
-return;
-
-}
-
+msg.innerHTML = "Checking...";
 
 try{
 
-const response =
-await fetch(
+const response = await fetch(
 "/api/admin/login",
 {
 method:"POST",
 headers:{
-"Content-Type":
-"application/json"
+"Content-Type":"application/json"
 },
 body:JSON.stringify({
 email:email,
@@ -391,552 +317,390 @@ password:password
 }
 );
 
+const data = await response.json();
+
+if(!response.ok){
+
+msg.innerHTML =
+'<div class="msg">'+
+(data.error || "Login failed")+
+'</div>';
+
+return;
+}
+
+adminToken = data.token;
+
+localStorage.setItem(
+"xenon_admin_token",
+adminToken
+);
+
+msg.innerHTML = "";
+
+showPanel();
+
+}catch(error){
+
+msg.innerHTML =
+'<div class="msg">Server se connection nahi hua.</div>';
+
+}
+
+}
+
+
+async function api(url,options={}){
+
+options.headers = Object.assign(
+{},
+options.headers || {},
+{
+"Authorization":"Bearer "+adminToken,
+"Content-Type":"application/json"
+}
+);
+
+const response =
+await fetch(url,options);
 
 const data =
 await response.json();
 
+if(response.status === 401 ||
+response.status === 403){
+
+localStorage.removeItem(
+"xenon_admin_token"
+);
+
+adminToken = "";
+
+showLogin();
+
+throw new Error(
+data.error || "Login required"
+);
+
+}
 
 if(!response.ok){
 
 throw new Error(
-data.error ||
-"Invalid admin login"
+data.error || "Request failed"
 );
 
 }
 
-
-token=data.token;
-
-localStorage.setItem(
-"xenon_admin_token",
-token
-);
-
-
-document.getElementById(
-"loginBox"
-).style.display="none";
-
-
-document.getElementById(
-"panel"
-).style.display="block";
-
-
-loadAll();
+return data;
 
 }
 
-catch(error){
-
-showMessage(
-"message",
-error.message
-);
-
-}
-
-}
-
-
-/* AUTH */
-
-function authHeaders(){
-
-return {
-"Authorization":
-"Bearer "+token,
-"Content-Type":
-"application/json"
-};
-
-}
-
-
-/* LOAD EVERYTHING */
 
 async function loadAll(){
 
-await loadStats();
-
-await loadProducts();
-
-await loadDeposits();
+loadStats();
+loadProducts();
+loadDeposits();
 
 }
 
-
-/* STATS */
 
 async function loadStats(){
 
 try{
 
-const response =
-await fetch(
-"/api/admin/stats",
-{
-headers:authHeaders()
-}
-);
-
-
-if(response.status===401 ||
-response.status===403){
-
-logout();
-return;
-
-}
-
-
 const data =
-await response.json();
+await api("/api/admin/stats");
 
+document.getElementById("users")
+.innerText = data.users || 0;
 
-document.getElementById(
-"users"
-).innerText =
-data.users || 0;
+document.getElementById("productsCount")
+.innerText = data.products || 0;
 
+document.getElementById("deposits")
+.innerText = data.deposits || 0;
 
-document.getElementById(
-"products"
-).innerText =
-data.products || 0;
+document.getElementById("sales")
+.innerText = data.purchases || 0;
 
+}catch(e){
 
-document.getElementById(
-"pending"
-).innerText =
-data.pendingDeposits || 0;
-
-
-document.getElementById(
-"purchases"
-).innerText =
-data.purchases || 0;
-
-}
-
-catch(error){
-
-console.log(error);
+console.log(e);
 
 }
 
 }
 
-
-/* PRODUCTS */
-
-async function loadProducts(){
-
-try{
-
-const response =
-await fetch(
-"/api/products"
-);
-
-const products =
-await response.json();
-
-
-const box =
-document.getElementById(
-"productList"
-);
-
-
-if(!Array.isArray(products) ||
-products.length===0){
-
-box.innerHTML=
-"<p class='small'>No products yet.</p>";
-
-return;
-
-}
-
-
-box.innerHTML =
-products.map(p => `
-
-<div class="product">
-
-${
-p.image
-?
-`<img src="${safe(p.image)}">`
-:
-`<div style="font-size:40px">
-${safe(p.icon || "📦")}
-</div>`
-}
-
-<h3>
-${safe(p.name)}
-</h3>
-
-<p class="small">
-${safe(p.description)}
-</p>
-
-<b>
-₹${Number(p.price)}
-</b>
-
-<br>
-
-<button
-class="danger"
-onclick="deleteProduct('${p.id}')"
->
-Delete
-</button>
-
-</div>
-
-`).join("");
-
-}
-
-catch(error){
-
-console.log(error);
-
-}
-
-}
-
-
-/* ADD PRODUCT */
 
 async function addProduct(){
 
 const name =
-document.getElementById(
-"productName"
-).value.trim();
+document.getElementById("pname").value.trim();
 
 const price =
-Number(
-document.getElementById(
-"productPrice"
-).value
-);
+Number(document.getElementById("pprice").value);
 
 const description =
-document.getElementById(
-"productDescription"
-).value.trim();
+document.getElementById("pdescription").value.trim();
 
 const image =
-document.getElementById(
-"productImage"
-).value.trim();
+document.getElementById("pimage").value.trim();
 
-const icon =
-document.getElementById(
-"productIcon"
-).value.trim();
-
+const msg =
+document.getElementById("productMsg");
 
 if(!name){
 
-showMessage(
-"productMessage",
-"Product name required."
-);
+msg.innerHTML =
+'<div class="msg">Product name likho.</div>';
 
 return;
 
 }
 
+if(!price || price <= 0){
 
-if(!price || price<=0){
-
-showMessage(
-"productMessage",
-"Valid price required."
-);
+msg.innerHTML =
+'<div class="msg">Valid price likho.</div>';
 
 return;
 
 }
-
 
 try{
 
-const response =
-await fetch(
+await api(
 "/api/admin/products",
 {
 method:"POST",
-headers:authHeaders(),
-
 body:JSON.stringify({
-name,
-price,
-description,
-image,
-icon
+name:name,
+price:price,
+description:description,
+image:image
 })
 }
 );
 
+document.getElementById("pname").value="";
+document.getElementById("pprice").value="";
+document.getElementById("pdescription").value="";
+document.getElementById("pimage").value="";
 
-const data =
-await response.json();
-
-
-if(!response.ok){
-
-throw new Error(
-data.error ||
-"Product add failed"
-);
-
-}
-
-
-document.getElementById(
-"productName"
-).value="";
-
-document.getElementById(
-"productPrice"
-).value="";
-
-document.getElementById(
-"productDescription"
-).value="";
-
-document.getElementById(
-"productImage"
-).value="";
-
+msg.innerHTML =
+'<div style="color:#65e6a0">Product added successfully ✅</div>';
 
 loadAll();
 
-}
+}catch(e){
 
-catch(error){
-
-showMessage(
-"productMessage",
-error.message
-);
+msg.innerHTML =
+'<div class="msg">'+e.message+'</div>';
 
 }
 
 }
 
 
-/* DELETE PRODUCT */
-
-async function deleteProduct(id){
-
-if(!confirm(
-"Product delete karna hai?"
-)) return;
-
-
-try{
-
-const response =
-await fetch(
-"/api/admin/products/"+id,
-{
-method:"DELETE",
-headers:authHeaders()
-}
-);
-
-
-const data =
-await response.json();
-
-
-if(!response.ok){
-
-throw new Error(
-data.error ||
-"Delete failed"
-);
-
-}
-
-
-loadAll();
-
-}
-
-catch(error){
-
-alert(error.message);
-
-}
-
-}
-
-
-/* DEPOSITS */
-
-async function loadDeposits(){
-
-try{
-
-const response =
-await fetch(
-"/api/admin/deposits",
-{
-headers:authHeaders()
-}
-);
-
-
-const deposits =
-await response.json();
-
+async function loadProducts(){
 
 const box =
-document.getElementById(
-"depositList"
-);
+document.getElementById("productList");
 
+try{
 
-if(!Array.isArray(deposits) ||
-deposits.length===0){
+const products =
+await api("/api/products");
 
-box.innerHTML=
-"<p class='small'>No deposits.</p>";
+if(!products.length){
+
+box.innerHTML =
+'<p class="small">Abhi koi product nahi hai.</p>';
 
 return;
 
 }
 
-
 box.innerHTML =
-deposits.map(d => `
+products.map(function(p){
 
-<div class="deposit">
-
-<b>
-${safe(d.userName)}
-</b>
-
-<p class="small">
-${safe(d.userEmail)}
-</p>
-
-<p>
-Amount:
-<b>₹${Number(d.amount)}</b>
-</p>
-
-<p>
-UTR:
-<b>${safe(d.utr)}</b>
-</p>
-
-<p class="small">
-Status: ${safe(d.status)}
-</p>
+return `
+<div class="card product">
 
 ${
-d.status==="PENDING"
+p.image
 ?
-`
-<div class="row">
+`<img src="${safe(p.image)}"
+onerror="this.style.display='none'">`
+:
+`<div style="font-size:60px;text-align:center;padding:40px">📦</div>`
+}
+
+<h3>${safe(p.name)}</h3>
+
+<div class="price">
+₹${Number(p.price)}
+</div>
+
+<p class="small">
+${safe(p.description || "No description")}
+</p>
 
 <button
-onclick="processDeposit('${d.id}','APPROVED')"
->
-✅ Approve
+class="danger"
+onclick="deleteProduct('${p.id}')">
+DELETE
+</button>
+
+</div>
+`;
+
+}).join("");
+
+}catch(e){
+
+box.innerHTML =
+'<div class="msg">'+e.message+'</div>';
+
+}
+
+}
+
+
+async function deleteProduct(id){
+
+if(!confirm("Ye product delete karna hai?")){
+return;
+}
+
+try{
+
+await api(
+"/api/admin/products/"+id,
+{
+method:"DELETE"
+}
+);
+
+loadAll();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+
+async function loadDeposits(){
+
+const box =
+document.getElementById("depositList");
+
+try{
+
+const deposits =
+await api("/api/admin/deposits");
+
+if(!deposits.length){
+
+box.innerHTML =
+'<p class="small">Koi money request nahi hai.</p>';
+
+return;
+
+}
+
+box.innerHTML =
+deposits.map(function(d){
+
+return `
+<div class="deposit">
+
+<b>Amount: ₹${Number(d.amount)}</b>
+
+<br>
+
+<span class="small">
+UTR: ${safe(d.utr)}
+</span>
+
+<br>
+
+<span class="small">
+User ID: ${safe(d.userId)}
+</span>
+
+<br>
+
+<span class="badge">
+${safe(d.status)}
+</span>
+
+<br><br>
+
+${
+d.status === "PENDING"
+?
+`
+<button
+class="success"
+onclick="depositAction('${d.id}','APPROVED')">
+APPROVE
 </button>
 
 <button
 class="danger"
-onclick="processDeposit('${d.id}','REJECTED')"
->
-❌ Reject
+onclick="depositAction('${d.id}','REJECTED')">
+REJECT
 </button>
-
-</div>
 `
 :
 ""
 }
 
 </div>
+`;
 
-`).join("");
+}).join("");
 
-}
+}catch(e){
 
-catch(error){
-
-console.log(error);
-
-}
+box.innerHTML =
+'<div class="msg">'+e.message+'</div>';
 
 }
 
+}
 
-/* APPROVE / REJECT */
 
-async function processDeposit(
-id,
-status
-){
+async function depositAction(id,status){
 
 try{
 
-const response =
-await fetch(
+await api(
 "/api/admin/deposits/"+id,
 {
 method:"POST",
-headers:authHeaders(),
-
 body:JSON.stringify({
 status:status
 })
 }
 );
 
-
-const data =
-await response.json();
-
-
-if(!response.ok){
-
-throw new Error(
-data.error ||
-"Deposit update failed"
-);
-
-}
-
-
 loadAll();
 
-}
+}catch(e){
 
-catch(error){
-
-alert(error.message);
+alert(e.message);
 
 }
 
 }
 
-
-/* ESCAPE */
 
 function safe(value){
 
@@ -950,71 +714,31 @@ return String(value || "")
 }
 
 
-/* LOGOUT */
-
-function logout(){
+document.getElementById("logout")
+.addEventListener("click",function(){
 
 localStorage.removeItem(
 "xenon_admin_token"
 );
 
-token=null;
+adminToken="";
 
-location.reload();
-
-}
-
-
-/* AUTO LOGIN */
-
-window.addEventListener(
-"load",
-async function(){
-
-if(!token) return;
-
-
-try{
-
-const response =
-await fetch(
-"/api/admin/stats",
-{
-headers:authHeaders()
-}
-);
-
-
-if(response.ok){
-
-document.getElementById(
-"loginBox"
-).style.display="none";
-
-document.getElementById(
-"panel"
-).style.display="block";
-
-loadAll();
-
-}
-
-else{
-
-logout();
-
-}
-
-}
-catch(error){
-
-logout();
-
-}
+showLogin();
 
 });
+
+
+if(adminToken){
+
+showPanel();
+
+}else{
+
+showLogin();
+
+}
 
 </script>
 
 </body>
-  </html>
+</html>
