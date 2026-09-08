@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+<title>Login</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<main class="auth">
+
+<div class="authbox">
+
+<div class="logo">
+XENON<span>SHOP</span>
+</div>
+
+<h1>Login</h1>
+
+<p>
+Welcome back.
+</p>
+
+<label class="label">
+Email
+</label>
+
+<input
+id="email"
+class="input"
+type="email"
+placeholder="Enter email">
+
+<label class="label">
+Password
+</label>
+
+<input
+id="password"
+class="input"
+type="password"
+placeholder="Enter password">
+
+<button
+class="btn"
+onclick="login()">
+
+LOGIN
+
+</button>
+
+<p>
+New user?
+<a href="/register.html">
+Create account
+</a>
+</p>
+
+<p>
+<a href="/">
+← Home
+</a>
+</p>
+
+</div>
+
+</main>
+
+<script>
+
+async function login(){
+
+const email =
+document.getElementById(
+"email"
+).value.trim();
+
+const password =
+document.getElementById(
+"password"
+).value;
+
+if(!email || !password){
+
+alert(
+"Email and password required"
+);
+
+return;
+}
+
+try{
+
+const response =
+await fetch(
+"/api/login",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+email,
+password
+})
+}
+);
+
+const data =
+await response.json();
+
+if(!response.ok){
+throw new Error(
+data.error
+);
+}
+
+localStorage.setItem(
+"xenon_token",
+data.token
+);
+
+location.href =
+"/shop.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
