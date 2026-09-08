@@ -5,632 +5,1349 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
+
 const PORT = process.env.PORT || 10000;
+
+/* =========================
+   ADMIN SETTINGS
+========================= */
 
 const ADMIN_EMAIL = "freefireidaskgamer@gmail.com";
 const ADMIN_PASSWORD = "sonu333";
-const JWT_SECRET = process.env.JWT_SECRET || "xenon-secret-123";
+
+const JWT_SECRET =
+  process.env.JWT_SECRET || "xenon-secret-change-this";
+
+const UPI_ID =
+  process.env.UPI_ID || "yourupi@upi";
+
+/* =========================
+   PATHS
+========================= */
 
 const DATA_DIR = path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "db.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
 
-app.use(express.json());
+/* =========================
+   APP
+========================= */
+
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
 
-function database() {
+/* =========================
+   DATABASE
+========================= */
+
+function defaultDatabase() {
+  return {
+    users: [],
+    products: [],
+    deposits: [],
+    purchases: []
+  };
+}
+
+function ensureDatabase() {
   if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.mkdirSync(DATA_DIR, {
+      recursive: true
+    });
   }
 
   if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(
       DATA_FILE,
-      JSON.stringify({
-        users: [],
-        products: [],
-        deposits: [],
-        purchases: []
-      }, null, 2)
+      JSON.stringify(
+        defaultDatabase(),
+        null,
+        2
+      )
     );
   }
+}
+
+function database() {
+  ensureDatabase();
 
   try {
-    return JSON.parse(
-      fs.readFileSync(DATA_FILE, "utf8")
-    );
-  } catch (e) {
+    const raw =
+      fs.readFileSync(
+        DATA_FILE,
+        "utf8"
+      );
+
+    const data = JSON.parse(raw);
+
     return {
-      users: [],
-      products: [],
-      deposits: [],
-      purchases: []
+      users: Array.isArray(data.users)
+        ? data.users
+        : [],
+
+      products: Array.isArray(data.products)
+        ? data.products
+        : [],
+
+      deposits: Array.isArray(data.deposits)
+        ? data.deposits
+        : [],
+
+      purchases: Array.isArray(data.purchases)
+        ? data.purchases
+        : []
     };
+
+  } catch (error) {
+
+    console.error(
+      "Database read error:",
+      error
+    );
+
+    return defaultDatabase();
   }
 }
 
 function save(data) {
+  ensureDatabase();
+
   fs.writeFileSync(
     DATA_FILE,
-    JSON.stringify(data, null, 2)
+    JSON.stringify(
+      data,
+      null,
+      2
+    )
   );
 }
+
+/* =========================
+   HELPERS
+========================= */
 
 function makeId() {
-  return Date.now().toString(36) +
-    Math.random().toString(36).slice(2);
-}
-
-function token(user) {
-  return jwt.sign(
-    { id: user.id },
-    JWT_SECRET,
-    { expiresIn: "30d" }
+  return (
+    Date.now().toString(36) +
+    "-" +
+    Math.random()
+      .toString(36)
+      .substring(2, 10)
   );
 }
 
-function auth(req, res, next) {
-  const header = req.headers.authorization || "";
+function makeReferralCode(name) {
 
-  if (!header.startsWith("Bearer ")) {
+  let prefix =
+    String(name || "USER")
+      .replace(
+        /[^a-zA-Z0-9]/g,
+        ""
+      )
+      .toUpperCase()
+      .substring(0, 5);
+
+  if (!prefix) {
+    prefix = "USER";
+  }
+
+  return (
+    prefix +
+    Math.floor(
+      1000 +
+      Math.random() * 9000
+    )
+  );
+}
+
+function publicUser(user) {
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    balance: Number(
+      user.balance || 0
+    ),
+    role: user.role || "user",
+    referralCode:
+      user.referralCode || "",
+    referralCount:
+      Number(
+        user.referralCount || 0
+      ),
+    referralEarnings:
+      Number(
+        user.referralEarnings || 0
+      ),
+    createdAt:
+      user.createdAt
+  };
+}
+
+function createToken(user) {
+
+  return jwt.sign(
+    {
+      id: user.id
+    },
+    JWT_SECRET,
+    {
+      expiresIn: "30d"
+    }
+  );
+}
+
+/* =========================
+   AUTH
+========================= */
+
+function auth(req, res, next) {
+
+  const header =
+    req.headers.authorization || "";
+
+  if (
+    !header.startsWith(
+      "Bearer "
+    )
+  ) {
     return res.status(401).json({
       error: "Login required"
     });
   }
 
+  const token =
+    header.substring(7);
+
   try {
-    req.user = jwt.verify(
-      header.substring(7),
-      JWT_SECRET
-    );
+
+    req.user =
+      jwt.verify(
+        token,
+        JWT_SECRET
+      );
 
     next();
-  } catch (e) {
+
+  } catch (error) {
+
     return res.status(401).json({
-      error: "Invalid token"
+      error:
+        "Invalid or expired token"
     });
   }
 }
 
-function admin(req, res, next) {
-  const data = database();
+function adminOnly(
+  req,
+  res,
+  next
+) {
 
-  const user = data.users.find(
-    x => x.id === req.user.id
-  );
+  const data =
+    database();
 
-  if (!user || user.role !== "admin") {
+  const user =
+    data.users.find(
+      x =>
+        String(x.id) ===
+        String(req.user.id)
+    );
+
+  if (
+    !user ||
+    user.role !== "admin"
+  ) {
     return res.status(403).json({
-      error: "Admin access required"
+      error:
+        "Admin access required"
     });
   }
 
   next();
 }
 
-/* HEALTH */
+ensureDatabase();
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "Xenon Shop is running"
-  });
-});
+/* =========================
+   HEALTH
+========================= */
 
-/* CONFIG */
-
-app.get("/api/config", (req, res) => {
-  res.json({
-    upiId: process.env.UPI_ID || "yourupi@upi"
-  });
-});
-
-/* REGISTER */
-
-app.post("/api/register", async (req, res) => {
-  try {
-    const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
-
-    if (!name || !email || password.length < 6) {
-      return res.status(400).json({
-        error: "Name, email and 6 character password required"
-      });
-    }
-
-    const data = database();
-
-    if (data.users.some(x => x.email === email)) {
-      return res.status(400).json({
-        error: "Email already registered"
-      });
-    }
-
-    const user = {
-      id: makeId(),
-      name: name,
-      email: email,
-      password: await bcrypt.hash(password, 10),
-      balance: 0,
-      role: "user",
-      referralCode: name.substring(0, 4).toUpperCase() + Math.floor(Math.random() * 9999),
-      createdAt: new Date().toISOString()
-    };
-
-    data.users.push(user);
-    save(data);
+app.get(
+  "/api/health",
+  (req, res) => {
 
     res.json({
       success: true,
-      token: token(user),
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        balance: user.balance
-      }
+      message:
+        "Xenon Shop is running"
     });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      error: "Registration failed"
-    });
+
   }
-});
+);
 
-/* USER LOGIN */
+/* =========================
+   CONFIG
+========================= */
 
-app.post("/api/login", async (req, res) => {
-  try {
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
-
-    const data = database();
-
-    const user = data.users.find(
-      x => x.email === email
-    );
-
-    if (!user) {
-      return res.status(401).json({
-        error: "Invalid email or password"
-      });
-    }
-
-    const ok = await bcrypt.compare(
-      password,
-      user.password
-    );
-
-    if (!ok) {
-      return res.status(401).json({
-        error: "Invalid email or password"
-      });
-    }
+app.get(
+  "/api/config",
+  (req, res) => {
 
     res.json({
-      success: true,
-      token: token(user),
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        balance: user.balance,
-        role: user.role
-      }
+      upiId: UPI_ID
     });
-  } catch (e) {
-    res.status(500).json({
-      error: "Login failed"
-    });
+
   }
-});
+);
 
-/* ADMIN LOGIN */
+/* =========================
+   REGISTER
+========================= */
 
-app.post("/api/admin/login", async (req, res) => {
-  try {
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
+app.post(
+  "/api/register",
+  async (req, res) => {
 
-    if (
-      email !== ADMIN_EMAIL.toLowerCase() ||
-      password !== ADMIN_PASSWORD
-    ) {
-      return res.status(401).json({
-        error: "Invalid admin login"
-      });
-    }
+    try {
 
-    const data = database();
+      const name =
+        String(
+          req.body.name || ""
+        ).trim();
 
-    let user = data.users.find(
-      x => x.email === ADMIN_EMAIL.toLowerCase()
-    );
+      const email =
+        String(
+          req.body.email || ""
+        )
+          .trim()
+          .toLowerCase();
 
-    if (!user) {
-      user = {
-        id: "admin",
-        name: "Xenon Admin",
-        email: ADMIN_EMAIL.toLowerCase(),
-        password: await bcrypt.hash(ADMIN_PASSWORD, 10),
+      const password =
+        String(
+          req.body.password || ""
+        );
+
+      const referral =
+        String(
+          req.body.referral || ""
+        )
+          .trim()
+          .toUpperCase();
+
+      if (!name) {
+        return res.status(400).json({
+          error:
+            "Name is required"
+        });
+      }
+
+      if (!email) {
+        return res.status(400).json({
+          error:
+            "Email is required"
+        });
+      }
+
+      if (
+        password.length < 6
+      ) {
+        return res.status(400).json({
+          error:
+            "Password must be at least 6 characters"
+        });
+      }
+
+      const data =
+        database();
+
+      if (
+        data.users.some(
+          x =>
+            x.email === email
+        )
+      ) {
+        return res.status(400).json({
+          error:
+            "Email already registered"
+        });
+      }
+
+      let code =
+        makeReferralCode(
+          name
+        );
+
+      while (
+        data.users.some(
+          x =>
+            x.referralCode ===
+            code
+        )
+      ) {
+        code =
+          makeReferralCode(
+            name
+          );
+      }
+
+      let referredBy = "";
+
+      if (referral) {
+
+        const referrer =
+          data.users.find(
+            x =>
+              String(
+                x.referralCode || ""
+              ).toUpperCase() ===
+              referral
+          );
+
+        if (referrer) {
+
+          referredBy =
+            referrer.id;
+
+          referrer.referralCount =
+            Number(
+              referrer.referralCount ||
+              0
+            ) + 1;
+        }
+      }
+
+      const user = {
+
+        id: makeId(),
+
+        name: name,
+
+        email: email,
+
+        password:
+          await bcrypt.hash(
+            password,
+            10
+          ),
+
         balance: 0,
-        role: "admin",
-        referralCode: "ADMIN",
-        createdAt: new Date().toISOString()
+
+        role: "user",
+
+        referralCode:
+          code,
+
+        referralCount: 0,
+
+        referralEarnings: 0,
+
+        referredBy:
+          referredBy,
+
+        createdAt:
+          new Date().toISOString()
       };
 
-      data.users.push(user);
-    } else {
-      user.role = "admin";
-      user.password = await bcrypt.hash(ADMIN_PASSWORD, 10);
+      data.users.push(
+        user
+      );
+
+      save(data);
+
+      res.status(201).json({
+
+        success: true,
+
+        token:
+          createToken(user),
+
+        user:
+          publicUser(user)
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Register error:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Registration failed"
+      });
     }
+  }
+);
+
+/* =========================
+   USER LOGIN
+========================= */
+
+app.post(
+  "/api/login",
+  async (req, res) => {
+
+    try {
+
+      const email =
+        String(
+          req.body.email || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      const password =
+        String(
+          req.body.password || ""
+        );
+
+      const data =
+        database();
+
+      const user =
+        data.users.find(
+          x =>
+            x.email ===
+            email
+        );
+
+      if (!user) {
+
+        return res.status(401).json({
+          error:
+            "Invalid email or password"
+        });
+      }
+
+      const valid =
+        await bcrypt.compare(
+          password,
+          user.password
+        );
+
+      if (!valid) {
+
+        return res.status(401).json({
+          error:
+            "Invalid email or password"
+        });
+      }
+
+      res.json({
+
+        success: true,
+
+        token:
+          createToken(user),
+
+        user:
+          publicUser(user)
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Login error:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Login failed"
+      });
+    }
+  }
+);
+
+/* =========================
+   CURRENT USER
+========================= */
+
+app.get(
+  "/api/me",
+  auth,
+  (req, res) => {
+
+    const data =
+      database();
+
+    const user =
+      data.users.find(
+        x =>
+          String(x.id) ===
+          String(req.user.id)
+      );
+
+    if (!user) {
+
+      return res.status(404).json({
+        error:
+          "User not found"
+      });
+    }
+
+    res.json(
+      publicUser(user)
+    );
+  }
+);
+
+/* =========================
+   PRODUCTS - PUBLIC
+========================= */
+
+app.get(
+  "/api/products",
+  (req, res) => {
+
+    const data =
+      database();
+
+    const products =
+      data.products.map(
+        product => ({
+
+          id:
+            product.id,
+
+          name:
+            product.name,
+
+          price:
+            Number(
+              product.price || 0
+            ),
+
+          description:
+            product.description ||
+            "",
+
+          image:
+            product.image ||
+            "",
+
+          icon:
+            product.icon ||
+            "📦",
+
+          /*
+            Delivery is included
+            so the frontend can
+            show what the buyer
+            receives.
+          */
+
+          delivery:
+            product.delivery ||
+            "",
+
+          createdAt:
+            product.createdAt
+        })
+      );
+
+    res.json(
+      products
+    );
+  }
+);
+
+/* =========================
+   BUY PRODUCT
+========================= */
+
+app.post(
+  "/api/buy",
+  auth,
+  (req, res) => {
+
+    try {
+
+      const productId =
+        String(
+          req.body.productId ||
+          ""
+        );
+
+      const data =
+        database();
+
+      const user =
+        data.users.find(
+          x =>
+            String(x.id) ===
+            String(req.user.id)
+        );
+
+      if (!user) {
+
+        return res.status(404).json({
+          error:
+            "User not found"
+        });
+      }
+
+      const product =
+        data.products.find(
+          x =>
+            String(x.id) ===
+            productId
+        );
+
+      if (!product) {
+
+        return res.status(404).json({
+          error:
+            "Product not found"
+        });
+      }
+
+      const price =
+        Number(
+          product.price
+        );
+
+      if (
+        !Number.isFinite(
+          price
+        ) ||
+        price <= 0
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid product price"
+        });
+      }
+
+      const balance =
+        Number(
+          user.balance || 0
+        );
+
+      if (
+        balance < price
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Insufficient wallet balance"
+        });
+      }
+
+      user.balance =
+        balance - price;
+
+      const purchase = {
+
+        id: makeId(),
+
+        userId:
+          user.id,
+
+        name:
+          user.name,
+
+        email:
+          user.email,
+
+        product:
+          product.name,
+
+        productId:
+          product.id,
+
+        amount:
+          price,
+
+        delivery:
+          product.delivery ||
+          "",
+
+        createdAt:
+          new Date().toISOString()
+      };
+
+      data.purchases.push(
+        purchase
+      );
+
+      save(data);
+
+      res.json({
+
+        success: true,
+
+        message:
+          "Purchase successful",
+
+        balance:
+          user.balance,
+
+        purchase:
+          purchase,
+
+        delivery:
+          product.delivery ||
+          ""
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Buy error:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Purchase failed"
+      });
+    }
+  }
+);
+
+/* =========================
+   USER PURCHASES
+========================= */
+
+app.get(
+  "/api/purchases",
+  auth,
+  (req, res) => {
+
+    const data =
+      database();
+
+    res.json(
+      data.purchases
+        .filter(
+          x =>
+            String(
+              x.userId
+            ) ===
+            String(
+              req.user.id
+            )
+        )
+        .reverse()
+    );
+  }
+);
+
+/* =========================
+   PUBLIC ACTIVITY
+========================= */
+
+app.get(
+  "/api/activity",
+  (req, res) => {
+
+    const data =
+      database();
+
+    res.json(
+      data.purchases
+        .slice(-30)
+        .reverse()
+        .map(
+          purchase => ({
+
+            name:
+              purchase.name,
+
+            product:
+              purchase.product,
+
+            amount:
+              purchase.amount,
+
+            createdAt:
+              purchase.createdAt
+          })
+        )
+    );
+  }
+);
+
+/* =========================
+   ADD MONEY
+========================= */
+
+app.post(
+  "/api/deposits",
+  auth,
+  (req, res) => {
+
+    const amount =
+      Number(
+        req.body.amount
+      );
+
+    const utr =
+      String(
+        req.body.utr || ""
+      ).trim();
+
+    if (
+      !Number.isFinite(
+        amount
+      ) ||
+      amount <= 0
+    ) {
+
+      return res.status(400).json({
+        error:
+          "Valid amount required"
+      });
+    }
+
+    if (!utr) {
+
+      return res.status(400).json({
+        error:
+          "UTR is required"
+      });
+    }
+
+    const data =
+      database();
+
+    const user =
+      data.users.find(
+        x =>
+          String(x.id) ===
+          String(req.user.id)
+      );
+
+    if (!user) {
+
+      return res.status(404).json({
+        error:
+          "User not found"
+      });
+    }
+
+    const deposit = {
+
+      id: makeId(),
+
+      userId:
+        user.id,
+
+      userName:
+        user.name,
+
+      userEmail:
+        user.email,
+
+      amount:
+        amount,
+
+      utr:
+        utr,
+
+      status:
+        "PENDING",
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+    data.deposits.push(
+      deposit
+    );
 
     save(data);
 
-    res.json({
+    res.status(201).json({
+
       success: true,
-      token: token(user),
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: "admin"
+
+      deposit:
+        deposit
+    });
+  }
+);
+
+/* =========================
+   USER DEPOSITS
+========================= */
+
+app.get(
+  "/api/deposits",
+  auth,
+  (req, res) => {
+
+    const data =
+      database();
+
+    res.json(
+      data.deposits
+        .filter(
+          x =>
+            String(
+              x.userId
+            ) ===
+            String(
+              req.user.id
+            )
+        )
+        .reverse()
+    );
+  }
+);
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+
+app.post(
+  "/api/admin/login",
+  async (req, res) => {
+
+    try {
+
+      const email =
+        String(
+          req.body.email || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      const password =
+        String(
+          req.body.password || ""
+        );
+
+      if (
+        email !==
+        ADMIN_EMAIL.toLowerCase() ||
+        password !==
+        ADMIN_PASSWORD
+      ) {
+
+        return res.status(401).json({
+          error:
+            "Invalid admin login"
+        });
       }
-    });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      error: "Admin login failed"
-    });
+
+      const data =
+        database();
+
+      let user =
+        data.users.find(
+          x =>
+            x.email ===
+            ADMIN_EMAIL.toLowerCase()
+        );
+
+      if (!user) {
+
+        user = {
+
+          id:
+            "admin",
+
+          name:
+            "Xenon Admin",
+
+          email:
+            ADMIN_EMAIL.toLowerCase(),
+
+          password:
+            await bcrypt.hash(
+              ADMIN_PASSWORD,
+              10
+            ),
+
+          balance: 0,
+
+          role:
+            "admin",
+
+          referralCode:
+            "ADMIN",
+
+          referralCount: 0,
+
+          referralEarnings: 0,
+
+          createdAt:
+            new Date().toISOString()
+        };
+
+        data.users.push(
+          user
+        );
+
+      } else {
+
+        user.role =
+          "admin";
+
+        user.password =
+          await bcrypt.hash(
+            ADMIN_PASSWORD,
+            10
+          );
+      }
+
+      save(data);
+
+      res.json({
+
+        success: true,
+
+        token:
+          createToken(user),
+
+        user:
+          publicUser(user)
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Admin login error:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Admin login failed"
+      });
+    }
   }
-});
+);
 
-/* CURRENT USER */
-
-app.get("/api/me", auth, (req, res) => {
-  const data = database();
-
-  const user = data.users.find(
-    x => x.id === req.user.id
-  );
-
-  if (!user) {
-    return res.status(404).json({
-      error: "User not found"
-    });
-  }
-
-  res.json({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    balance: Number(user.balance || 0),
-    role: user.role
-  });
-});
-
-/* PRODUCTS */
-
-app.get("/api/products", (req, res) => {
-  const data = database();
-
-  res.json(data.products || []);
-});
-
-/* ACTIVITY */
-
-app.get("/api/activity", (req, res) => {
-  const data = database();
-
-  res.json(
-    (data.purchases || []).slice(-30).reverse()
-  );
-});
-
-/* BUY */
-
-app.post("/api/buy", auth, (req, res) => {
-  const data = database();
-
-  const user = data.users.find(
-    x => x.id === req.user.id
-  );
-
-  const product = data.products.find(
-    x => String(x.id) === String(req.body.productId)
-  );
-
-  if (!user) {
-    return res.status(404).json({
-      error: "User not found"
-    });
-  }
-
-  if (!product) {
-    return res.status(404).json({
-      error: "Product not found"
-    });
-  }
-
-  const price = Number(product.price);
-
-  if (user.balance < price) {
-    return res.status(400).json({
-      error: "Insufficient balance"
-    });
-  }
-
-  user.balance -= price;
-
-  const purchase = {
-    id: makeId(),
-    userId: user.id,
-    name: user.name,
-    product: product.name,
-    amount: price,
-    createdAt: new Date().toISOString()
-  };
-
-  data.purchases.push(purchase);
-  save(data);
-
-  res.json({
-    success: true,
-    balance: user.balance,
-    purchase: purchase
-  });
-});
-
-/* ADD MONEY REQUEST */
-
-app.post("/api/deposits", auth, (req, res) => {
-  const amount = Number(req.body.amount);
-  const utr = String(req.body.utr || "").trim();
-
-  if (!amount || amount <= 0 || !utr) {
-    return res.status(400).json({
-      error: "Amount and UTR required"
-    });
-  }
-
-  const data = database();
-
-  const deposit = {
-    id: makeId(),
-    userId: req.user.id,
-    amount: amount,
-    utr: utr,
-    status: "PENDING",
-    createdAt: new Date().toISOString()
-  };
-
-  data.deposits.push(deposit);
-  save(data);
-
-  res.json({
-    success: true,
-    deposit: deposit
-  });
-});
-
-/* USER DEPOSITS */
-
-app.get("/api/deposits", auth, (req, res) => {
-  const data = database();
-
-  res.json(
-    data.deposits.filter(
-      x => x.userId === req.user.id
-    )
-  );
-});
-
-/* ADMIN PRODUCTS */
+/* =========================
+   ADMIN PRODUCTS - ADD
+========================= */
 
 app.post(
   "/api/admin/products",
   auth,
-  admin,
+  adminOnly,
   (req, res) => {
-    const name = String(req.body.name || "").trim();
-    const price = Number(req.body.price);
-    const description = String(req.body.description || "").trim();
-    const image = String(req.body.image || "").trim();
 
-    if (!name || !price || price <= 0) {
-      return res.status(400).json({
-        error: "Name and valid price required"
-      });
-    }
+    try {
 
-    const data = database();
+      const name =
+        String(
+          req.body.name || ""
+        ).trim();
 
-    const product = {
-      id: makeId(),
-      name: name,
-      price: price,
-      description: description,
-      image: image,
-      icon: "📦",
-      createdAt: new Date().toISOString()
-    };
-
-    data.products.push(product);
-    save(data);
-
-    res.json({
-      success: true,
-      product: product
-    });
-  }
-);
-
-/* ADMIN PRODUCT DELETE */
-
-app.delete(
-  "/api/admin/products/:id",
-  auth,
-  admin,
-  (req, res) => {
-    const data = database();
-
-    const index = data.products.findIndex(
-      x => String(x.id) === String(req.params.id)
-    );
-
-    if (index === -1) {
-      return res.status(404).json({
-        error: "Product not found"
-      });
-    }
-
-    data.products.splice(index, 1);
-    save(data);
-
-    res.json({
-      success: true
-    });
-  }
-);
-
-/* ADMIN DEPOSITS */
-
-app.get(
-  "/api/admin/deposits",
-  auth,
-  admin,
-  (req, res) => {
-    const data = database();
-
-    res.json(
-      data.deposits.slice().reverse()
-    );
-  }
-);
-
-/* APPROVE / REJECT */
-
-app.post(
-  "/api/admin/deposits/:id",
-  auth,
-  admin,
-  (req, res) => {
-    const status =
-      String(req.body.status || "").toUpperCase();
-
-    if (
-      status !== "APPROVED" &&
-      status !== "REJECTED"
-    ) {
-      return res.status(400).json({
-        error: "Invalid status"
-      });
-    }
-
-    const data = database();
-
-    const deposit = data.deposits.find(
-      x => String(x.id) === String(req.params.id)
-    );
-
-    if (!deposit) {
-      return res.status(404).json({
-        error: "Deposit not found"
-      });
-    }
-
-    if (deposit.status !== "PENDING") {
-      return res.status(400).json({
-        error: "Already processed"
-      });
-    }
-
-    deposit.status = status;
-
-    if (status === "APPROVED") {
-      const user = data.users.find(
-        x => x.id === deposit.userId
-      );
-
-      if (user) {
-        user.balance =
-          Number(user.balance || 0) +
-          Number(deposit.amount || 0);
-      }
-    }
-
-    save(data);
-
-    res.json({
-      success: true,
-      deposit: deposit
-    });
-  }
-);
-
-/* ADMIN STATS */
-
-app.get(
-  "/api/admin/stats",
-  auth,
-  admin,
-  (req, res) => {
-    const data = database();
-
-    const approved =
-      data.deposits
-        .filter(x => x.status === "APPROVED")
-        .reduce(
-          (sum, x) => sum + Number(x.amount || 0),
-          0
+      const price =
+        Number(
+          req.body.price
         );
 
-    res.json({
-      users: data.users.filter(
-        x => x.role !== "admin"
-      ).length,
-      products: data.products.length,
-      deposits: data.deposits.length,
-      purchases: data.purchases.length,
-      approvedAmount: approved
-    });
+      const description =
+        String(
+          req.body.description ||
+          ""
+        ).trim();
+
+      const image =
+        String(
+          req.body.image || ""
+        ).trim();
+
+      const delivery =
+        String(
+          req.body.delivery ||
+          ""
+        ).trim();
+
+      const icon =
+        String(
+          req.body.icon ||
+          "📦"
+        ).trim();
+
+      if (!name) {
+
+        return res.status(400).json({
+          error:
+            "Product name required"
+        });
+      }
+
+      if (
+        !Number.isFinite(
+          price
+        ) ||
+        price <= 0
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Valid price required"
+        });
+      }
+
+      const data =
+        database();
+
+      const product = {
+
+        id: makeId(),
+
+        name:
+          name,
+
+        price:
+          price,
+
+        description:
+          description,
+
+        image:
+          image,
+
+        delivery:
+          delivery,
+
+        icon:
+          icon,
+
+        createdAt:
+          new Date().toISOString()
+      };
+
+      data.products.push(
+        product
+      );
+
+      save(data);
+
+      res.status(201).json({
+
+        success: true,
+
+        product:
+          product
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Add product error:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Product add failed"
+      });
+    }
   }
 );
 
-/* FRONTEND */
+/* =========================
+   ADMIN PRODUCTS - UPDATE
+========================= */
 
-app.use((req, res, next) => {
-  if (req.method !== "GET") {
-    return next();
-  }
+app.put(
+  "/api/admin/products/:id",
+  auth,
+  adminOnly,
+  (req, res) => {
 
-  if (req.path.startsWith("/api/")) {
-    return res.status(404).json({
-      error: "API endpoint not found"
-    });
-  }
+    const data =
+      database();
 
-  const file = path.join(
-    PUBLIC_DIR,
-    "index.html"
-  );
+    const product =
+      data.products.find(
+        x =>
+          String(x.id) ===
+          String(req.params.id)
+      );
 
-  if (fs.existsSync(file)) {
-    return res.sendFile(file);
-  }
+    if (!product) {
 
-  res.status(404).send(
-    "Xenon Shop: index.html not found"
-  );
-});
+      return res.status(404).json({
+        error:
+          "Product not found"
+      });
+    }
 
-/* START */
+    if (
+      req.body.name !==
+      undefined
+    ) {
 
-app.listen(PORT, () => {
-  console.log(
-    "XENON SHOP RUNNING ON PORT " + PORT
-  );
-});
+      const name =
+        String(
+          req.body.name
+        ).trim();
+
+      if (!name) {
+
+        return res.status(400).json({
+          error:
+            "Product name required"
+        });
+      }
+
+      product.name =
+        name;
+    }
+
+    if (
+      req.body.price !==
+      undefined
+    ) {
+
+      const price =
+        Number(
+          req.body.price
+        );
+
+      if (
+        !Number.isFinite(
+          price
+        ) ||
+        price <= 0
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid price"
+        });
+      }
+
+      product.price =
+        price;
+    }
+
+    if (
+      req.body.description !==
+      undefined
+    ) {
+
+      product.description =
+        String(
+          req.body.description
+        ).trim();
+    }
+
+    if (
+      req.body.image !==
+      undefined
+    ) {
+
+      product.image =
+        String(
+          req.body.image
+        ).trim();
+    }
+
+    if (
+  
