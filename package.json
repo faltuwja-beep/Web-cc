@@ -1,7 +1,7 @@
 {
   "name": "xenon-shop",
   "version": "1.0.0",
-  "description": "Xenon Shop digital products store",
+  "description": "Xenon Shop",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -10,8 +10,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.0"
   }
 }
