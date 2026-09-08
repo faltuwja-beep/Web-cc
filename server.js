@@ -4,10 +4,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+const PORT = process.env.PORT || 3000;
 const SECRET =
-  process.env.JWT_SECRET || "xenon-change-this-secret";
+  process.env.JWT_SECRET || "change-this-secret";
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL || "admin@xenon.shop";
@@ -18,41 +18,43 @@ const ADMIN_PASSWORD =
 const UPI_ID =
   process.env.UPI_ID || "yourupi@upi";
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json({ limit: "5mb" }));
 
-const db = {
+app.use(
+  express.static(path.join(__dirname, "public"))
+);
+
+/* ---------------- DATABASE ---------------- */
+
+let data = {
   users: [],
   deposits: [],
   purchases: [],
-  referrals: [],
-
   products: [
     {
       id: 1,
       name: "Premium Account",
       price: 99,
-      description: "Premium digital package",
+      description:
+        "Premium digital package.",
+      image: "",
       icon: "⭐"
     },
     {
       id: 2,
       name: "VIP Package",
       price: 199,
-      description: "VIP digital package",
+      description:
+        "VIP digital package.",
+      image: "",
       icon: "💎"
-    },
-    {
-      id: 3,
-      name: "Pro Package",
-      price: 299,
-      description: "Professional package",
-      icon: "🚀"
     }
   ]
 };
 
-function makeToken(user) {
+/* ---------------- HELPERS ---------------- */
+
+function createToken(user) {
   return jwt.sign(
     {
       id: user.id,
@@ -86,8 +88,11 @@ function makeReferralCode() {
   );
 }
 
+/* ---------------- AUTH ---------------- */
+
 function auth(req, res, next) {
-  const header = req.headers.authorization || "";
+  const header =
+    req.headers.authorization || "";
 
   if (!header.startsWith("Bearer ")) {
     return res.status(401).json({
@@ -96,21 +101,26 @@ function auth(req, res, next) {
   }
 
   try {
+    const token = header.substring(7);
+
     req.user = jwt.verify(
-      header.substring(7),
+      token,
       SECRET
     );
 
     next();
-  } catch {
+  } catch (error) {
     return res.status(401).json({
       error: "Session expired"
     });
   }
 }
 
-function admin(req, res, next) {
-  if (req.user.email !== ADMIN_EMAIL) {
+function adminOnly(req, res, next) {
+  if (
+    !req.user ||
+    req.user.email !== ADMIN_EMAIL
+  ) {
     return res.status(403).json({
       error: "Admin only"
     });
@@ -119,122 +129,170 @@ function admin(req, res, next) {
   next();
 }
 
-/* REGISTER */
+/* ---------------- REGISTER ---------------- */
 
 app.post("/api/register", async (req, res) => {
-  const name = String(req.body.name || "").trim();
-  const email = String(req.body.email || "")
-    .trim()
-    .toLowerCase();
+  try {
+    const name =
+      String(req.body.name || "").trim();
 
-  const password = String(
-    req.body.password || ""
-  );
+    const email =
+      String(req.body.email || "")
+        .trim()
+        .toLowerCase();
 
-  const referralCode = String(
-    req.body.referralCode || ""
-  )
-    .trim()
-    .toUpperCase();
+    const password =
+      String(req.body.password || "");
 
-  if (!name || !email || password.length < 6) {
-    return res.status(400).json({
-      error:
-        "Name, email and password of at least 6 characters are required"
-    });
-  }
+    const referralCode =
+      String(
+        req.body.referralCode || ""
+      )
+        .trim()
+        .toUpperCase();
 
-  if (
-    db.users.some(
-      user => user.email === email
-    )
-  ) {
-    return res.status(400).json({
-      error: "Email already registered"
-    });
-  }
+    if (
+      !name ||
+      !email ||
+      !password
+    ) {
+      return res.status(400).json({
+        error:
+          "Name, email and password required"
+      });
+    }
 
-  const user = {
-    id: Date.now().toString(),
+    if (password.length < 6) {
+      return res.status(400).json({
+        error:
+          "Password minimum 6 characters hona chahiye"
+      });
+    }
 
-    name,
+    const exists =
+      data.users.find(
+        user => user.email === email
+      );
 
-    email,
+    if (exists) {
+      return res.status(400).json({
+        error:
+          "Email already registered"
+      });
+    }
 
-    passwordHash:
-      await bcrypt.hash(password, 10),
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        10
+      );
 
-    balance: 0,
+    const user = {
+      id: Date.now().toString(),
 
-    referralCode:
-      makeReferralCode(),
+      name,
 
-    referralBonus: 0,
+      email,
 
-    referredBy: null
-  };
+      passwordHash:
+        hashedPassword,
 
-  if (referralCode) {
-    const referrer = db.users.find(
-      user =>
-        user.referralCode ===
-        referralCode
-    );
+      balance: 0,
+
+      referralCode:
+        makeReferralCode(),
+
+      referralBonus: 0,
+
+      referredBy: null
+    };
+
+    const referrer =
+      data.users.find(
+        user =>
+          user.referralCode ===
+          referralCode
+      );
 
     if (referrer) {
-      user.referredBy = referrer.id;
+      user.referredBy =
+        referrer.id;
     }
-  }
 
-  db.users.push(user);
+    data.users.push(user);
 
-  res.json({
-    token: makeToken(user),
-    user: publicUser(user)
-  });
-});
+    res.json({
+      token: createToken(user),
+      user: publicUser(user)
+    });
 
-/* LOGIN */
+  } catch (error) {
+    console.error(error);
 
-app.post("/api/login", async (req, res) => {
-  const email = String(
-    req.body.email || ""
-  )
-    .trim()
-    .toLowerCase();
-
-  const password = String(
-    req.body.password || ""
-  );
-
-  const user = db.users.find(
-    x => x.email === email
-  );
-
-  if (
-    !user ||
-    !(await bcrypt.compare(
-      password,
-      user.passwordHash
-    ))
-  ) {
-    return res.status(401).json({
-      error: "Wrong email or password"
+    res.status(500).json({
+      error: "Registration failed"
     });
   }
-
-  res.json({
-    token: makeToken(user),
-    user: publicUser(user)
-  });
 });
 
-/* CURRENT USER */
+/* ---------------- LOGIN ---------------- */
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const email =
+      String(req.body.email || "")
+        .trim()
+        .toLowerCase();
+
+    const password =
+      String(req.body.password || "");
+
+    const user =
+      data.users.find(
+        user =>
+          user.email === email
+      );
+
+    if (!user) {
+      return res.status(401).json({
+        error:
+          "Wrong email or password"
+      });
+    }
+
+    const correct =
+      await bcrypt.compare(
+        password,
+        user.passwordHash
+      );
+
+    if (!correct) {
+      return res.status(401).json({
+        error:
+          "Wrong email or password"
+      });
+    }
+
+    res.json({
+      token: createToken(user),
+      user: publicUser(user)
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: "Login failed"
+    });
+  }
+});
+
+/* ---------------- CURRENT USER ---------------- */
 
 app.get("/api/me", auth, (req, res) => {
-  const user = db.users.find(
-    x => x.id === req.user.id
-  );
+  const user =
+    data.users.find(
+      user =>
+        user.id === req.user.id
+    );
 
   if (!user) {
     return res.status(404).json({
@@ -242,16 +300,21 @@ app.get("/api/me", auth, (req, res) => {
     });
   }
 
-  res.json(publicUser(user));
+  res.json(
+    publicUser(user)
+  );
 });
 
-/* PRODUCTS */
+/* ---------------- PRODUCTS ---------------- */
 
-app.get("/api/products", (req, res) => {
-  res.json(db.products);
-});
+app.get(
+  "/api/products",
+  (req, res) => {
+    res.json(data.products);
+  }
+);
 
-/* PAYMENT INFO */
+/* ---------------- PAYMENT INFO ---------------- */
 
 app.get(
   "/api/payment-info",
@@ -262,66 +325,80 @@ app.get(
   }
 );
 
-/* ADD MONEY */
+/* ---------------- ADD MONEY ---------------- */
 
 app.post(
   "/api/deposits",
   auth,
   (req, res) => {
-    const amount = Number(
-      req.body.amount
-    );
 
-    const utr = String(
-      req.body.utr || ""
-    ).trim();
+    const amount =
+      Number(req.body.amount);
+
+    const utr =
+      String(
+        req.body.utr || ""
+      ).trim();
 
     if (
       !amount ||
-      amount <= 0 ||
-      !utr
+      amount <= 0
     ) {
       return res.status(400).json({
-        error: "Amount and UTR are required"
+        error:
+          "Valid amount enter karo"
+      });
+    }
+
+    if (!utr) {
+      return res.status(400).json({
+        error:
+          "UTR enter karo"
       });
     }
 
     const deposit = {
       id: Date.now().toString(),
 
-      userId: req.user.id,
+      userId:
+        req.user.id,
 
       amount,
 
       utr,
 
-      status: "PENDING",
+      status:
+        "PENDING",
 
       createdAt:
         new Date().toISOString()
     };
 
-    db.deposits.push(deposit);
+    data.deposits.push(
+      deposit
+    );
 
     res.json({
       message:
-        "Payment submitted successfully",
+        "Payment submitted",
+
       deposit
     });
   }
 );
 
-/* USER PAYMENT HISTORY */
+/* ---------------- USER DEPOSITS ---------------- */
 
 app.get(
   "/api/deposits",
   auth,
   (req, res) => {
+
     const deposits =
-      db.deposits
+      data.deposits
         .filter(
-          x =>
-            x.userId ===
+          deposit =>
+            deposit.userId ===
             req.user.id
         )
         .reverse();
@@ -330,106 +407,165 @@ app.get(
   }
 );
 
-/* BUY */
+/* ---------------- BUY PRODUCT ---------------- */
 
-app.post("/api/buy", auth, (req, res) => {
-  const user = db.users.find(
-    x => x.id === req.user.id
-  );
+app.post(
+  "/api/buy",
+  auth,
+  (req, res) => {
 
-  const product = db.products.find(
-    x =>
-      x.id ===
-      Number(req.body.productId)
-  );
-
-  if (!product) {
-    return res.status(404).json({
-      error: "Product not found"
-    });
-  }
-
-  if (user.balance < product.price) {
-    return res.status(400).json({
-      error: "Insufficient balance"
-    });
-  }
-
-  user.balance -= product.price;
-
-  db.purchases.push({
-    id: Date.now().toString(),
-
-    userId: user.id,
-
-    productId: product.id,
-
-    amount: product.price,
-
-    status: "COMPLETED",
-
-    createdAt:
-      new Date().toISOString()
-  });
-
-  if (
-    user.referredBy &&
-    !db.referrals.some(
-      x =>
-        x.referredUserId ===
-        user.id
-    )
-  ) {
-    const referrer =
-      db.users.find(
-        x =>
-          x.id ===
-          user.referredBy
+    const user =
+      data.users.find(
+        user =>
+          user.id ===
+          req.user.id
       );
 
-    if (referrer) {
-      referrer.balance += 50;
+    const product =
+      data.products.find(
+        product =>
+          product.id ===
+          Number(
+            req.body.productId
+          )
+      );
 
-      referrer.referralBonus += 50;
-
-      db.referrals.push({
-        referrerId:
-          referrer.id,
-
-        referredUserId:
-          user.id,
-
-        amount: 50,
-
-        status: "PAID",
-
-        createdAt:
-          new Date().toISOString()
+    if (!user) {
+      return res.status(404).json({
+        error:
+          "User not found"
       });
     }
+
+    if (!product) {
+      return res.status(404).json({
+        error:
+          "Product not found"
+      });
+    }
+
+    if (
+      user.balance <
+      product.price
+    ) {
+      return res.status(400).json({
+        error:
+          "Insufficient balance"
+      });
+    }
+
+    user.balance -=
+      product.price;
+
+    const purchase = {
+      id: Date.now().toString(),
+
+      userId:
+        user.id,
+
+      productId:
+        product.id,
+
+      amount:
+        product.price,
+
+      status:
+        "COMPLETED",
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+    data.purchases.push(
+      purchase
+    );
+
+    res.json({
+      message:
+        "Purchase successful",
+
+      user:
+        publicUser(user)
+    });
   }
+);
 
-  res.json({
-    message:
-      "Purchase successful",
-    user: publicUser(user)
-  });
-});
+/* ---------------- LIVE ACTIVITY ---------------- */
 
-/* REFERRALS */
+app.get(
+  "/api/activity",
+  (req, res) => {
+
+    const activity =
+      data.purchases
+        .slice(-15)
+        .reverse()
+        .map(
+          purchase => {
+
+            const user =
+              data.users.find(
+                user =>
+                  user.id ===
+                  purchase.userId
+              );
+
+            const product =
+              data.products.find(
+                product =>
+                  product.id ===
+                  purchase.productId
+              );
+
+            return {
+              name:
+                user
+                  ? user.name
+                  : "Customer",
+
+              product:
+                product
+                  ? product.name
+                  : "Product",
+
+              amount:
+                purchase.amount,
+
+              createdAt:
+                purchase.createdAt
+            };
+          }
+        );
+
+    res.json(activity);
+  }
+);
+
+/* ---------------- REFERRALS ---------------- */
 
 app.get(
   "/api/referrals",
   auth,
   (req, res) => {
-    const user = db.users.find(
-      x => x.id === req.user.id
-    );
+
+    const user =
+      data.users.find(
+        user =>
+          user.id ===
+          req.user.id
+      );
+
+    if (!user) {
+      return res.status(404).json({
+        error:
+          "User not found"
+      });
+    }
 
     const referrals =
-      db.referrals.filter(
-        x =>
-          x.referrerId ===
+      data.users.filter(
+        other =>
+          other.referredBy ===
           user.id
       );
 
@@ -440,20 +576,32 @@ app.get(
       bonus:
         user.referralBonus,
 
-      referrals
+      total:
+        referrals.length
     });
   }
 );
 
-/* ADMIN LOGIN */
+/* ---------------- ADMIN LOGIN ---------------- */
 
 app.post(
   "/api/admin/login",
   (req, res) => {
+
+    const email =
+      String(
+        req.body.email || ""
+      ).trim();
+
+    const password =
+      String(
+        req.body.password || ""
+      );
+
     if (
-      req.body.email !==
+      email !==
         ADMIN_EMAIL ||
-      req.body.password !==
+      password !==
         ADMIN_PASSWORD
     ) {
       return res.status(401).json({
@@ -462,56 +610,77 @@ app.post(
       });
     }
 
-    const token = jwt.sign(
-      {
-        id: "admin",
-        email: ADMIN_EMAIL
-      },
-      SECRET,
-      {
-        expiresIn: "30d"
-      }
-    );
+    const token =
+      jwt.sign(
+        {
+          id: "admin",
+          email:
+            ADMIN_EMAIL
+        },
+        SECRET,
+        {
+          expiresIn:
+            "30d"
+        }
+      );
 
-    res.json({ token });
+    res.json({
+      token
+    });
   }
 );
 
-/* ADMIN DEPOSITS */
+/* ---------------- ADMIN DEPOSITS ---------------- */
 
 app.get(
   "/api/admin/deposits",
   auth,
-  admin,
+  adminOnly,
   (req, res) => {
-    const list =
-      db.deposits.map(d => ({
-        ...d,
 
-        user:
-          db.users.find(
-            u =>
-              u.id ===
-              d.userId
-          )?.email ||
-          "Unknown"
-      }));
+    const deposits =
+      data.deposits
+        .map(deposit => {
 
-    res.json(list.reverse());
+          const user =
+            data.users.find(
+              user =>
+                user.id ===
+                deposit.userId
+            );
+
+          return {
+            ...deposit,
+
+            user:
+              user
+                ? user.email
+                : "Unknown",
+
+            userName:
+              user
+                ? user.name
+                : "Unknown"
+          };
+        })
+        .reverse();
+
+    res.json(deposits);
   }
 );
 
-/* APPROVE / REJECT */
+/* ---------------- ADMIN APPROVE / REJECT ---------------- */
 
 app.post(
   "/api/admin/deposits/:id",
   auth,
-  admin,
+  adminOnly,
   (req, res) => {
+
     const deposit =
-      db.deposits.find(
-        x =>
-          x.id ===
+      data.deposits.find(
+        deposit =>
+          deposit.id ===
           req.params.id
       );
 
@@ -536,8 +705,10 @@ app.post(
       req.body.status;
 
     if (
-      status !== "APPROVED" &&
-      status !== "REJECTED"
+      status !==
+        "APPROVED" &&
+      status !==
+        "REJECTED"
     ) {
       return res.status(400).json({
         error:
@@ -545,46 +716,14 @@ app.post(
       });
     }
 
-    deposit.status = status;
+    deposit.status =
+      status;
 
-    if (status === "APPROVED") {
+    if (
+      status ===
+      "APPROVED"
+    ) {
+
       const user =
-        db.users.find(
-          x =>
-            x.id ===
-            deposit.userId
-        );
-
-      if (user) {
-        user.balance +=
-          deposit.amount;
-      }
-    }
-
-    res.json(deposit);
-  }
-);
-
-/* HEALTH */
-
-app.get(
-  "/api/health",
-  (req, res) => {
-    res.json({
-      ok: true
-    });
-  }
-);
-
-app.listen(
-  PORT,
-  () => {
-    console.log(
-      "⚡ XENON SHOP RUNNING"
-    );
-
-    console.log(
-      "🌐 Port: " + PORT
-    );
-  }
-);
+        data.users.find(
+          user =>
