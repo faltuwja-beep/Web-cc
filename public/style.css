@@ -1,0 +1,206 @@
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#080914;
+  color:white;
+}
+
+a{
+  color:#a78bfa;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.wrap{
+  max-width:1050px;
+  margin:auto;
+  padding:20px 16px 100px;
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px;
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#0b0c18;
+  border-bottom:1px solid #292c47;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+}
+
+.logo span{
+  color:#8b5cf6;
+}
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.authbox{
+  width:100%;
+  max-width:430px;
+  padding:28px;
+  border-radius:24px;
+  background:#121426;
+  border:1px solid #30334f;
+}
+
+.label{
+  display:block;
+  margin:15px 0 7px;
+  color:#b6b9ce;
+}
+
+.input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #393d5c;
+  background:#080914;
+  color:white;
+  outline:none;
+}
+
+.input:focus{
+  border-color:#8b5cf6;
+}
+
+.btn{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  background:#7c3aed;
+  color:white;
+  font-weight:800;
+}
+
+.btn2{
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid #3b3f60;
+  background:#17192b;
+  color:white;
+  text-decoration:none;
+}
+
+.hero{
+  padding:28px;
+  margin-bottom:24px;
+  border-radius:24px;
+  background:#17122d;
+  border:1px solid #3a3560;
+}
+
+.card{
+  padding:20px;
+  margin:12px 0;
+  border-radius:20px;
+  background:#121426;
+  border:1px solid #30334f;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+
+.price{
+  font-size:25px;
+  font-weight:900;
+  margin:15px 0;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.row>*{
+  flex:1;
+}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:10;
+  display:flex;
+  justify-content:center;
+  background:#0d0e1b;
+  border-top:1px solid #292c47;
+}
+
+.nav a{
+  padding:15px 20px;
+  color:#9b9fb8;
+  text-decoration:none;
+}
+
+.nav a:hover{
+  color:#a78bfa;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.PENDING{
+  background:#3b2e0b;
+  color:#fbbf24;
+}
+
+.APPROVED{
+  background:#123a24;
+  color:#4ade80;
+}
+
+.REJECTED{
+  background:#3d1820;
+  color:#fb7185;
+}
+
+@media(max-width:600px){
+
+  .hero{
+    padding:22px;
+  }
+
+  .nav a{
+    padding:14px 10px;
+    font-size:12px;
+  }
+
+  .row{
+    flex-direction:column;
+  }
+}
