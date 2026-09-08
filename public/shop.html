@@ -1,134 +1,577 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Xenon Shop</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
+
 <body>
 
-<header class="top">
-  <div class="logo">XENON<span>SHOP</span></div>
-  <div>Balance: ₹<b id="balance">0</b></div>
-</header>
+  <!-- TOP BAR -->
 
-<main class="wrap">
+  <header class="topbar">
 
-<section class="hero">
-  <h1>Welcome, <span id="username"></span> 👋</h1>
-  <p>Choose your product.</p>
-</section>
+    <div class="logo">
+      XENON<span>SHOP</span>
+    </div>
 
-<h2>Products</h2>
-<div id="products" class="grid"></div>
+    <div class="balance">
+      ₹<span id="balance">0</span>
+    </div>
 
-</main>
+  </header>
 
-<nav class="nav">
-  <a href="/shop.html">🏠 Shop</a>
-  <a href="/wallet.html">💰 Wallet</a>
-  <a href="/referral.html">🎁 Refer</a>
-  <a href="/profile.html">👤 Profile</a>
-</nav>
 
-<script>
+  <!-- MAIN -->
 
-const token = localStorage.getItem("xenon_token");
+  <main class="container">
 
-if(!token){
-  location.href="/login.html";
-}
+    <!-- HERO -->
 
-const headers = {
-  "Authorization":"Bearer "+token,
-  "Content-Type":"application/json"
-};
+    <section class="hero">
 
-async function load(){
+      <div class="small-text">
+        MEMBER AREA
+      </div>
 
-  const userResponse =
-    await fetch("/api/me",{headers});
+      <h1>
+        Welcome,
+        <span id="username">
+          User
+        </span>
+        👋
+      </h1>
 
-  if(!userResponse.ok){
-    localStorage.removeItem("xenon_token");
-    location.href="/login.html";
-    return;
-  }
+      <p>
+        Choose your premium product
+        and buy instantly using your wallet.
+      </p>
 
-  const user =
-    await userResponse.json();
+      <div
+        class="row wrap"
+        style="margin-top:22px"
+      >
 
-  document.getElementById("username").textContent =
-    user.name;
-
-  document.getElementById("balance").textContent =
-    user.balance;
-
-  const response =
-    await fetch("/api/products");
-
-  const products =
-    await response.json();
-
-  document.getElementById("products").innerHTML =
-    products.map(product => `
-
-      <div class="card">
-
-        <div style="font-size:42px">
-          ${product.icon}
-        </div>
-
-        <h3>${product.name}</h3>
-
-        <p>${product.description}</p>
-
-        <div class="price">
-          ₹${product.price}
-        </div>
-
-        <button
+        <a
+          href="/wallet.html"
           class="btn"
-          onclick="buy(${product.id})">
+        >
+          + Add Money
+        </a>
 
-          BUY NOW
-
-        </button>
+        <a
+          href="/referral.html"
+          class="btn-secondary"
+        >
+          🎁 Refer & Earn
+        </a>
 
       </div>
 
-    `).join("");
+    </section>
 
-}
 
-async function buy(id){
+    <!-- PRODUCTS -->
 
-  const response =
-    await fetch("/api/buy",{
-      method:"POST",
-      headers,
-      body:JSON.stringify({
-        productId:id
-      })
-    });
+    <h2 class="section-title">
+      Premium Products
+    </h2>
 
-  const data =
-    await response.json();
+    <div
+      id="products"
+      class="grid"
+    >
 
-  if(!response.ok){
-    alert(data.error);
-    return;
-  }
+      <div class="card">
+        Loading products...
+      </div>
 
-  alert("Purchase successful!");
+    </div>
 
-  load();
-}
 
-load();
+    <!-- ACTIVITY -->
 
-</script>
+    <h2 class="section-title">
+      Recent Purchases
+    </h2>
 
-</body>
-</html>
+    <div
+      id="activity"
+      class="card"
+    >
+
+      <p class="small-text">
+        Loading activity...
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottom-nav">
+
+    <a
+      href="/shop.html"
+      class="active"
+    >
+      🏠 Shop
+    </a>
+
+    <a
+      href="/wallet.html"
+    >
+      💰 Wallet
+    </a>
+
+    <a
+      href="/referral.html"
+    >
+      🎁 Refer
+    </a>
+
+    <a
+      href="/profile.html"
+    >
+      👤 Profile
+    </a>
+
+  </nav>
+
+
+  <!-- SCRIPT -->
+
+  <script>
+
+    const token =
+      localStorage.getItem(
+        "xenon_admin"
+      );
+
+    const userToken =
+      localStorage.getItem(
+        "xenon_token"
+      );
+
+
+    /* LOGIN CHECK */
+
+    if (!userToken) {
+
+      location.href =
+        "/login.html";
+
+    }
+
+
+    const headers = {
+
+      "Authorization":
+        "Bearer " +
+        userToken,
+
+      "Content-Type":
+        "application/json"
+
+    };
+
+
+    /* ---------------- LOAD USER ---------------- */
+
+    async function loadUser() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/me",
+            {
+              headers
+            }
+          );
+
+
+        if (!response.ok) {
+
+          localStorage.removeItem(
+            "xenon_token"
+          );
+
+          location.href =
+            "/login.html";
+
+          return;
+
+        }
+
+
+        const user =
+          await response.json();
+
+
+        document
+          .getElementById(
+            "username"
+          )
+          .textContent =
+          user.name;
+
+
+        document
+          .getElementById(
+            "balance"
+          )
+          .textContent =
+          Number(
+            user.balance || 0
+          ).toFixed(0);
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+
+    /* ---------------- LOAD PRODUCTS ---------------- */
+
+    async function loadProducts() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/products"
+          );
+
+
+        const products =
+          await response.json();
+
+
+        const box =
+          document
+            .getElementById(
+              "products"
+            );
+
+
+        if (
+          !Array.isArray(
+            products
+          ) ||
+          products.length === 0
+        ) {
+
+          box.innerHTML = `
+
+            <div class="card">
+
+              <h3>
+                No products available
+              </h3>
+
+              <p class="small-text">
+                Admin ne abhi koi product add nahi kiya.
+              </p>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        box.innerHTML =
+          products
+            .map(
+              product => {
+
+                const image =
+                  product.image ||
+                  "";
+
+
+                return `
+
+                  <div
+                    class="card product"
+                  >
+
+                    ${
+                      image
+                        ? `
+
+                          <img
+                            src="${escapeHtml(image)}"
+                            class="product-image"
+                            alt="${escapeHtml(product.name)}"
+                            onerror="imageError(this)"
+                          >
+
+                        `
+                        : `
+
+                          <div
+                            class="product-icon"
+                          >
+                            ${escapeHtml(
+                              product.icon ||
+                              "📦"
+                            )}
+                          </div>
+
+                        `
+                    }
+
+
+                    <h3>
+                      ${escapeHtml(
+                        product.name
+                      )}
+                    </h3>
+
+
+                    <p
+                      class="description"
+                    >
+                      ${escapeHtml(
+                        product.description ||
+                        "Premium digital product."
+                      )}
+                    </p>
+
+
+                    <div class="price">
+                      ₹${Number(
+                        product.price
+                      )}
+                    </div>
+
+
+                    <button
+                      class="btn full"
+                      onclick="buyProduct(${product.id})"
+                    >
+                      BUY NOW
+                    </button>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        document
+          .getElementById(
+            "products"
+          )
+          .innerHTML = `
+
+            <div class="card">
+
+              <h3>
+                Products load nahi hue
+              </h3>
+
+              <p class="small-text">
+                Page refresh karke dobara try karo.
+              </p>
+
+            </div>
+
+          `;
+
+      }
+
+    }
+
+
+    /* ---------------- BUY ---------------- */
+
+    async function buyProduct(
+      productId
+    ) {
+
+      const confirmBuy =
+        confirm(
+          "Kya aap ye product buy karna chahte ho?"
+        );
+
+
+      if (!confirmBuy) {
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/buy",
+            {
+              method: "POST",
+
+              headers,
+
+              body:
+                JSON.stringify({
+                  productId
+                })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          alert(
+            data.error ||
+            "Purchase failed"
+          );
+
+          return;
+
+        }
+
+
+        alert(
+          "✅ Purchase successful!"
+        );
+
+
+        await loadUser();
+
+        await loadActivity();
+
+      }
+
+      catch (error) {
+
+        alert(
+          "Server connection error"
+        );
+
+      }
+
+    }
+
+
+    /* ---------------- ACTIVITY ---------------- */
+
+    async function loadActivity() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/activity"
+          );
+
+
+        const activity =
+          await response.json();
+
+
+        const box =
+          document
+            .getElementById(
+              "activity"
+            );
+
+
+        if (
+          !Array.isArray(
+            activity
+          ) ||
+          activity.length === 0
+        ) {
+
+          box.innerHTML = `
+
+            <p class="small-text">
+              Abhi koi purchase nahi hua.
+            </p>
+
+          `;
+
+          return;
+
+        }
+
+
+        box.innerHTML =
+          activity
+            .map(
+              item => {
+
+                const date =
+                  new Date(
+                    item.createdAt
+                  );
+
+
+                const time =
+                  date.toLocaleString();
+
+
+                return `
+
+                  <div
+                    class="activity"
+                  >
+
+                    <span
+                      class="activity-dot"
+                    ></span>
+
+                    <div>
+
+                      <b>
+                        ${escapeHtml(
+                          item.name
+                        )}
+                      </b>
+
+                      purchased
+
+                      <b>
+                        ${escapeHtml(
+                          item.product
+                        )}
+                      </b>
+
+                     
