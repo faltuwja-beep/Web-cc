@@ -2,394 +2,256 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
-/>
-
-<title>XENON SHOP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xenon Shop</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  background:#080914;
+  color:#fff;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.auth{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background:
-    radial-gradient(circle at top, #20204b, #080914 55%);
-  color: white;
-  min-height: 100vh;
+.box{
+  width:100%;
+  max-width:420px;
+  background:#121426;
+  border:1px solid #303452;
+  border-radius:24px;
+  padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 
-button,
-input {
-  font: inherit;
+.logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+  margin-bottom:25px;
 }
 
-button {
-  cursor: pointer;
+.logo span{color:#8b5cf6}
+
+h1{margin:0 0 8px}
+p{color:#9da1bb;line-height:1.5}
+
+label{
+  display:block;
+  margin:16px 0 7px;
+  color:#b9bdd2;
 }
 
-.hidden {
-  display: none !important;
+input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #383b5c;
+  background:#080914;
+  color:white;
+  outline:none;
 }
 
-/* HEADER */
+input:focus{border-color:#8b5cf6}
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(15px);
-  background: rgba(8, 9, 20, .85);
-  border-bottom: 1px solid #292b49;
+.btn{
+  width:100%;
+  border:0;
+  padding:14px;
+  border-radius:13px;
+  margin-top:20px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:white;
+  font-weight:800;
 }
 
-.header-inner {
-  max-width: 1100px;
-  margin: auto;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.link{
+  background:none;
+  border:0;
+  color:#a78bfa;
+  font-weight:700;
 }
 
-.logo {
-  font-size: 25px;
-  font-weight: 900;
-  letter-spacing: -1px;
+.switch{
+  text-align:center;
+  margin-top:20px;
 }
 
-.logo span {
-  color: #8b5cf6;
+#app{
+  min-height:100vh;
+  padding-bottom:90px;
 }
 
-.balance {
-  background: #17182b;
-  border: 1px solid #34365b;
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-weight: 700;
+header{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#0b0c18;
+  border-bottom:1px solid #292c47;
 }
 
-/* MAIN */
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 28px 18px 120px;
+.head{
+  max-width:1000px;
+  margin:auto;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.hero {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(124, 58, 237, .30),
-      rgba(30, 41, 59, .30)
-    );
-  border: 1px solid #34365b;
-  border-radius: 28px;
-  padding: 30px;
-  margin-bottom: 25px;
+.brand{
+  font-weight:900;
+  font-size:22px;
 }
 
-.hero h1 {
-  margin: 0 0 10px;
-  font-size: 38px;
+.brand span{color:#8b5cf6}
+
+.wallet{
+  background:#191b30;
+  padding:10px 14px;
+  border-radius:12px;
 }
 
-.hero p {
-  color: #aaaec8;
-  margin: 0;
-  line-height: 1.6;
+main{
+  max-width:1000px;
+  margin:auto;
+  padding:22px 16px;
 }
 
-/* CARDS */
-
-.grid {
-  display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+.hero{
+  padding:28px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#241653,#14172b);
+  border:1px solid #3a3560;
+  margin-bottom:25px;
 }
 
-.card {
-  background: rgba(17, 18, 35, .9);
-  border: 1px solid #2e304f;
-  border-radius: 22px;
-  padding: 20px;
-  box-shadow:
-    0 15px 40px rgba(0,0,0,.25);
+.hero h1{font-size:32px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
 }
 
-.product-icon {
-  font-size: 40px;
+.card{
+  background:#121426;
+  border:1px solid #2c2f4c;
+  border-radius:20px;
+  padding:20px;
 }
 
-.card h3 {
-  margin: 12px 0 7px;
+.price{
+  font-size:25px;
+  font-weight:900;
+  margin:15px 0;
 }
 
-.muted {
-  color: #969ab4;
-  font-size: 14px;
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#0d0e1b;
+  border-top:1px solid #292c47;
+  z-index:10;
 }
 
-.price {
-  font-size: 25px;
-  font-weight: 900;
-  margin: 16px 0;
+.nav{
+  max-width:650px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
 }
 
-.primary {
-  border: 0;
-  width: 100%;
-  padding: 13px;
-  border-radius: 14px;
-  background:
-    linear-gradient(135deg,#7c3aed,#8b5cf6);
-  color: white;
-  font-weight: 800;
+.nav button{
+  border:0;
+  background:none;
+  color:#8589a4;
+  padding:13px 5px;
+  font-size:12px;
 }
 
-.secondary {
-  border: 1px solid #3b3d61;
-  background: #17182b;
-  color: white;
-  padding: 12px;
-  border-radius: 13px;
-  font-weight: 700;
+.nav button.active{color:#a78bfa}
+
+.nav b{
+  display:block;
+  font-size:20px;
+  margin-bottom:3px;
 }
 
-/* BOTTOM NAV */
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  background: rgba(9,10,20,.95);
-  border-top: 1px solid #292b49;
-  backdrop-filter: blur(15px);
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:rgba(0,0,0,.75);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
 }
 
-.nav-inner {
-  max-width: 650px;
-  margin: auto;
-  display: grid;
-  grid-template-columns:
-    repeat(4, 1fr);
+.modalbox{
+  width:100%;
+  max-width:430px;
+  background:#121426;
+  border:1px solid #383b5c;
+  border-radius:22px;
+  padding:24px;
 }
 
-.nav-btn {
-  padding: 13px 5px;
-  background: transparent;
-  border: 0;
-  color: #888ca8;
-  font-size: 12px;
+.close{
+  float:right;
+  border:0;
+  background:#24263d;
+  color:#fff;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  font-size:20px;
 }
 
-.nav-btn.active {
-  color: #a78bfa;
+.status{
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:bold;
 }
 
-.nav-icon {
-  display: block;
-  font-size: 21px;
-  margin-bottom: 3px;
+.pending{background:#3b2e0b;color:#fbbf24}
+.approved{background:#123a24;color:#4ade80}
+.rejected{background:#3d1820;color:#fb7185}
+
+.toast{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  background:#202239;
+  border:1px solid #444866;
+  border-radius:12px;
+  padding:12px 18px;
+  display:none;
 }
 
-/* MODAL */
+.toast.show{display:block}
 
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: rgba(0,0,0,.72);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-}
-
-.modal-box {
-  width: 100%;
-  max-width: 460px;
-  max-height: 90vh;
-  overflow: auto;
-  background: #111225;
-  border: 1px solid #35385c;
-  border-radius: 25px;
-  padding: 25px;
-}
-
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.close {
-  border: 0;
-  background: #22243a;
-  color: white;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 20px;
-}
-
-/* INPUT */
-
-label {
-  display: block;
-  color: #a8abc2;
-  margin: 14px 0 7px;
-}
-
-input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 13px;
-  border: 1px solid #35385b;
-  background: #080914;
-  color: white;
-  outline: none;
-}
-
-input:focus {
-  border-color: #8b5cf6;
-}
-
-.form-btn {
-  margin-top: 18px;
-}
-
-/* LOGIN */
-
-.auth-wrap {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.auth-box {
-  width: 100%;
-  max-width: 430px;
-  background: #111225;
-  border: 1px solid #34365b;
-  border-radius: 28px;
-  padding: 30px;
-}
-
-.auth-logo {
-  font-size: 30px;
-  font-weight: 900;
-  margin-bottom: 30px;
-}
-
-.auth-logo span {
-  color: #8b5cf6;
-}
-
-.auth-box h1 {
-  font-size: 32px;
-}
-
-.link {
-  color: #a78bfa;
-  border: 0;
-  background: transparent;
-  font-weight: 700;
-}
-
-/* STATUS */
-
-.status {
-  display: inline-block;
-  padding: 6px 9px;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.pending {
-  background: #3a2d0c;
-  color: #fbbf24;
-}
-
-.approved {
-  background: #123522;
-  color: #4ade80;
-}
-
-.rejected {
-  background: #3b171c;
-  color: #fb7185;
-}
-
-/* REFERRAL */
-
-.referral {
-  border: 1px solid #493c70;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(124,58,237,.22),
-      rgba(30,30,50,.3)
-    );
-}
-
-.ref-code {
-  margin: 15px 0;
-  padding: 14px;
-  background: #080914;
-  border-radius: 13px;
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-
-/* TOAST */
-
-.toast {
-  position: fixed;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-  background: #17182b;
-  border: 1px solid #414466;
-  padding: 13px 18px;
-  border-radius: 13px;
-  display: none;
-  max-width: 90%;
-}
-
-.toast.show {
-  display: block;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:600px) {
-  .hero h1 {
-    font-size: 30px;
-  }
-
-  .hero {
-    padding: 22px;
-  }
-
-  .container {
-    padding-bottom: 105px;
-  }
+@media(max-width:600px){
+  .hero h1{font-size:27px}
 }
 </style>
 </head>
@@ -398,107 +260,73 @@ input:focus {
 
 <div id="toast" class="toast"></div>
 
-<!-- AUTH -->
+<!-- LOGIN / REGISTER -->
 
-<div id="authScreen" class="auth-wrap">
+<div id="auth" class="auth">
 
-  <div class="auth-box">
+  <div class="box">
 
-    <div class="auth-logo">
+    <div class="logo">
       XENON<span>SHOP</span>
     </div>
 
-    <div id="loginForm">
+    <!-- LOGIN -->
+
+    <div id="loginBox">
 
       <h1>Welcome Back</h1>
 
-      <p class="muted">
-        Login to your Xenon Shop account
-      </p>
+      <p>Login to your Xenon Shop account.</p>
 
       <label>Email</label>
-      <input
-        id="loginEmail"
-        type="email"
-        placeholder="Enter email"
-      >
+      <input id="loginEmail" type="email" placeholder="Enter email">
 
       <label>Password</label>
-      <input
-        id="loginPassword"
-        type="password"
-        placeholder="Enter password"
-      >
+      <input id="loginPassword" type="password" placeholder="Enter password">
 
-      <button
-        class="primary form-btn"
-        onclick="login()"
-      >
-        Login
+      <button class="btn" onclick="login()">
+        LOGIN
       </button>
 
-      <p style="text-align:center;margin-top:20px">
-        Don't have an account?
-        <button
-          class="link"
-          onclick="showRegister()"
-        >
-          Create account
+      <div class="switch">
+        New user?
+        <button class="link" onclick="showRegister()">
+          CREATE ACCOUNT
         </button>
-      </p>
+      </div>
 
     </div>
 
-    <div id="registerForm" class="hidden">
+    <!-- REGISTER -->
+
+    <div id="registerBox" class="hidden">
 
       <h1>Create Account</h1>
 
-      <p class="muted">
-        Join Xenon Shop
-      </p>
+      <p>Register your new Xenon Shop account.</p>
 
       <label>Name</label>
-      <input
-        id="regName"
-        placeholder="Your name"
-      >
+      <input id="regName" type="text" placeholder="Your name">
 
       <label>Email</label>
-      <input
-        id="regEmail"
-        type="email"
-        placeholder="Enter email"
-      >
+      <input id="regEmail" type="email" placeholder="Your email">
 
       <label>Password</label>
-      <input
-        id="regPassword"
-        type="password"
-        placeholder="Minimum 6 characters"
-      >
+      <input id="regPassword" type="password" placeholder="Minimum 6 characters">
 
       <label>Referral Code (optional)</label>
-      <input
-        id="regReferral"
-        placeholder="XENONXXXXXX"
-      >
+      <input id="regReferral" type="text" placeholder="Referral code">
 
-      <button
-        class="primary form-btn"
-        onclick="register()"
-      >
-        Register
+      <button class="btn" onclick="register()">
+        REGISTER
       </button>
 
-      <p style="text-align:center;margin-top:20px">
-        Already have an account?
-        <button
-          class="link"
-          onclick="showLogin()"
-        >
-          Login
+      <div class="switch">
+        Already registered?
+        <button class="link" onclick="showLogin()">
+          LOGIN
         </button>
-      </p>
+      </div>
 
     </div>
 
@@ -510,820 +338,33 @@ input:focus {
 
 <div id="app" class="hidden">
 
-  <header class="header">
+<header>
+  <div class="head">
 
-    <div class="header-inner">
-
-      <div class="logo">
-        XENON<span>SHOP</span>
-      </div>
-
-      <div class="balance">
-        ₹<span id="balance">0</span>
-      </div>
-
+    <div class="brand">
+      XENON<span>SHOP</span>
     </div>
 
-  </header>
-
-  <main class="container">
-
-    <!-- HOME -->
-
-    <section id="homePage">
-
-      <div class="hero">
-
-        <h1>Premium Digital Store 🚀</h1>
-
-        <p>
-          Buy your favourite packages instantly.
-          Add balance and enjoy Xenon Shop.
-        </p>
-
-      </div>
-
-      <h2>Products</h2>
-
-      <div
-        id="products"
-        class="grid"
-      ></div>
-
-    </section>
-
-    <!-- WALLET -->
-
-    <section
-      id="walletPage"
-      class="hidden"
-    >
-
-      <div class="hero">
-
-        <h1>Wallet 💰</h1>
-
-        <p>
-          Add money and track your payment status.
-        </p>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="openDeposit()"
-      >
-        + Add Money
-      </button>
-
-      <h2>Payment History</h2>
-
-      <div
-        id="deposits"
-        class="grid"
-      ></div>
-
-    </section>
-
-    <!-- REFERRAL -->
-
-    <section
-      id="referralPage"
-      class="hidden"
-    >
-
-      <div class="hero referral">
-
-        <h1>Refer & Earn 🎁</h1>
-
-        <p>
-          Share your referral code.
-          When your referred user makes their
-          first successful purchase, you earn ₹50.
-        </p>
-
-        <div
-          id="refCode"
-          class="ref-code"
-        >
-          Loading...
-        </div>
-
-        <button
-          class="primary"
-          onclick="copyReferral()"
-        >
-          Copy Referral Link
-        </button>
-
-      </div>
-
-      <div class="card">
-
-        <h2>Referral Earnings</h2>
-
-        <div class="price">
-          ₹<span id="refBonus">0</span>
-        </div>
-
-        <p class="muted">
-          Total referral bonus
-        </p>
-
-      </div>
-
-      <h2>Referral History</h2>
-
-      <div
-        id="referrals"
-        class="grid"
-      ></div>
-
-    </section>
-
-    <!-- PROFILE -->
-
-    <section
-      id="profilePage"
-      class="hidden"
-    >
-
-      <div class="hero">
-
-        <h1>My Account 👤</h1>
-
-        <p>
-          Manage your Xenon Shop account.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <h3>Name</h3>
-        <p id="profileName"></p>
-
-        <h3>Email</h3>
-        <p id="profileEmail"></p>
-
-        <button
-          class="secondary"
-          onclick="logout()"
-        >
-          Logout
-        </button>
-
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- BOTTOM NAV -->
-
-  <nav class="bottom-nav">
-
-    <div class="nav-inner">
-
-      <button
-        class="nav-btn active"
-        onclick="page('homePage',this)"
-      >
-        <span class="nav-icon">🏠</span>
-        Home
-      </button>
-
-      <button
-        class="nav-btn"
-        onclick="page('walletPage',this)"
-      >
-        <span class="nav-icon">💰</span>
-        Wallet
-      </button>
-
-      <button
-        class="nav-btn"
-        onclick="page('referralPage',this)"
-      >
-        <span class="nav-icon">🎁</span>
-        Refer
-      </button>
-
-      <button
-        class="nav-btn"
-        onclick="page('profilePage',this)"
-      >
-        <span class="nav-icon">👤</span>
-        Profile
-      </button>
-
+    <div class="wallet">
+      ₹<span id="balance">0</span>
     </div>
-
-  </nav>
-
-</div>
-
-<!-- DEPOSIT MODAL -->
-
-<div
-  id="depositModal"
-  class="modal hidden"
->
-
-  <div class="modal-box">
-
-    <div class="modal-head">
-
-      <h2>Add Money</h2>
-
-      <button
-        class="close"
-        onclick="closeDeposit()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <p class="muted">
-      Pay using UPI and submit your UTR.
-    </p>
-
-    <div class="card">
-
-      <p class="muted">
-        UPI ID
-      </p>
-
-      <h3 id="upiId">
-        Loading...
-      </h3>
-
-      <button
-        class="secondary"
-        onclick="copyUPI()"
-      >
-        Copy UPI ID
-      </button>
-
-    </div>
-
-    <label>Amount</label>
-
-    <input
-      id="depositAmount"
-      type="number"
-      placeholder="Enter amount"
-    >
-
-    <label>UTR / Transaction ID</label>
-
-    <input
-      id="depositUTR"
-      placeholder="Enter UTR"
-    >
-
-    <button
-      class="primary form-btn"
-      onclick="submitDeposit()"
-    >
-      Submit Payment
-    </button>
 
   </div>
+</header>
 
-</div>
+<main>
 
-<script>
-const API = "/api";
+  <!-- HOME -->
 
-let token =
-  localStorage.getItem("xenon_token") || "";
+  <section id="home">
 
-let currentUser = null;
-let referralLink = "";
+    <div class="hero">
 
-// ---------------- HELPERS ----------------
+      <h1>Premium Digital Store 🚀</h1>
 
-function toast(message) {
-  const el =
-    document.getElementById("toast");
-
-  el.textContent = message;
-  el.classList.add("show");
-
-  setTimeout(() => {
-    el.classList.remove("show");
-  }, 2500);
-}
-
-async function api(url, options = {}) {
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {})
-  };
-
-  if (token) {
-    headers.Authorization =
-      "Bearer " + token;
-  }
-
-  const response = await fetch(
-    API + url,
-    {
-      ...options,
-      headers
-    }
-  );
-
-  const data =
-    await response.json()
-      .catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(
-      data.error || "Something went wrong"
-    );
-  }
-
-  return data;
-}
-
-function money(value) {
-  return Number(value || 0)
-    .toLocaleString("en-IN");
-}
-
-// ---------------- AUTH UI ----------------
-
-function showRegister() {
-  document
-    .getElementById("loginForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("registerForm")
-    .classList.remove("hidden");
-}
-
-function showLogin() {
-  document
-    .getElementById("registerForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loginForm")
-    .classList.remove("hidden");
-}
-
-// ---------------- REGISTER ----------------
-
-async function register() {
-
-  const name =
-    document.getElementById("regName").value;
-
-  const email =
-    document.getElementById("regEmail").value;
-
-  const password =
-    document.getElementById("regPassword").value;
-
-  const referralCode =
-    document.getElementById("regReferral").value;
-
-  try {
-
-    const data = await api(
-      "/register",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          referralCode
-        })
-      }
-    );
-
-    token = data.token;
-
-    localStorage.setItem(
-      "xenon_token",
-      token
-    );
-
-    toast("Account created!");
-
-    await startApp();
-
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-// ---------------- LOGIN ----------------
-
-async function login() {
-
-  const email =
-    document.getElementById("loginEmail").value;
-
-  const password =
-    document.getElementById("loginPassword").value;
-
-  try {
-
-    const data = await api(
-      "/login",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          email,
-          password
-        })
-      }
-    );
-
-    token = data.token;
-
-    localStorage.setItem(
-      "xenon_token",
-      token
-    );
-
-    toast("Login successful!");
-
-    await startApp();
-
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-// ---------------- APP ----------------
-
-async function startApp() {
-
-  try {
-
-    currentUser =
-      await api("/me");
-
-    document
-      .getElementById("authScreen")
-      .classList.add("hidden");
-
-    document
-      .getElementById("app")
-      .classList.remove("hidden");
-
-    updateUser();
-
-    await loadProducts();
-    await loadDeposits();
-    await loadReferral();
-
-  } catch {
-
-    localStorage.removeItem(
-      "xenon_token"
-    );
-
-    token = "";
-
-    document
-      .getElementById("authScreen")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("app")
-      .classList.add("hidden");
-  }
-}
-
-function updateUser() {
-
-  if (!currentUser) return;
-
-  document.getElementById(
-    "balance"
-  ).textContent =
-    money(currentUser.balance);
-
-  document.getElementById(
-    "profileName"
-  ).textContent =
-    currentUser.name;
-
-  document.getElementById(
-    "profileEmail"
-  ).textContent =
-    currentUser.email;
-}
-
-// ---------------- PRODUCTS ----------------
-
-async function loadProducts() {
-
-  const products =
-    await api("/products");
-
-  const box =
-    document.getElementById("products");
-
-  box.innerHTML = "";
-
-  products.forEach(product => {
-
-    const div =
-      document.createElement("div");
-
-    div.className = "card";
-
-    div.innerHTML = `
-      <div class="product-icon">
-        ${product.icon}
-      </div>
-
-      <h3>${escapeHTML(product.name)}</h3>
-
-      <p class="muted">
-        ${escapeHTML(product.description)}
+      <p>
+        Welcome to Xenon Shop. Buy products
+        using your wallet balance.
       </p>
 
-      <div class="price">
-        ₹${money(product.price)}
-      </div>
-
-      <button
-        class="primary"
-        onclick="buyProduct(${product.id})"
-      >
-        Buy Now
-      </button>
-    `;
-
-    box.appendChild(div);
-  });
-}
-
-// ---------------- BUY ----------------
-
-async function buyProduct(id) {
-
-  if (
-    !confirm(
-      "Are you sure you want to buy this product?"
-    )
-  ) {
-    return;
-  }
-
-  try {
-
-    const data =
-      await api(
-        "/buy",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            productId: id
-          })
-        }
-      );
-
-    currentUser =
-      data.user;
-
-    updateUser();
-
-    toast(
-      "Purchase successful!"
-    );
-
-    await loadReferral();
-
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-// ---------------- DEPOSIT ----------------
-
-async function openDeposit() {
-
-  document
-    .getElementById("depositModal")
-    .classList.remove("hidden");
-
-  try {
-
-    const data =
-      await api(
-        "/payment-info"
-      );
-
-    document.getElementById(
-      "upiId"
-    ).textContent =
-      data.upiId;
-
-  } catch {
-    document.getElementById(
-      "upiId"
-    ).textContent =
-      "UPI unavailable";
-  }
-}
-
-function closeDeposit() {
-
-  document
-    .getElementById("depositModal")
-    .classList.add("hidden");
-}
-
-async function submitDeposit() {
-
-  const amount =
-    document.getElementById(
-      "depositAmount"
-    ).value;
-
-  const utr =
-    document.getElementById(
-      "depositUTR"
-    ).value;
-
-  try {
-
-    await api(
-      "/deposits",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          amount,
-          utr
-        })
-      }
-    );
-
-    toast(
-      "Payment submitted. Status: PENDING"
-    );
-
-    document.getElementById(
-      "depositAmount"
-    ).value = "";
-
-    document.getElementById(
-      "depositUTR"
-    ).value = "";
-
-    closeDeposit();
-
-    await loadDeposits();
-
-    page(
-      "walletPage",
-      document.querySelectorAll(
-        ".nav-btn"
-      )[1]
-    );
-
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
-// ---------------- DEPOSITS ----------------
-
-async function loadDeposits() {
-
-  const deposits =
-    await api("/deposits");
-
-  const box =
-    document.getElementById("deposits");
-
-  box.innerHTML = "";
-
-  if (!deposits.length) {
-
-    box.innerHTML = `
-      <div class="card">
-        <h3>No payments yet</h3>
-        <p class="muted">
-          Your payment history will appear here.
-        </p>
-      </div>
-    `;
-
-    return;
-  }
-
-  deposits.forEach(d => {
-
-    const statusClass =
-      d.status === "APPROVED"
-        ? "approved"
-        : d.status === "REJECTED"
-          ? "rejected"
-          : "pending";
-
-    const div =
-      document.createElement("div");
-
-    div.className = "card";
-
-    div.innerHTML = `
-      <h3>₹${money(d.amount)}</h3>
-
-      <p class="muted">
-        UTR: ${escapeHTML(d.utr)}
-      </p>
-
-      <span class="status ${statusClass}">
-        ${d.status}
-      </span>
-
-      <p class="muted">
-        ${new Date(d.createdAt)
-          .toLocaleString("en-IN")}
-      </p>
-    `;
-
-    box.appendChild(div);
-  });
-}
-
-// ---------------- REFERRAL ----------------
-
-async function loadReferral() {
-
-  const data =
-    await api("/referrals");
-
-  document.getElementById(
-    "refCode"
-  ).textContent =
-    data.referralCode;
-
-  document.getElementById(
-    "refBonus"
-  ).textContent =
-    money(data.bonus);
-
-  referralLink =
-    location.origin +
-    "/?ref=" +
-    data.referralCode;
-
-  const box =
-    document.getElementById(
-      "referrals"
-    );
-
-  box.innerHTML = "";
-
-  if (!data.referrals.length) {
-
-    box.innerHTML = `
-      <div class="card">
-        <h3>No referrals yet</h3>
-        <p class="muted">
-          Share your referral link to earn ₹50.
-        </p>
-      </div>
-    `;
-
-    return;
-  }
-
-  data.referrals.forEach(r => {
-
-    const div =
-      document.createElement("div");
-
-    div.className = "card";
-
-    div.innerHTML = `
-      <h3>Referral Bonus</h3>
-
-      <div class="price">
-        ₹${money(r.amount)}
-      </div>
-
-      <span class="status approved">
-        ${r.status}
-      </span>
-    `;
-
-    box.appendChild(div);
-  });
-}
-
-async function c
+    </div>
