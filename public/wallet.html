@@ -1,188 +1,579 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wallet</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Wallet • Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
 
 <body>
 
-<header class="top">
-  <div class="logo">XENON<span>SHOP</span></div>
-</header>
+  <!-- TOP BAR -->
 
-<main class="wrap">
+  <header class="topbar">
 
-<section class="hero">
-  <h1>Wallet 💰</h1>
-  <p>Add money and check payment status.</p>
-</section>
+    <div class="logo">
+      XENON<span>SHOP</span>
+    </div>
 
-<div class="card">
+    <div class="balance">
+      ₹<span id="balance">0</span>
+    </div>
 
-<h3>Payment UPI</h3>
+  </header>
 
-<div class="price" id="upi">
-Loading...
-</div>
 
-<label class="label">
-Amount
-</label>
+  <!-- MAIN -->
 
-<input
-  id="amount"
-  class="input"
-  type="number"
-  placeholder="Enter amount">
+  <main class="container">
 
-<label class="label">
-UTR / Transaction ID
-</label>
+    <section class="hero">
 
-<input
-  id="utr"
-  class="input"
-  placeholder="Enter UTR">
+      <div class="small-text">
+        MY WALLET
+      </div>
 
-<button
-  class="btn"
-  onclick="submitPayment()">
+      <h1>
+        ₹<span id="heroBalance">0</span>
+      </h1>
 
-SUBMIT PAYMENT
+      <p>
+        Add money to your Xenon wallet.
+        Your payment request will be checked
+        by the admin.
+      </p>
 
-</button>
+      <button
+        class="btn"
+        onclick="openAddMoney()"
+      >
+        + ADD MONEY
+      </button>
 
-</div>
+    </section>
 
-<h2>Payment History</h2>
 
-<div id="history"></div>
+    <!-- PAYMENT STATUS -->
 
-</main>
+    <h2 class="section-title">
+      Payment History
+    </h2>
 
-<nav class="nav">
-  <a href="/shop.html">🏠 Shop</a>
-  <a href="/wallet.html">💰 Wallet</a>
-  <a href="/referral.html">🎁 Refer</a>
-  <a href="/profile.html">👤 Profile</a>
-</nav>
-
-<script>
-
-const token =
-  localStorage.getItem("xenon_token");
-
-if(!token){
-  location.href="/login.html";
-}
-
-const headers = {
-  "Authorization":"Bearer "+token,
-  "Content-Type":"application/json"
-};
-
-async function load(){
-
-  const paymentInfo =
-    await fetch("/api/payment-info")
-      .then(r=>r.json());
-
-  document.getElementById("upi").textContent =
-    paymentInfo.upiId;
-
-  const response =
-    await fetch("/api/deposits",{
-      headers
-    });
-
-  const deposits =
-    await response.json();
-
-  if(!deposits.length){
-
-    document.getElementById("history").innerHTML =
-      `<div class="card">
-        <p>No payments yet.</p>
-      </div>`;
-
-    return;
-  }
-
-  document.getElementById("history").innerHTML =
-    deposits.map(d=>`
+    <div
+      id="payments"
+    >
 
       <div class="card">
+        Loading payment history...
+      </div>
 
-        <h3>₹${d.amount}</h3>
+    </div>
 
-        <p>
-          UTR: ${d.utr}
-        </p>
+  </main>
 
-        <span class="status ${d.status}">
-          ${d.status}
-        </span>
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottom-nav">
+
+    <a href="/shop.html">
+      🏠 Shop
+    </a>
+
+    <a
+      href="/wallet.html"
+      class="active"
+    >
+      💰 Wallet
+    </a>
+
+    <a href="/referral.html">
+      🎁 Refer
+    </a>
+
+    <a href="/profile.html">
+      👤 Profile
+    </a>
+
+  </nav>
+
+
+  <!-- ADD MONEY MODAL -->
+
+  <div
+    id="moneyModal"
+    class="modal"
+  >
+
+    <div class="modal-box">
+
+      <button
+        class="close"
+        onclick="closeAddMoney()"
+      >
+        ×
+      </button>
+
+      <div class="logo">
+        XENON<span>WALLET</span>
+      </div>
+
+      <h2>
+        Add Money
+      </h2>
+
+      <p class="small-text">
+        Payment karne ke baad UTR/Transaction
+        number submit karo.
+      </p>
+
+
+      <!-- UPI INFO -->
+
+      <div
+        class="card"
+        style="margin:15px 0"
+      >
+
+        <div class="small-text">
+          UPI ID
+        </div>
+
+        <h3 id="upiId">
+          Loading...
+        </h3>
+
+        <button
+          class="btn-secondary"
+          onclick="copyUPI()"
+        >
+          Copy UPI ID
+        </button>
 
       </div>
 
-    `).join("");
 
-}
+      <label>
+        Amount
+      </label>
 
-async function submitPayment(){
+      <input
+        id="amount"
+        class="input"
+        type="number"
+        min="1"
+        placeholder="Enter amount"
+      >
 
-  const amount =
-    document.getElementById("amount").value;
 
-  const utr =
-    document.getElementById("utr").value.trim();
+      <label>
+        UTR / Transaction ID
+      </label>
 
-  if(!amount || !utr){
+      <input
+        id="utr"
+        class="input"
+        type="text"
+        placeholder="Enter UTR number"
+      >
 
-    alert(
-      "Amount and UTR enter karo"
-    );
 
-    return;
-  }
+      <br>
 
-  const response =
-    await fetch("/api/deposits",{
-      method:"POST",
-      headers,
-      body:JSON.stringify({
-        amount,
-        utr
-      })
-    });
+      <button
+        id="submitBtn"
+        class="btn full"
+        onclick="submitPayment()"
+      >
+        SUBMIT PAYMENT
+      </button>
 
-  const data =
-    await response.json();
 
-  if(!response.ok){
+      <p
+        id="modalMessage"
+        class="small-text"
+        style="
+          display:none;
+          margin-top:14px;
+        "
+      ></p>
 
-    alert(data.error);
+    </div>
 
-    return;
-  }
+  </div>
 
-  alert(
-    "Payment submitted! Status: PENDING"
-  );
 
-  document.getElementById("amount").value="";
-  document.getElementById("utr").value="";
+  <script>
 
-  load();
+    const token =
+      localStorage.getItem(
+        "xenon_token"
+      );
 
-}
 
-load();
+    /* LOGIN CHECK */
 
-</script>
+    if (!token) {
 
-</body>
-</html>
+      location.href =
+        "/login.html";
+
+    }
+
+
+    const headers = {
+
+      "Authorization":
+        "Bearer " + token,
+
+      "Content-Type":
+        "application/json"
+
+    };
+
+
+    /* ---------------- USER ---------------- */
+
+    async function loadUser() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/me",
+            {
+              headers
+            }
+          );
+
+
+        if (!response.ok) {
+
+          localStorage.removeItem(
+            "xenon_token"
+          );
+
+          location.href =
+            "/login.html";
+
+          return;
+
+        }
+
+
+        const user =
+          await response.json();
+
+
+        const balance =
+          Number(
+            user.balance || 0
+          );
+
+
+        document
+          .getElementById(
+            "balance"
+          )
+          .textContent =
+          balance.toFixed(0);
+
+
+        document
+          .getElementById(
+            "heroBalance"
+          )
+          .textContent =
+          balance.toFixed(0);
+
+      }
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+      }
+
+    }
+
+
+    /* ---------------- OPEN MODAL ---------------- */
+
+    function openAddMoney() {
+
+      document
+        .getElementById(
+          "moneyModal"
+        )
+        .classList.add(
+          "show"
+        );
+
+      loadUPI();
+
+    }
+
+
+    /* ---------------- CLOSE MODAL ---------------- */
+
+    function closeAddMoney() {
+
+      document
+        .getElementById(
+          "moneyModal"
+        )
+        .classList.remove(
+          "show"
+        );
+
+    }
+
+
+    /* Outside click */
+
+    document
+      .getElementById(
+        "moneyModal"
+      )
+      .addEventListener(
+        "click",
+        function(event) {
+
+          if (
+            event.target ===
+            this
+          ) {
+
+            closeAddMoney();
+
+          }
+
+        }
+      );
+
+
+    /* ---------------- UPI ---------------- */
+
+    async function loadUPI() {
+
+      const box =
+        document
+          .getElementById(
+            "upiId"
+          );
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/config"
+          );
+
+
+        if (
+          response.ok
+        ) {
+
+          const data =
+            await response.json();
+
+
+          box.textContent =
+            data.upiId ||
+            "UPI ID unavailable";
+
+        }
+
+        else {
+
+          box.textContent =
+            "UPI ID unavailable";
+
+        }
+
+      }
+
+      catch (error) {
+
+        box.textContent =
+          "UPI ID unavailable";
+
+      }
+
+    }
+
+
+    /* ---------------- COPY UPI ---------------- */
+
+    async function copyUPI() {
+
+      const upi =
+        document
+          .getElementById(
+            "upiId"
+          )
+          .textContent;
+
+
+      if (
+        !upi ||
+        upi.includes(
+          "unavailable"
+        )
+      ) {
+
+        return;
+
+      }
+
+
+      try {
+
+        await navigator
+          .clipboard
+          .writeText(
+            upi
+          );
+
+
+        alert(
+          "✅ UPI ID copied"
+        );
+
+      }
+
+      catch (error) {
+
+        alert(
+          "UPI ID: " +
+          upi
+        );
+
+      }
+
+    }
+
+
+    /* ---------------- SUBMIT PAYMENT ---------------- */
+
+    async function submitPayment() {
+
+      const amount =
+        Number(
+          document
+            .getElementById(
+              "amount"
+            )
+            .value
+        );
+
+
+      const utr =
+        document
+          .getElementById(
+            "utr"
+          )
+          .value
+          .trim();
+
+
+      const button =
+        document
+          .getElementById(
+            "submitBtn"
+          );
+
+
+      const message =
+        document
+          .getElementById(
+            "modalMessage"
+          );
+
+
+      if (
+        !amount ||
+        amount <= 0
+      ) {
+
+        showModalMessage(
+          "Valid amount enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!utr) {
+
+        showModalMessage(
+          "UTR / Transaction ID enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "SUBMITTING...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/deposits",
+            {
+              method: "POST",
+
+              headers,
+
+              body:
+                JSON.stringify({
+                  amount,
+                  utr
+                })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          showModalMessage(
+            data.error ||
+            "Payment submit nahi hua.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        showModalMessage(
+          "✅ Payment request submitted. Status P
