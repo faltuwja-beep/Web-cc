@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+<title>Register</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<main class="auth">
+
+<div class="authbox">
+
+<div class="logo">
+XENON<span>SHOP</span>
+</div>
+
+<h1>Create Account</h1>
+
+<p>
+Register your new account.
+</p>
+
+<label class="label">
+Name
+</label>
+
+<input
+id="name"
+class="input"
+placeholder="Your name">
+
+<label class="label">
+Email
+</label>
+
+<input
+id="email"
+class="input"
+type="email"
+placeholder="Your email">
+
+<label class="label">
+Password
+</label>
+
+<input
+id="password"
+class="input"
+type="password"
+placeholder="Minimum 6 characters">
+
+<label class="label">
+Referral Code
+(optional)
+</label>
+
+<input
+id="referralCode"
+class="input"
+placeholder="Referral code">
+
+<button
+class="btn"
+onclick="register()">
+
+REGISTER
+
+</button>
+
+<p>
+Already registered?
+<a href="/login.html">
+Login
+</a>
+</p>
+
+<p>
+<a href="/">
+← Home
+</a>
+</p>
+
+</div>
+
+</main>
+
+<script>
+
+const ref =
+new URLSearchParams(
+location.search
+).get("ref");
+
+if(ref){
+
+document.getElementById(
+"referralCode"
+).value = ref;
+
+}
+
+async function register(){
+
+const name =
+document.getElementById(
+"name"
+).value.trim();
+
+const email =
+document.getElementById(
+"email"
+).value.trim();
+
+const password =
+document.getElementById(
+"password"
+).value;
+
+const referralCode =
+document.getElementById(
+"referralCode"
+).value.trim();
+
+if(!name || !email || !password){
+
+alert(
+"Please fill all required fields"
+);
+
+return;
+}
+
+if(password.length < 6){
+
+alert(
+"Password must be at least 6 characters"
+);
+
+return;
+}
+
+try{
+
+const response =
+await fetch(
+"/api/register",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+name,
+email,
+password,
+referralCode
+
+})
+}
+);
+
+const data =
+await response.json();
+
+if(!response.ok){
+
+throw new Error(
+data.error
+);
+
+}
+
+localStorage.setItem(
+"xenon_token",
+data.token
+);
+
+location.href =
+"/shop.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
