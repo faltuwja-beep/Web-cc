@@ -1,143 +1,376 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-<title>Login</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Login • Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
 
 <body>
 
-<main class="auth">
+  <main class="auth-page">
 
-<div class="authbox">
+    <div class="form-card">
 
-<div class="logo">
-XENON<span>SHOP</span>
-</div>
+      <div class="logo">
+        XENON<span>SHOP</span>
+      </div>
 
-<h1>Login</h1>
+      <h1>Welcome Back 👋</h1>
 
-<p>
-Welcome back.
-</p>
+      <p class="small-text">
+        Login to continue to your Xenon account.
+      </p>
 
-<label class="label">
-Email
-</label>
 
-<input
-id="email"
-class="input"
-type="email"
-placeholder="Enter email">
+      <label for="email">
+        Email
+      </label>
 
-<label class="label">
-Password
-</label>
+      <input
+        id="email"
+        class="input"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      >
 
-<input
-id="password"
-class="input"
-type="password"
-placeholder="Enter password">
 
-<button
-class="btn"
-onclick="login()">
+      <label for="password">
+        Password
+      </label>
 
-LOGIN
+      <input
+        id="password"
+        class="input"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+      >
 
-</button>
 
-<p>
-New user?
-<a href="/register.html">
-Create account
-</a>
-</p>
+      <br>
 
-<p>
-<a href="/">
-← Home
-</a>
-</p>
+      <button
+        id="loginBtn"
+        class="btn full"
+        onclick="login()"
+      >
+        LOGIN
+      </button>
 
-</div>
 
-</main>
+      <p
+        id="message"
+        class="small-text"
+        style="
+          display:none;
+          margin-top:15px;
+        "
+      ></p>
 
-<script>
 
-async function login(){
+      <div
+        style="
+          text-align:center;
+          margin-top:22px;
+        "
+      >
 
-const email =
-document.getElementById(
-"email"
-).value.trim();
+        <span class="small-text">
+          Don't have an account?
+        </span>
 
-const password =
-document.getElementById(
-"password"
-).value;
+        <a
+          href="/register.html"
+          style="
+            color:#a78bfa;
+            font-weight:800;
+          "
+        >
+          Register
+        </a>
 
-if(!email || !password){
+      </div>
 
-alert(
-"Email and password required"
-);
 
-return;
-}
+      <div
+        style="
+          text-align:center;
+          margin-top:14px;
+        "
+      >
 
-try{
+        <a
+          href="/"
+          class="small-text"
+        >
+          ← Back to Home
+        </a>
 
-const response =
-await fetch(
-"/api/login",
-{
-method:"POST",
+      </div>
 
-headers:{
-"Content-Type":
-"application/json"
-},
+    </div>
 
-body:JSON.stringify({
-email,
-password
-})
-}
-);
+  </main>
 
-const data =
-await response.json();
 
-if(!response.ok){
-throw new Error(
-data.error
-);
-}
+  <script>
 
-localStorage.setItem(
-"xenon_token",
-data.token
-);
+    /* Already logged in? */
 
-location.href =
-"/shop.html";
+    if (
+      localStorage.getItem(
+        "xenon_token"
+      )
+    ) {
 
-}catch(error){
+      location.href =
+        "/shop.html";
 
-alert(error.message);
+    }
 
-}
 
-}
+    async function login() {
 
-</script>
+      const email =
+        document
+          .getElementById(
+            "email"
+          )
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById(
+            "password"
+          )
+          .value;
+
+
+      const button =
+        document
+          .getElementById(
+            "loginBtn"
+          );
+
+
+      const message =
+        document
+          .getElementById(
+            "message"
+          );
+
+
+      if (!email) {
+
+        showMessage(
+          "Email enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!password) {
+
+        showMessage(
+          "Password enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "LOGINING...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/login",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  email,
+                  password
+                })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          showMessage(
+            data.error ||
+            "Login failed.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        if (!data.token) {
+
+          showMessage(
+            "Server ne login token nahi diya.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        /*
+          IMPORTANT:
+          Same token name is used
+          by shop.html, wallet.html,
+          referral.html and profile.html.
+        */
+
+        localStorage.setItem(
+          "xenon_token",
+          data.token
+        );
+
+
+        showMessage(
+          "✅ Login successful. Opening shop...",
+          false
+        );
+
+
+        setTimeout(
+          () => {
+
+            location.href =
+              "/shop.html";
+
+          },
+          500
+        );
+
+
+      }
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+        showMessage(
+          "Server se connection nahi ho raha.",
+          true
+        );
+
+      }
+
+      finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "LOGIN";
+
+      }
+
+    }
+
+
+    function showMessage(
+      text,
+      error
+    ) {
+
+      const message =
+        document
+          .getElementById(
+            "message"
+          );
+
+
+      message.style.display =
+        "block";
+
+
+      message.textContent =
+        text;
+
+
+      if (error) {
+
+        message.style.color =
+          "#fb7185";
+
+      }
+
+      else {
+
+        message.style.color =
+          "#4ade80";
+
+      }
+
+    }
+
+
+    /* Enter key se login */
+
+    document
+      .getElementById(
+        "password"
+      )
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (
+            event.key ===
+            "Enter"
+          ) {
+
+            login();
+
+          }
+
+        }
+      );
+
+  </script>
 
 </body>
 </html>
