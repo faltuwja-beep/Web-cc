@@ -1,143 +1,559 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-<title>Login</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
 
 <body>
 
-<main class="auth">
+  <!-- TOP BAR -->
 
-<div class="authbox">
+  <header class="topbar">
 
-<div class="logo">
-XENON<span>SHOP</span>
-</div>
+    <div class="logo">
+      XENON<span>SHOP</span>
+    </div>
 
-<h1>Login</h1>
+    <div class="row">
 
-<p>
-Welcome back.
-</p>
+      <a
+        href="/login.html"
+        class="btn-secondary"
+      >
+        Login
+      </a>
 
-<label class="label">
-Email
-</label>
+      <a
+        href="/register.html"
+        class="btn"
+      >
+        Register
+      </a>
 
-<input
-id="email"
-class="input"
-type="email"
-placeholder="Enter email">
+    </div>
 
-<label class="label">
-Password
-</label>
+  </header>
 
-<input
-id="password"
-class="input"
-type="password"
-placeholder="Enter password">
 
-<button
-class="btn"
-onclick="login()">
+  <!-- MAIN -->
 
-LOGIN
+  <main class="container">
 
-</button>
+    <!-- HERO -->
 
-<p>
-New user?
-<a href="/register.html">
-Create account
-</a>
-</p>
+    <section class="hero">
 
-<p>
-<a href="/">
-← Home
-</a>
-</p>
+      <div class="small-text">
+        ⚡ NEXT-GEN DIGITAL STORE
+      </div>
 
-</div>
+      <h1>
+        Premium products.
+        <br>
+        Simple experience.
+      </h1>
 
-</main>
+      <p>
+        Welcome to Xenon Shop.
+        Create your account, add money
+        and purchase premium products.
+      </p>
 
-<script>
+      <div
+        class="row wrap"
+        style="margin-top:25px"
+      >
 
-async function login(){
+        <a
+          href="/register.html"
+          class="btn"
+        >
+          🚀 Get Started
+        </a>
 
-const email =
-document.getElementById(
-"email"
-).value.trim();
+        <a
+          href="/login.html"
+          class="btn-secondary"
+        >
+          Login
+        </a>
 
-const password =
-document.getElementById(
-"password"
-).value;
+      </div>
 
-if(!email || !password){
+    </section>
 
-alert(
-"Email and password required"
-);
 
-return;
-}
+    <!-- PRODUCTS -->
 
-try{
+    <h2 class="section-title">
+      Featured Products
+    </h2>
 
-const response =
-await fetch(
-"/api/login",
-{
-method:"POST",
+    <div
+      id="products"
+      class="grid"
+    >
 
-headers:{
-"Content-Type":
-"application/json"
-},
+      <div class="card">
+        Loading products...
+      </div>
 
-body:JSON.stringify({
-email,
-password
-})
-}
-);
+    </div>
 
-const data =
-await response.json();
 
-if(!response.ok){
-throw new Error(
-data.error
-);
-}
+    <!-- LIVE ACTIVITY -->
 
-localStorage.setItem(
-"xenon_token",
-data.token
-);
+    <h2 class="section-title">
+      Recent Purchases
+    </h2>
 
-location.href =
-"/shop.html";
+    <div
+      id="activity"
+      class="card"
+    >
 
-}catch(error){
+      <p class="small-text">
+        Loading recent activity...
+      </p>
 
-alert(error.message);
+    </div>
 
-}
 
-}
+    <!-- FEATURES -->
 
-</script>
+    <h2 class="section-title">
+      Why Xenon Shop?
+    </h2>
+
+    <div class="grid">
+
+      <div class="card">
+
+        <div
+          class="product-icon"
+        >
+          🔐
+        </div>
+
+        <h3>
+          Secure Account
+        </h3>
+
+        <p class="small-text">
+          Your account is protected
+          with secure login.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          class="product-icon"
+        >
+          ⚡
+        </div>
+
+        <h3>
+          Fast Experience
+        </h3>
+
+        <p class="small-text">
+          Simple and fast shopping
+          experience.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          class="product-icon"
+        >
+          💰
+        </div>
+
+        <h3>
+          Wallet System
+        </h3>
+
+        <p class="small-text">
+          Add money and track
+          your payment status.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div
+          class="product-icon"
+        >
+          🎁
+        </div>
+
+        <h3>
+          Refer & Earn
+        </h3>
+
+        <p class="small-text">
+          Share your referral link
+          with friends.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottom-nav">
+
+    <a
+      href="/"
+      class="active"
+    >
+      🏠 Home
+    </a>
+
+    <a
+      href="/login.html"
+    >
+      🔐 Login
+    </a>
+
+    <a
+      href="/register.html"
+    >
+      ✨ Register
+    </a>
+
+  </nav>
+
+
+  <!-- SCRIPT -->
+
+  <script>
+
+    /* ---------------- PRODUCTS ---------------- */
+
+    async function loadProducts() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/products"
+          );
+
+        const products =
+          await response.json();
+
+
+        const box =
+          document.getElementById(
+            "products"
+          );
+
+
+        if (
+          !Array.isArray(
+            products
+          ) ||
+          products.length === 0
+        ) {
+
+          box.innerHTML = `
+
+            <div class="card">
+
+              <h3>
+                No products yet
+              </h3>
+
+              <p class="small-text">
+                Products will appear here
+                when the admin adds them.
+              </p>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        box.innerHTML =
+          products
+            .map(
+              product => `
+
+                <div
+                  class="card product"
+                >
+
+                  ${
+                    product.image
+                      ? `
+
+                        <img
+                          src="${escapeHtml(product.image)}"
+                          class="product-image"
+                          alt="${escapeHtml(product.name)}"
+                          onerror="this.style.display='none'"
+                        >
+
+                      `
+                      : `
+
+                        <div
+                          class="product-icon"
+                        >
+                          ${escapeHtml(
+                            product.icon ||
+                            "📦"
+                          )}
+                        </div>
+
+                      `
+                  }
+
+
+                  <h3>
+                    ${escapeHtml(
+                      product.name
+                    )}
+                  </h3>
+
+
+                  <p
+                    class="description"
+                  >
+                    ${escapeHtml(
+                      product.description ||
+                      "Premium digital product."
+                    )}
+                  </p>
+
+
+                  <div class="price">
+                    ₹${Number(
+                      product.price
+                    )}
+                  </div>
+
+
+                  <a
+                    href="/login.html"
+                    class="btn full"
+                  >
+                    LOGIN TO BUY
+                  </a>
+
+                </div>
+
+              `
+            )
+            .join("");
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+
+    /* ---------------- ACTIVITY ---------------- */
+
+    async function loadActivity() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/activity"
+          );
+
+
+        const activity =
+          await response.json();
+
+
+        const box =
+          document.getElementById(
+            "activity"
+          );
+
+
+        if (
+          !Array.isArray(
+            activity
+          ) ||
+          activity.length === 0
+        ) {
+
+          box.innerHTML = `
+
+            <p class="small-text">
+              Abhi koi purchase nahi hua.
+            </p>
+
+          `;
+
+          return;
+
+        }
+
+
+        box.innerHTML =
+          activity
+            .map(
+              item => {
+
+                const date =
+                  new Date(
+                    item.createdAt
+                  );
+
+
+                return `
+
+                  <div
+                    class="activity"
+                  >
+
+                    <span
+                      class="activity-dot"
+                    ></span>
+
+                    <div>
+
+                      <b>
+                        ${escapeHtml(
+                          item.name
+                        )}
+                      </b>
+
+                      purchased
+
+                      <b>
+                        ${escapeHtml(
+                          item.product
+                        )}
+                      </b>
+
+                      <div
+                        class="small-text"
+                      >
+
+                        ₹${Number(
+                          item.amount
+                        )}
+
+                        •
+
+                        ${date.toLocaleString()}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+
+    /* ---------------- ESCAPE ---------------- */
+
+    function escapeHtml(
+      value
+    ) {
+
+      return String(
+        value || ""
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* ---------------- START ---------------- */
+
+    loadProducts();
+
+    loadActivity();
+
+
+    /*
+      Recent purchase list
+      refreshes automatically.
+    */
+
+    setInterval(
+      loadActivity,
+      15000
+    );
+
+  </script>
 
 </body>
+
 </html>
