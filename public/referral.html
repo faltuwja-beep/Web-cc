@@ -1,135 +1,431 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Referral</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Refer & Earn • Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
 
 <body>
 
-<header class="top">
-  <div class="logo">XENON<span>SHOP</span></div>
-</header>
+  <header class="topbar">
 
-<main class="wrap">
+    <div class="logo">
+      XENON<span>SHOP</span>
+    </div>
 
-<section class="hero">
+    <div class="balance">
+      ₹<span id="balance">0</span>
+    </div>
 
-<h1>Referral 🎁</h1>
+  </header>
 
-<p>
-Share your referral link with friends.
-</p>
 
-</section>
+  <main class="container">
 
-<div class="card">
+    <section class="hero">
 
-<h3>Your Referral Code</h3>
+      <div class="small-text">
+        XENON REWARDS
+      </div>
 
-<div
-  id="code"
-  class="price">
+      <h1>
+        Refer & Earn 🎁
+      </h1>
 
-Loading...
+      <p>
+        Apna referral code friends ke saath
+        share karo.
+      </p>
 
-</div>
+    </section>
 
-<button
-  class="btn"
-  onclick="copyLink()">
 
-COPY REFERRAL LINK
+    <h2 class="section-title">
+      Your Referral
+    </h2>
 
-</button>
+    <div class="card">
 
-</div>
+      <div class="small-text">
+        YOUR REFERRAL CODE
+      </div>
 
-<div class="card">
+      <h1 id="referralCode">
+        Loading...
+      </h1>
 
-<h3>Total Referral Bonus</h3>
+      <button
+        class="btn"
+        onclick="copyCode()"
+      >
+        COPY CODE
+      </button>
 
-<div class="price">
-₹<span id="bonus">0</span>
-</div>
+      <button
+        class="btn-secondary"
+        onclick="shareReferral()"
+        style="margin-left:8px"
+      >
+        SHARE
+      </button>
 
-</div>
+    </div>
 
-</main>
 
-<nav class="nav">
-  <a href="/shop.html">🏠 Shop</a>
-  <a href="/wallet.html">💰 Wallet</a>
-  <a href="/referral.html">🎁 Refer</a>
-  <a href="/profile.html">👤 Profile</a>
-</nav>
+    <h2 class="section-title">
+      Referral Link
+    </h2>
 
-<script>
+    <div class="card">
 
-const token =
-  localStorage.getItem("xenon_token");
+      <input
+        id="referralLink"
+        class="input"
+        readonly
+      >
 
-if(!token){
-  location.href="/login.html";
-}
+      <br><br>
 
-let referralLink="";
+      <button
+        class="btn full"
+        onclick="copyLink()"
+      >
+        COPY REFERRAL LINK
+      </button>
 
-async function load(){
+    </div>
 
-  const response =
-    await fetch("/api/referrals",{
-      headers:{
-        "Authorization":
-          "Bearer "+token
+
+    <h2 class="section-title">
+      Referral Stats
+    </h2>
+
+    <div class="grid">
+
+      <div class="card">
+
+        <div class="small-text">
+          TOTAL REFERRALS
+        </div>
+
+        <div
+          id="referralCount"
+          class="price"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="small-text">
+          REFERRAL EARNINGS
+        </div>
+
+        <div
+          id="referralEarnings"
+          class="price"
+        >
+          ₹0
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <nav class="bottom-nav">
+
+    <a href="/shop.html">
+      🏠 Shop
+    </a>
+
+    <a href="/wallet.html">
+      💰 Wallet
+    </a>
+
+    <a
+      href="/referral.html"
+      class="active"
+    >
+      🎁 Refer
+    </a>
+
+    <a href="/profile.html">
+      👤 Profile
+    </a>
+
+  </nav>
+
+
+  <script>
+
+    const token =
+      localStorage.getItem(
+        "xenon_token"
+      );
+
+
+    if (!token) {
+
+      location.href =
+        "/login.html";
+
+    }
+
+
+    const headers = {
+
+      "Authorization":
+        "Bearer " + token
+
+    };
+
+
+    async function loadReferral() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/me",
+            {
+              headers
+            }
+          );
+
+
+        if (!response.ok) {
+
+          localStorage.removeItem(
+            "xenon_token"
+          );
+
+          location.href =
+            "/login.html";
+
+          return;
+
+        }
+
+
+        const user =
+          await response.json();
+
+
+        document
+          .getElementById(
+            "balance"
+          )
+          .textContent =
+          Number(
+            user.balance || 0
+          ).toFixed(0);
+
+
+        const code =
+          user.referralCode ||
+          user.referral ||
+          "N/A";
+
+
+        document
+          .getElementById(
+            "referralCode"
+          )
+          .textContent =
+          code;
+
+
+        const link =
+          window.location.origin +
+          "/register.html?ref=" +
+          encodeURIComponent(
+            code
+          );
+
+
+        document
+          .getElementById(
+            "referralLink"
+          )
+          .value =
+          link;
+
+
+        document
+          .getElementById(
+            "referralCount"
+          )
+          .textContent =
+          Number(
+            user.referralCount || 0
+          );
+
+
+        document
+          .getElementById(
+            "referralEarnings"
+          )
+          .textContent =
+          "₹" +
+          Number(
+            user.referralEarnings || 0
+          );
+
       }
-    });
 
-  const data =
-    await response.json();
+      catch (error) {
 
-  document.getElementById("code")
-    .textContent =
-    data.referralCode;
+        console.error(error);
 
-  document.getElementById("bonus")
-    .textContent =
-    data.bonus;
+      }
 
-  referralLink =
-    location.origin +
-    "/register.html?ref=" +
-    data.referralCode;
+    }
 
-}
 
-async function copyLink(){
+    async function copyCode() {
 
-  try{
+      const code =
+        document
+          .getElementById(
+            "referralCode"
+          )
+          .textContent;
 
-    await navigator.clipboard
-      .writeText(referralLink);
 
-    alert(
-      "Referral link copied!"
-    );
+      if (!code || code === "N/A") {
 
-  }catch{
+        return;
 
-    prompt(
-      "Copy this link:",
-      referralLink
-    );
+      }
 
-  }
 
-}
+      try {
 
-load();
+        await navigator
+          .clipboard
+          .writeText(code);
 
-</script>
+        alert(
+          "✅ Referral code copied"
+        );
+
+      }
+
+      catch (error) {
+
+        alert(
+          "Referral Code: " + code
+        );
+
+      }
+
+    }
+
+
+    async function copyLink() {
+
+      const input =
+        document
+          .getElementById(
+            "referralLink"
+          );
+
+
+      try {
+
+        await navigator
+          .clipboard
+          .writeText(
+            input.value
+          );
+
+        alert(
+          "✅ Referral link copied"
+        );
+
+      }
+
+      catch (error) {
+
+        input.select();
+
+        document.execCommand(
+          "copy"
+        );
+
+        alert(
+          "✅ Referral link copied"
+        );
+
+      }
+
+    }
+
+
+    async function shareReferral() {
+
+      const link =
+        document
+          .getElementById(
+            "referralLink"
+          )
+          .value;
+
+
+      const text =
+        "Join me on Xenon Shop 🎁\n" +
+        link;
+
+
+      if (
+        navigator.share
+      ) {
+
+        try {
+
+          await navigator.share({
+            title:
+              "Xenon Shop",
+            text
+          });
+
+        }
+
+        catch (error) {}
+
+      }
+
+      else {
+
+        await copyLink();
+
+      }
+
+    }
+
+
+    loadReferral();
+
+  </script>
 
 </body>
+
 </html>
