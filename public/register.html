@@ -1,200 +1,451 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-<title>Register</title>
-<link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Register • Xenon Shop</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
 </head>
 
 <body>
 
-<main class="auth">
+  <main class="auth-page">
 
-<div class="authbox">
+    <div class="form-card">
 
-<div class="logo">
-XENON<span>SHOP</span>
-</div>
+      <div class="logo">
+        XENON<span>SHOP</span>
+      </div>
 
-<h1>Create Account</h1>
+      <h1>Create Account 🚀</h1>
 
-<p>
-Register your new account.
-</p>
+      <p class="small-text">
+        Create your Xenon account and start shopping.
+      </p>
 
-<label class="label">
-Name
-</label>
 
-<input
-id="name"
-class="input"
-placeholder="Your name">
+      <label for="name">
+        Name
+      </label>
 
-<label class="label">
-Email
-</label>
+      <input
+        id="name"
+        class="input"
+        type="text"
+        autocomplete="name"
+        placeholder="Your name"
+      >
 
-<input
-id="email"
-class="input"
-type="email"
-placeholder="Your email">
 
-<label class="label">
-Password
-</label>
+      <label for="email">
+        Email
+      </label>
 
-<input
-id="password"
-class="input"
-type="password"
-placeholder="Minimum 6 characters">
+      <input
+        id="email"
+        class="input"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      >
 
-<label class="label">
-Referral Code
-(optional)
-</label>
 
-<input
-id="referralCode"
-class="input"
-placeholder="Referral code">
+      <label for="password">
+        Password
+      </label>
 
-<button
-class="btn"
-onclick="register()">
+      <input
+        id="password"
+        class="input"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Minimum 6 characters"
+      >
 
-REGISTER
 
-</button>
+      <label for="confirmPassword">
+        Confirm Password
+      </label>
 
-<p>
-Already registered?
-<a href="/login.html">
-Login
-</a>
-</p>
+      <input
+        id="confirmPassword"
+        class="input"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Enter password again"
+      >
 
-<p>
-<a href="/">
-← Home
-</a>
-</p>
 
-</div>
+      <label for="referral">
+        Referral Code
+        <span class="small-text">
+          (optional)
+        </span>
+      </label>
 
-</main>
+      <input
+        id="referral"
+        class="input"
+        type="text"
+        placeholder="Referral code"
+      >
 
-<script>
 
-const ref =
-new URLSearchParams(
-location.search
-).get("ref");
+      <br>
 
-if(ref){
+      <button
+        id="registerBtn"
+        class="btn full"
+        onclick="registerUser()"
+      >
+        CREATE ACCOUNT
+      </button>
 
-document.getElementById(
-"referralCode"
-).value = ref;
 
-}
+      <p
+        id="message"
+        class="small-text"
+        style="
+          display:none;
+          margin-top:15px;
+        "
+      ></p>
 
-async function register(){
 
-const name =
-document.getElementById(
-"name"
-).value.trim();
+      <div
+        style="
+          text-align:center;
+          margin-top:22px;
+        "
+      >
 
-const email =
-document.getElementById(
-"email"
-).value.trim();
+        <span class="small-text">
+          Already have an account?
+        </span>
 
-const password =
-document.getElementById(
-"password"
-).value;
+        <a
+          href="/login.html"
+          style="
+            color:#a78bfa;
+            font-weight:800;
+          "
+        >
+          Login
+        </a>
 
-const referralCode =
-document.getElementById(
-"referralCode"
-).value.trim();
+      </div>
 
-if(!name || !email || !password){
 
-alert(
-"Please fill all required fields"
-);
+      <div
+        style="
+          text-align:center;
+          margin-top:14px;
+        "
+      >
 
-return;
-}
+        <a
+          href="/"
+          class="small-text"
+        >
+          ← Back to Home
+        </a>
 
-if(password.length < 6){
+      </div>
 
-alert(
-"Password must be at least 6 characters"
-);
+    </div>
 
-return;
-}
+  </main>
 
-try{
 
-const response =
-await fetch(
-"/api/register",
-{
-method:"POST",
+  <script>
 
-headers:{
-"Content-Type":
-"application/json"
-},
+    async function registerUser() {
 
-body:JSON.stringify({
+      const name =
+        document
+          .getElementById(
+            "name"
+          )
+          .value
+          .trim();
 
-name,
-email,
-password,
-referralCode
 
-})
-}
-);
+      const email =
+        document
+          .getElementById(
+            "email"
+          )
+          .value
+          .trim();
 
-const data =
-await response.json();
 
-if(!response.ok){
+      const password =
+        document
+          .getElementById(
+            "password"
+          )
+          .value;
 
-throw new Error(
-data.error
-);
 
-}
+      const confirmPassword =
+        document
+          .getElementById(
+            "confirmPassword"
+          )
+          .value;
 
-localStorage.setItem(
-"xenon_token",
-data.token
-);
 
-location.href =
-"/shop.html";
+      const referral =
+        document
+          .getElementById(
+            "referral"
+          )
+          .value
+          .trim();
 
-}catch(error){
 
-alert(error.message);
+      const button =
+        document
+          .getElementById(
+            "registerBtn"
+          );
 
-}
 
-}
+      if (!name) {
 
-</script>
+        showMessage(
+          "Name enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (!email) {
+
+        showMessage(
+          "Email enter karo.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (password.length < 6) {
+
+        showMessage(
+          "Password kam se kam 6 characters ka hona chahiye.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if (
+        password !==
+        confirmPassword
+      ) {
+
+        showMessage(
+          "Passwords match nahi kar rahe.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "CREATING...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/register",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  name,
+                  email,
+                  password,
+                  referral
+                })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          showMessage(
+            data.error ||
+            "Registration failed.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        /*
+          Registration successful.
+          If server sends token,
+          user can be logged in directly.
+        */
+
+        if (data.token) {
+
+          localStorage.setItem(
+            "xenon_token",
+            data.token
+          );
+
+
+          showMessage(
+            "✅ Account created! Opening shop...",
+            false
+          );
+
+
+          setTimeout(
+            () => {
+              location.href =
+                "/shop.html";
+            },
+            600
+          );
+
+        }
+
+        else {
+
+          showMessage(
+            "✅ Account created! Login karo.",
+            false
+          );
+
+
+          setTimeout(
+            () => {
+              location.href =
+                "/login.html";
+            },
+            800
+          );
+
+        }
+
+      }
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+        showMessage(
+          "Server se connection nahi ho raha.",
+          true
+        );
+
+      }
+
+      finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "CREATE ACCOUNT";
+
+      }
+
+    }
+
+
+    function showMessage(
+      text,
+      error
+    ) {
+
+      const message =
+        document
+          .getElementById(
+            "message"
+          );
+
+
+      message.style.display =
+        "block";
+
+
+      message.textContent =
+        text;
+
+
+      message.style.color =
+        error
+          ? "#fb7185"
+          : "#4ade80";
+
+    }
+
+
+    /* Enter key */
+
+    document
+      .getElementById(
+        "confirmPassword"
+      )
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (
+            event.key ===
+            "Enter"
+          ) {
+
+            registerUser();
+
+          }
+
+        }
+      );
+
+  </script>
 
 </body>
-</html>
+
+</html> 
