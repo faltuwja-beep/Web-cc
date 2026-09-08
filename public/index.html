@@ -12,175 +12,173 @@ body{
  background:#070914;
  color:#fff;
  font-family:Arial,sans-serif;
- min-height:100vh;
+ padding-bottom:80px
 }
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
-.wrap{max-width:700px;margin:auto;padding:18px}
+.container{max-width:720px;margin:auto;padding:18px}
 
 .logo{
  font-size:25px;
  font-weight:900;
- margin:10px 0 30px;
+ margin-bottom:25px
 }
-.logo span{color:#8d72ff}
+.logo span{color:#967cff}
 
 .auth{
  min-height:100vh;
  display:flex;
  align-items:center;
  justify-content:center;
- padding:20px;
+ padding:18px
 }
 .authbox{
  width:100%;
  max-width:430px;
- background:#111528;
- border:1px solid #282e49;
- border-radius:24px;
- padding:25px;
+ background:#101426;
+ border:1px solid #292f48;
+ border-radius:25px;
+ padding:25px
 }
-.authbox h1{margin:0 0 8px;font-size:28px}
-.sub{color:#9299ae;font-size:14px;margin-bottom:22px}
+.authbox h1{font-size:29px;margin:0 0 8px}
+.muted{color:#9299ae;font-size:13px;line-height:1.5}
 
 label{
  display:block;
- color:#aab0c0;
+ color:#9299ae;
  font-size:12px;
- margin:13px 0 7px;
+ margin:15px 0 7px
 }
 input,textarea{
  width:100%;
- background:#080b15;
- color:#fff;
- border:1px solid #292f48;
+ padding:14px;
  border-radius:13px;
- padding:13px;
- outline:none;
+ border:1px solid #292f48;
+ background:#080b15;
+ color:white;
+ outline:none
 }
-input:focus,textarea:focus{border-color:#8064ff}
+input:focus,textarea:focus{border-color:#7657ff}
 
 .btn{
+ width:100%;
+ padding:14px;
+ margin-top:12px;
  border:0;
  border-radius:13px;
- padding:13px 16px;
  background:#7657ff;
  color:#fff;
- font-weight:800;
- width:100%;
- margin-top:12px;
+ font-weight:800
 }
-.btn.secondary{background:#191e31;border:1px solid #2a3048}
-.btn.danger{background:#4b1b29;color:#ff8da0}
+.btn.dark{
+ background:#181e31;
+ border:1px solid #292f48
+}
+.btn.red{
+ background:#4b1b29;
+ color:#ff8194
+}
 
 .switch{
  text-align:center;
- color:#a692ff;
- font-size:13px;
  margin-top:18px;
- cursor:pointer;
+ color:#a895ff;
+ font-size:13px;
+ cursor:pointer
 }
-
-#app{display:none}
 
 .top{
  position:sticky;
  top:0;
- z-index:20;
+ z-index:50;
  background:rgba(7,9,20,.95);
  backdrop-filter:blur(15px);
- border-bottom:1px solid #252b42;
- padding:16px;
+ border-bottom:1px solid #252b43;
+ padding:15px;
  display:flex;
- justify-content:space-between;
  align-items:center;
+ justify-content:space-between
 }
 
 .avatar{
- width:40px;
- height:40px;
- border-radius:12px;
+ width:42px;
+ height:42px;
+ border-radius:13px;
  background:#7657ff;
  display:grid;
  place-items:center;
- font-weight:900;
+ font-weight:900
 }
 
-.hero{
- padding:28px 4px 20px;
-}
-.hero small{
- color:#a38eff;
- background:#17142b;
- border:1px solid #332b55;
- padding:7px 10px;
+.hero{padding:25px 3px}
+.tag{
+ display:inline-block;
+ padding:7px 11px;
  border-radius:20px;
+ color:#a895ff;
+ background:#17152a;
+ border:1px solid #38305e;
+ font-size:11px
 }
 .hero h1{
- font-size:38px;
+ font-size:40px;
  line-height:1.05;
- margin:18px 0 10px;
+ margin:17px 0 10px
 }
-.hero h1 span{color:#927cff}
+.hero h1 span{color:#967cff}
 .hero p{color:#9299ae;line-height:1.6}
 
 .wallet{
- background:linear-gradient(135deg,#7657ff,#37266e);
- border-radius:22px;
- padding:20px;
- margin:12px 0 25px;
+ background:linear-gradient(135deg,#7657ff,#382675);
+ border-radius:23px;
+ padding:21px;
+ margin-bottom:24px
 }
-.wallet small{opacity:.75}
+.wallet-title{font-size:11px;opacity:.75}
 .balance{
  font-size:36px;
  font-weight:900;
- margin:7px 0 15px;
+ margin:7px 0 15px
 }
 .row{display:flex;gap:9px}
-.row button{margin:0}
+.row .btn{margin:0}
 
-.title{
+.section{
  display:flex;
  justify-content:space-between;
  align-items:center;
- margin:20px 0 13px;
+ margin:22px 0 13px
 }
-.title h2{font-size:20px}
+.section h2{font-size:20px}
 
 .grid{
  display:grid;
  grid-template-columns:1fr 1fr;
- gap:12px;
+ gap:12px
 }
 .card{
- background:#111528;
- border:1px solid #282e49;
- border-radius:18px;
- padding:16px;
+ background:#101426;
+ border:1px solid #292f48;
+ border-radius:19px;
+ padding:16px
 }
 .icon{
- width:50px;
- height:50px;
- border-radius:14px;
- background:#19172c;
+ width:52px;
+ height:52px;
+ border-radius:15px;
+ background:#18162b;
  display:grid;
  place-items:center;
- font-size:24px;
- margin-bottom:12px;
+ font-size:26px;
+ margin-bottom:13px
 }
 .card h3{margin:0 0 7px}
-.desc{
- color:#9299ae;
- font-size:12px;
- line-height:1.5;
- min-height:36px;
-}
 .price{
  font-size:20px;
  font-weight:900;
- margin:13px 0;
+ margin:13px 0
 }
 
 .bottom{
@@ -189,107 +187,115 @@ input:focus,textarea:focus{border-color:#8064ff}
  left:50%;
  transform:translateX(-50%);
  width:100%;
- max-width:700px;
- height:72px;
- background:#0d1120;
- border-top:1px solid #282e49;
+ max-width:720px;
+ height:75px;
+ background:#0c0f1c;
+ border-top:1px solid #292f48;
  display:grid;
  grid-template-columns:repeat(5,1fr);
- z-index:50;
+ z-index:100
 }
 .nav{
- background:none;
  border:0;
- color:#707991;
+ background:none;
+ color:#737c94;
  font-size:10px;
- font-weight:700;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- gap:5px;
+ font-weight:700
 }
-.nav b{font-size:19px}
-.nav.active{color:#a18dff}
-
-.page{padding-bottom:90px}
+.nav b{display:block;font-size:20px;margin-bottom:3px}
+.nav.active{color:#a895ff}
 
 .modal{
  position:fixed;
  inset:0;
- z-index:100;
+ z-index:200;
  background:rgba(0,0,0,.75);
  display:flex;
  align-items:flex-end;
+ justify-content:center
 }
 .modalbox{
  width:100%;
- max-width:700px;
- margin:auto;
- background:#0f1322;
+ max-width:720px;
+ max-height:92vh;
+ overflow:auto;
+ background:#0e1221;
  border:1px solid #292f48;
  border-radius:25px 25px 0 0;
- padding:20px;
- max-height:90vh;
- overflow:auto;
+ padding:20px 16px 30px
 }
 .modalhead{
  display:flex;
  justify-content:space-between;
  align-items:center;
- margin-bottom:15px;
+ margin-bottom:18px
 }
 .close{
- width:38px;
- height:38px;
+ width:40px;
+ height:40px;
  border:0;
- border-radius:11px;
+ border-radius:12px;
  background:#191e31;
  color:#fff;
- font-size:22px;
+ font-size:22px
 }
 .notice{
- background:#161b2c;
+ background:#151a2b;
  border:1px solid #292f48;
- border-radius:13px;
+ border-radius:14px;
  padding:13px;
- color:#aeb5c7;
+ color:#b9c1d3;
  font-size:13px;
  line-height:1.5;
- margin:10px 0;
+ margin:10px 0
+}
+.qr{
+ width:180px;
+ height:180px;
+ margin:18px auto;
+ background:white;
+ color:#111;
+ border-radius:14px;
+ display:grid;
+ place-items:center;
+ text-align:center;
+ font-weight:900
 }
 .status{
  display:inline-block;
- padding:6px 10px;
+ padding:6px 9px;
  border-radius:20px;
  font-size:11px;
- font-weight:800;
+ font-weight:800
 }
 .PENDING{background:#3a3017;color:#ffd05c}
-.ACCEPTED{background:#123824;color:#35dc88}
-.REJECTED{background:#421925;color:#ff7188}
+.ACCEPTED{background:#123523;color:#35dc88}
+.REJECTED{background:#3b1822;color:#ff7188}
 
 .history{
- border-bottom:1px solid #282e49;
  padding:14px 0;
+ border-bottom:1px solid #292f48
 }
-.history:last-child{border:0}
-.muted{color:#9299ae;font-size:13px}
+.empty{
+ text-align:center;
+ color:#777f96;
+ padding:30px 10px
+}
 
 .profile{
  display:flex;
  justify-content:space-between;
- padding:15px 0;
- border-bottom:1px solid #282e49;
- gap:15px;
+ padding:14px 0;
+ border-bottom:1px solid #292f48;
+ gap:15px
 }
-.profile:last-child{border:0}
 
-.empty{
- text-align:center;
- color:#777f96;
- padding:25px;
+.admin-tabs{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px
 }
+.admin-tabs button{margin:0;padding:11px 5px;font-size:11px}
 
 @media(max-width:430px){
  .grid{grid-template-columns:1fr}
@@ -304,345 +310,353 @@ input:focus,textarea:focus{border-color:#8064ff}
 
 <div id="auth" class="auth">
 
- <div class="authbox">
+<div class="authbox">
 
-  <div class="logo">XENON<span>SHOP</span></div>
+<div class="logo">XENON<span>SHOP</span></div>
 
-  <div id="loginBox">
+<div id="loginBox">
 
-   <h1>Welcome Back</h1>
-   <div class="sub">Login to your Xenon Shop account</div>
+<h1>Welcome Back</h1>
+<p class="muted">Login to your Xenon Shop account</p>
 
-   <label>Email</label>
-   <input id="loginEmail" type="email" placeholder="Enter email">
+<label>Email</label>
+<input id="loginEmail" type="email" placeholder="Enter email">
 
-   <label>Password</label>
-   <input id="loginPassword" type="password" placeholder="Enter password">
+<label>Password</label>
+<input id="loginPassword" type="password" placeholder="Enter password">
 
-   <button class="btn" onclick="login()">Login</button>
+<button class="btn" onclick="login()">Login</button>
 
-   <div class="switch" onclick="showRegister()">
-    Create new account
-   </div>
-
-  </div>
-
-
-  <div id="registerBox" class="hidden">
-
-   <h1>Create Account</h1>
-   <div class="sub">Create your Xenon Shop account</div>
-
-   <label>Name</label>
-   <input id="regName" placeholder="Your name">
-
-   <label>Email</label>
-   <input id="regEmail" type="email" placeholder="Email">
-
-   <label>Password</label>
-   <input id="regPassword" type="password" placeholder="Password">
-
-   <label>Referral Code</label>
-   <input id="regReferral" placeholder="Optional">
-
-   <button class="btn" onclick="register()">Register</button>
-
-   <div class="switch" onclick="showLogin()">
-    Already have an account? Login
-   </div>
-
-  </div>
-
- </div>
+<div class="switch" onclick="showRegister()">
+Create new account
 </div>
-
-
-<!-- MAIN APP -->
-
-<div id="app">
-
- <div class="top">
-  <div class="logo" style="margin:0">XENON<span>SHOP</span></div>
-  <div class="avatar" id="avatar">X</div>
- </div>
-
-
- <main class="wrap page">
-
-  <!-- HOME -->
-
-  <section id="homePage">
-
-   <div class="hero">
-
-    <small>⚡ PREMIUM DIGITAL STORE</small>
-
-    <h1>Shop <span>Digital</span><br>Products.</h1>
-
-    <p>
-     Redeem codes, digital products and more.
-     Fast and secure digital delivery.
-    </p>
-
-   </div>
-
-
-   <div class="wallet">
-
-    <small>WALLET BALANCE</small>
-
-    <div class="balance" id="balance">₹0</div>
-
-    <div class="row">
-     <button class="btn secondary" onclick="openWallet()">＋ Add Money</button>
-     <button class="btn secondary" onclick="go('history')">History</button>
-    </div>
-
-   </div>
-
-
-   <div class="title">
-    <h2>🔥 Products</h2>
-   </div>
-
-   <div id="products" class="grid"></div>
-
-  </section>
-
-
-  <!-- WALLET -->
-
-  <section id="walletPage" class="hidden">
-
-   <div class="title">
-    <h2>💳 Wallet</h2>
-   </div>
-
-   <div class="wallet">
-
-    <small>AVAILABLE BALANCE</small>
-
-    <div class="balance" id="walletBalance">₹0</div>
-
-    <button class="btn secondary" onclick="openWallet()">
-     ＋ Add Money
-    </button>
-
-   </div>
-
-   <div class="title">
-    <h2>Payment Status</h2>
-   </div>
-
-   <div class="card" id="walletPayments"></div>
-
-  </section>
-
-
-  <!-- REFER -->
-
-  <section id="referPage" class="hidden">
-
-   <div class="title">
-    <h2>🎁 Refer & Earn</h2>
-   </div>
-
-   <div class="card">
-
-    <h2>Earn ₹50</h2>
-
-    <p class="muted">
-     Apna referral code friends ko share karo.
-     Eligible purchase hone par referral reward milega.
-    </p>
-
-    <label>Your Referral Code</label>
-
-    <div id="refCode"
-     style="background:#080b15;padding:15px;border-radius:13px;font-weight:900">
-     -
-    </div>
-
-    <button class="btn" onclick="copyReferral()">
-     Copy Referral Code
-    </button>
-
-   </div>
-
-  </section>
-
-
-  <!-- HISTORY -->
-
-  <section id="historyPage" class="hidden">
-
-   <div class="title">
-    <h2>📜 History</h2>
-   </div>
-
-   <div class="card" id="historyBox"></div>
-
-  </section>
-
-
-  <!-- PROFILE -->
-
-  <section id="profilePage" class="hidden">
-
-   <div class="title">
-    <h2>👤 Profile</h2>
-   </div>
-
-   <div class="card">
-
-    <div class="profile">
-     <span class="muted">Name</span>
-     <b id="profileName">-</b>
-    </div>
-
-    <div class="profile">
-     <span class="muted">Email</span>
-     <b id="profileEmail">-</b>
-    </div>
-
-    <div class="profile">
-     <span class="muted">UID</span>
-     <b id="profileUid">-</b>
-    </div>
-
-    <div class="profile">
-     <span class="muted">Membership</span>
-     <b>💎 VIP PRIME</b>
-    </div>
-
-   </div>
-
-   <button class="btn secondary" onclick="openSupport()">
-    🎧 Support
-   </button>
-
-   <button class="btn secondary" onclick="openAdmin()">
-    ⚙️ Admin Panel
-   </button>
-
-   <button class="btn danger" onclick="logout()">
-    Logout
-   </button>
-
-  </section>
-
- </main>
-
-
- <!-- BOTTOM NAV -->
-
- <nav class="bottom">
-
-  <button class="nav active" onclick="go('home',this)">
-   <b>⌂</b>Home
-  </button>
-
-  <button class="nav" onclick="go('wallet',this)">
-   <b>◉</b>Wallet
-  </button>
-
-  <button class="nav" onclick="go('refer',this)">
-   <b>🎁</b>Refer
-  </button>
-
-  <button class="nav" onclick="go('history',this)">
-   <b>◷</b>History
-  </button>
-
-  <button class="nav" onclick="go('profile',this)">
-   <b>●</b>Profile
-  </button>
-
- </nav>
 
 </div>
 
 
-<!-- ADD MONEY MODAL -->
+<div id="registerBox" class="hidden">
+
+<h1>Create Account</h1>
+<p class="muted">Join Xenon Shop</p>
+
+<label>Name</label>
+<input id="regName" placeholder="Your name">
+
+<label>Email</label>
+<input id="regEmail" type="email" placeholder="Email">
+
+<label>Password</label>
+<input id="regPassword" type="password" placeholder="Minimum 6 characters">
+
+<label>Referral Code</label>
+<input id="regReferral" placeholder="Optional">
+
+<button class="btn" onclick="register()">Create Account</button>
+
+<div class="switch" onclick="showLogin()">
+Already have an account? Login
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- APP -->
+
+<div id="app" class="hidden">
+
+<div class="top">
+<div class="logo" style="margin:0">XENON<span>SHOP</span></div>
+<div class="avatar" id="avatar">X</div>
+</div>
+
+
+<div class="container">
+
+<!-- HOME -->
+
+<section id="homePage">
+
+<div class="hero">
+
+<div class="tag">⚡ PREMIUM DIGITAL STORE</div>
+
+<h1>Shop <span>Digital</span><br>Products.</h1>
+
+<p>
+Redeem codes, digital products and more.
+Fast delivery directly to your account.
+</p>
+
+</div>
+
+
+<div class="wallet">
+
+<div class="wallet-title">WALLET BALANCE</div>
+
+<div class="balance" id="balance">₹0</div>
+
+<div class="row">
+
+<button class="btn dark" onclick="openWallet()">
+＋ Add Money
+</button>
+
+<button class="btn dark" onclick="goPage('history')">
+History
+</button>
+
+</div>
+
+</div>
+
+
+<div class="section">
+<h2>🔥 Featured Products</h2>
+</div>
+
+<div id="products" class="grid"></div>
+
+</section>
+
+
+<!-- WALLET -->
+
+<section id="walletPage" class="hidden">
+
+<div class="section">
+<h2>💳 My Wallet</h2>
+</div>
+
+<div class="wallet">
+
+<div class="wallet-title">AVAILABLE BALANCE</div>
+
+<div class="balance" id="walletBalance">₹0</div>
+
+<button class="btn dark" onclick="openWallet()">
+＋ Add Money
+</button>
+
+</div>
+
+<div class="section">
+<h2>Payment Requests</h2>
+</div>
+
+<div class="card" id="walletPayments"></div>
+
+</section>
+
+
+<!-- REFER -->
+
+<section id="referPage" class="hidden">
+
+<div class="section">
+<h2>🎁 Refer & Earn</h2>
+</div>
+
+<div class="card">
+
+<h2>Invite & Earn ₹50</h2>
+
+<p class="muted">
+Apna referral code share karo.
+Referred user ki eligible purchase par ₹50 reward milega.
+</p>
+
+<label>Your Referral Code</label>
+
+<div id="refCode"
+style="background:#080b15;padding:14px;border-radius:13px;font-weight:900">
+-
+</div>
+
+<button class="btn" onclick="copyReferral()">
+Copy Referral Code
+</button>
+
+</div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section id="historyPage" class="hidden">
+
+<div class="section">
+<h2>📜 History</h2>
+</div>
+
+<div class="card" id="historyBox">
+<div class="empty">Loading...</div>
+</div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section id="profilePage" class="hidden">
+
+<div class="section">
+<h2>👤 Profile</h2>
+</div>
+
+<div class="card">
+
+<div class="profile">
+<span class="muted">Name</span>
+<b id="profileName">-</b>
+</div>
+
+<div class="profile">
+<span class="muted">Email</span>
+<b id="profileEmail">-</b>
+</div>
+
+<div class="profile">
+<span class="muted">UID</span>
+<b id="profileUid">-</b>
+</div>
+
+<div class="profile">
+<span class="muted">Membership</span>
+<b>💎 VIP PRIME PROFESSIONAL</b>
+</div>
+
+</div>
+
+<button class="btn dark" onclick="openSupport()">
+🎧 Customer Support
+</button>
+
+<button class="btn dark" onclick="openAdmin()">
+⚙️ Admin Panel
+</button>
+
+<button class="btn red" onclick="logout()">
+Logout
+</button>
+
+</section>
+
+</div>
+
+
+<!-- BOTTOM -->
+
+<nav class="bottom">
+
+<button class="nav active" onclick="goPage('home',this)">
+<b>⌂</b>Home
+</button>
+
+<button class="nav" onclick="goPage('wallet',this)">
+<b>◉</b>Wallet
+</button>
+
+<button class="nav" onclick="goPage('refer',this)">
+<b>🎁</b>Refer
+</button>
+
+<button class="nav" onclick="goPage('history',this)">
+<b>◷</b>History
+</button>
+
+<button class="nav" onclick="goPage('profile',this)">
+<b>●</b>Profile
+</button>
+
+</nav>
+
+</div>
+
+
+<!-- ADD MONEY -->
 
 <div id="walletModal" class="modal hidden">
 
- <div class="modalbox">
+<div class="modalbox">
 
-  <div class="modalhead">
-   <div>
-    <h2>Add Money</h2>
-    <div class="muted">Make payment and submit UTR</div>
-   </div>
+<div class="modalhead">
+<div>
+<h2>💳 Add Money</h2>
+<p class="muted">Payment verification required</p>
+</div>
+<button class="close" onclick="closeWallet()">×</button>
+</div>
 
-   <button class="close" onclick="closeWallet()">×</button>
-  </div>
+<div class="notice">
+QR par payment karo, phir amount aur UTR submit karo.
+Admin verification ke baad balance update hoga.
+</div>
 
-  <div class="notice">
-   Payment karne ke baad UTR/Transaction ID submit karo.
-   Admin verification ke baad balance update hoga.
-  </div>
+<div class="qr">
+YOUR<br>PAYMENT<br>QR
+</div>
 
-  <div style="
-   width:180px;height:180px;background:#fff;color:#111;
-   margin:20px auto;border-radius:15px;
-   display:grid;place-items:center;text-align:center;font-weight:900">
-   PAYMENT<br>QR
-  </div>
+<label>Amount</label>
+<input id="amount" type="number" placeholder="Enter amount">
 
-  <label>Amount</label>
-  <input id="amount" type="number" placeholder="Enter amount">
+<label>UTR / Transaction ID</label>
+<input id="utr" placeholder="Enter UTR">
 
-  <label>UTR / Transaction ID</label>
-  <input id="utr" placeholder="Enter UTR">
+<button class="btn" onclick="submitDeposit()">
+Submit Payment
+</button>
 
-  <button class="btn" onclick="deposit()">
-   Submit Payment
-  </button>
+<div class="section">
+<h2 style="font-size:17px">Payment Status</h2>
+</div>
 
-  <div class="title">
-   <h3>Your Payment</h3>
-  </div>
+<div id="paymentStatus"></div>
 
-  <div id="paymentStatus"></div>
-
- </div>
+</div>
 </div>
 
 
-<!-- BUY MODAL -->
+<!-- BUY -->
 
 <div id="buyModal" class="modal hidden">
 
- <div class="modalbox">
+<div class="modalbox">
 
-  <div class="modalhead">
-   <div>
-    <h2 id="buyName">Product</h2>
-    <div class="muted" id="buyDesc"></div>
-   </div>
+<div class="modalhead">
 
-   <button class="close" onclick="closeBuy()">×</button>
-  </div>
+<div>
+<h2 id="buyName">Product</h2>
+<p class="muted" id="buyDescription"></p>
+</div>
 
-  <div class="notice">
-   Price: <b id="buyPrice">₹0</b>
-  </div>
+<button class="close" onclick="closeBuy()">×</button>
 
-  <label>Coupon Code</label>
-  <input id="coupon" placeholder="Enter coupon">
+</div>
 
-  <button class="btn secondary" onclick="applyCoupon()">
-   Apply Coupon
-  </button>
+<div class="notice">
+Product Price:
+<b id="buyPrice">₹0</b>
+</div>
 
-  <div id="couponResult" class="notice hidden"></div>
+<label>Coupon Code</label>
+<input id="coupon" placeholder="Enter coupon">
 
-  <button class="btn" onclick="buy()">
-   Confirm Purchase
-  </button>
+<button class="btn dark" onclick="applyCoupon()">
+Apply Coupon
+</button>
 
- </div>
+<div id="couponResult" class="notice hidden"></div>
+
+<button class="btn" onclick="buyProduct()">
+Confirm Purchase
+</button>
+
+</div>
 </div>
 
 
@@ -650,26 +664,26 @@ input:focus,textarea:focus{border-color:#8064ff}
 
 <div id="supportModal" class="modal hidden">
 
- <div class="modalbox">
+<div class="modalbox">
 
-  <div class="modalhead">
-   <h2>🎧 Support</h2>
-   <button class="close" onclick="closeSupport()">×</button>
-  </div>
+<div class="modalhead">
+<h2>🎧 Support</h2>
+<button class="close" onclick="closeSupport()">×</button>
+</div>
 
-  <label>Subject</label>
-  <input id="supportSubject" placeholder="Subject">
+<label>Subject</label>
+<input id="supportSubject" placeholder="Subject">
 
-  <label>Message</label>
-  <textarea id="supportMessage"
-   style="height:120px"
-   placeholder="Write your message"></textarea>
+<label>Message</label>
+<textarea id="supportMessage"
+style="height:130px"
+placeholder="Write your message"></textarea>
 
-  <button class="btn" onclick="support()">
-   Send
-  </button>
+<button class="btn" onclick="sendSupport()">
+Send Message
+</button>
 
- </div>
+</div>
 </div>
 
 
@@ -677,51 +691,63 @@ input:focus,textarea:focus{border-color:#8064ff}
 
 <div id="adminLoginModal" class="modal hidden">
 
- <div class="modalbox">
+<div class="modalbox">
 
-  <div class="modalhead">
-   <h2>⚙️ Admin Login</h2>
-   <button class="close" onclick="closeAdmin()">×</button>
-  </div>
+<div class="modalhead">
+<h2>⚙️ Admin Login</h2>
+<button class="close" onclick="closeAdmin()">×</button>
+</div>
 
-  <label>Admin Email</label>
-  <input id="adminEmail" type="email">
+<label>Admin Email</label>
+<input id="adminEmail" type="email">
 
-  <label>Admin Password</label>
-  <input id="adminPassword" type="password">
+<label>Admin Password</label>
+<input id="adminPassword" type="password">
 
-  <button class="btn" onclick="adminLogin()">
-   Login
-  </button>
+<button class="btn" onclick="adminLogin()">
+Login
+</button>
 
- </div>
+</div>
 </div>
 
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 
 <div id="adminModal" class="modal hidden">
 
- <div class="modalbox">
+<div class="modalbox">
 
-  <div class="modalhead">
-   <div>
-    <h2>⚙️ Admin Panel</h2>
-    <div class="muted">Xenon Shop Management</div>
-   </div>
+<div class="modalhead">
 
-   <button class="close" onclick="closeAdminPanel()">×</button>
-  </div>
+<div>
+<h2>⚙️ Xenon Admin</h2>
+<p class="muted">Store Management</p>
+</div>
 
-  <div class="row">
-   <button class="btn" onclick="adminPayments()">Payments</button>
-   <button class="btn secondary" onclick="adminProducts()">Products</button>
-   <button class="btn secondary" onclick="adminCoupons()">Coupons</button>
-  </div>
+<button class="close" onclick="closeAdminPanel()">×</button>
 
-  <div id="adminContent" style="margin-top:18px"></div>
+</div>
 
- </div>
+<div class="admin-tabs">
+
+<button class="btn" onclick="adminPayments()">
+Payments
+</button>
+
+<button class="btn dark" onclick="adminProducts()">
+Products
+</button>
+
+<button class="btn dark" onclick="adminCoupons()">
+Coupons
+</button>
+
+</div>
+
+<div id="adminContent"></div>
+
+</div>
 </div>
 
 
@@ -730,7 +756,6 @@ input:focus,textarea:focus{border-color:#8064ff}
 let token=localStorage.getItem("xenon_token");
 let user=null;
 let selectedProduct=null;
-let finalPrice=0;
 
 let adminEmail="";
 let adminPassword="";
@@ -738,408 +763,59 @@ let adminPassword="";
 
 async function api(url,options={}){
 
- const headers={
-  "Content-Type":"application/json",
-  ...(options.headers||{})
- };
+options.headers={
+"Content-Type":"application/json",
+...(options.headers||{})
+};
 
- if(token){
-  headers.Authorization="Bearer "+token;
- }
+if(token){
+options.headers.Authorization="Bearer "+token;
+}
 
- const response=await fetch(url,{
-  ...options,
-  headers
- });
+const response=await fetch(url,options);
 
- let data={};
+let data={};
 
- try{
-  data=await response.json();
- }catch(e){}
+try{
+data=await response.json();
+}catch(e){}
 
- if(!response.ok){
-  throw new Error(data.error||"Request failed");
- }
+if(!response.ok){
+throw new Error(data.error||"Something went wrong");
+}
 
- return data;
+return data;
+}
+
+
+async function adminApi(url,options={}){
+
+options.headers={
+"Content-Type":"application/json",
+"x-admin-email":adminEmail,
+"x-admin-password":adminPassword,
+...(options.headers||{})
+};
+
+const response=await fetch(url,options);
+
+let data={};
+
+try{
+data=await response.json();
+}catch(e){}
+
+if(!response.ok){
+throw new Error(data.error||"Admin request failed");
+}
+
+return data;
 }
 
 
 function money(n){
- return "₹"+Number(n||0).toLocaleString("en-IN");
+return "₹"+Number(n||0).toLocaleString("en-IN");
 }
 
 
-function esc(x){
- return String(x??"")
- .replaceAll("&","&amp;")
- .replaceAll("<","&lt;")
- .replaceAll(">","&gt;")
- .replaceAll('"',"&quot;")
- .replaceAll("'","&#039;");
-}
-
-
-/* AUTH */
-
-function showRegister(){
-
- document.getElementById("loginBox").classList.add("hidden");
- document.getElementById("registerBox").classList.remove("hidden");
-
-}
-
-
-function showLogin(){
-
- document.getElementById("registerBox").classList.add("hidden");
- document.getElementById("loginBox").classList.remove("hidden");
-
-}
-
-
-async function register(){
-
- const name=document.getElementById("regName").value.trim();
- const email=document.getElementById("regEmail").value.trim();
- const password=document.getElementById("regPassword").value;
- const referralCode=document.getElementById("regReferral").value.trim();
-
- if(!name||!email||!password){
-  alert("Name, email aur password required hai.");
-  return;
- }
-
- try{
-
-  const data=await api("/api/register",{
-   method:"POST",
-   body:JSON.stringify({
-    name,
-    email,
-    password,
-    referralCode
-   })
-  });
-
-  token=data.token;
-
-  localStorage.setItem("xenon_token",token);
-
-  await loadUser();
-
- }catch(error){
-
-  alert(error.message);
-
- }
-
-}
-
-
-async function login(){
-
- const email=document.getElementById("loginEmail").value.trim();
- const password=document.getElementById("loginPassword").value;
-
- if(!email||!password){
-  alert("Email aur password enter karo.");
-  return;
- }
-
- try{
-
-  const data=await api("/api/login",{
-   method:"POST",
-   body:JSON.stringify({
-    email,
-    password
-   })
-  });
-
-  token=data.token;
-
-  localStorage.setItem("xenon_token",token);
-
-  await loadUser();
-
- }catch(error){
-
-  alert(error.message);
-
- }
-
-}
-
-
-async function loadUser(){
-
- try{
-
-  user=await api("/api/me");
-
-  document.getElementById("auth").style.display="none";
-  document.getElementById("app").style.display="block";
-
-  updateUser();
-  loadProducts();
-
- }catch(error){
-
-  localStorage.removeItem("xenon_token");
-  token=null;
-
-  document.getElementById("auth").style.display="flex";
-  document.getElementById("app").style.display="none";
-
-  alert(error.message);
-
- }
-
-}
-
-
-function updateUser(){
-
- document.getElementById("balance").textContent=money(user.wallet);
- document.getElementById("walletBalance").textContent=money(user.wallet);
-
- document.getElementById("profileName").textContent=user.name||"-";
- document.getElementById("profileEmail").textContent=user.email||"-";
- document.getElementById("profileUid").textContent=user.uid||"-";
-
- document.getElementById("refCode").textContent=user.referralCode||"-";
-
- document.getElementById("avatar").textContent=
-  (user.name||"X").charAt(0).toUpperCase();
-
-}
-
-
-function logout(){
-
- localStorage.removeItem("xenon_token");
- token=null;
- location.reload();
-
-}
-
-
-/* NAV */
-
-function hidePages(){
-
- ["homePage","walletPage","referPage","historyPage","profilePage"]
- .forEach(id=>document.getElementById(id).classList.add("hidden"));
-
-}
-
-
-function go(page,button){
-
- hidePages();
-
- document.getElementById(page+"Page").classList.remove("hidden");
-
- document.querySelectorAll(".nav")
- .forEach(x=>x.classList.remove("active"));
-
- if(button) button.classList.add("active");
-
- if(page==="history") loadHistory();
- if(page==="wallet") loadWallet();
-
- window.scrollTo(0,0);
-
-}
-
-
-/* PRODUCTS */
-
-async function loadProducts(){
-
- try{
-
-  const products=await api("/api/products");
-  const box=document.getElementById("products");
-
-  if(!products.length){
-   box.innerHTML='<div class="card empty">No products available.</div>';
-   return;
-  }
-
-  box.innerHTML="";
-
-  products.forEach(product=>{
-
-   const div=document.createElement("div");
-   div.className="card";
-
-   div.innerHTML=`
-    <div class="icon">${esc(product.icon||"🎟️")}</div>
-    <h3>${esc(product.name)}</h3>
-    <div class="desc">${esc(product.description||"Digital product")}</div>
-    <div class="price">${money(product.price)}</div>
-    <button class="btn">Buy Now</button>
-   `;
-
-   div.querySelector("button").onclick=()=>{
-    openBuy(product);
-   };
-
-   box.appendChild(div);
-
-  });
-
- }catch(error){
-
-  document.getElementById("products").innerHTML=
-   '<div class="card notice">'+esc(error.message)+'</div>';
-
- }
-
-}
-
-
-/* WALLET */
-
-function openWallet(){
-
- document.getElementById("walletModal").classList.remove("hidden");
- loadPaymentStatus();
-
-}
-
-
-function closeWallet(){
-
- document.getElementById("walletModal").classList.add("hidden");
-
-}
-
-
-async function deposit(){
-
- const amount=Number(document.getElementById("amount").value);
- const utr=document.getElementById("utr").value.trim();
-
- if(!amount||amount<10){
-  alert("Minimum amount ₹10 hai.");
-  return;
- }
-
- if(!utr){
-  alert("UTR enter karo.");
-  return;
- }
-
- try{
-
-  await api("/api/deposits",{
-   method:"POST",
-   body:JSON.stringify({amount,utr})
-  });
-
-  document.getElementById("amount").value="";
-  document.getElementById("utr").value="";
-
-  alert("Payment submitted. Admin verification ka wait karo.");
-
-  loadPaymentStatus();
-
- }catch(error){
-
-  alert(error.message);
-
- }
-
-}
-
-
-async function loadPaymentStatus(){
-
- try{
-
-  const h=await api("/api/history");
-  const box=document.getElementById("paymentStatus");
-
-  if(!h.deposits||!h.deposits.length){
-   box.innerHTML='<div class="empty">No payment requests.</div>';
-   return;
-  }
-
-  box.innerHTML=h.deposits.slice().reverse().map(d=>`
-
-   <div class="history">
-
-    <b>${money(d.amount)}</b><br>
-
-    <span class="muted">
-     UTR: ${esc(d.utr)}
-    </span>
-
-    <br><br>
-
-    <span class="status ${esc(d.status)}">
-     ${esc(d.status)}
-    </span>
-
-    ${d.reviewNote?
-     `<div class="muted" style="margin-top:7px">${esc(d.reviewNote)}</div>`
-     :""
-    }
-
-   </div>
-
-  `).join("");
-
- }catch(error){}
-
-}
-
-
-async function loadWallet(){
-
- try{
-
-  const h=await api("/api/history");
-  const box=document.getElementById("walletPayments");
-
-  if(!h.deposits||!h.deposits.length){
-   box.innerHTML='<div class="empty">No payments yet.</div>';
-   return;
-  }
-
-  box.innerHTML=h.deposits.slice().reverse().map(d=>`
-
-   <div class="history">
-
-    <b>${money(d.amount)}</b><br>
-    <span class="muted">UTR: ${esc(d.utr)}</span><br><br>
-
-    <span class="status ${esc(d.status)}">
-     ${esc(d.status)}
-    </span>
-
-   </div>
-
-  `).join("");
-
- }catch(error){}
-
-}
-
-
-/* BUY */
-
-function openBuy(product){
-
- selectedProduct=product;
- finalPrice=product.price;
-
- document.getElementById("buyName").textContent=product.name;
- document.getElementById("buyDesc").textContent=product.description||"";
- document.getElementById("buyPrice").textContent=money(product.price);
-
- document.getEleme
+function
