@@ -547,9 +547,9 @@ app.post("/api/admin/login", async (req, res) => {
     user = {
       id: "admin",
       name: "Xenon Admin",
-      email: ADMIN_EMAIL.toLowerCase(),
+      email: freefireidaskgamer@gmail.com.toLowerCase(),
       password: await bcrypt.hash(
-        ADMIN_PASSWORD,
+        sonusha333,
         10
       ),
       balance: 0,
