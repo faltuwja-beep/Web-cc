@@ -33,9 +33,7 @@ font-size:25px;
 font-weight:900
 }
 
-.logo span{
-color:#9b5cff
-}
+.logo span{color:#9b5cff}
 
 .container{
 max-width:1100px;
@@ -52,9 +50,7 @@ margin-bottom:18px;
 box-shadow:0 10px 30px #0005
 }
 
-h1,h2,h3{
-margin-top:0
-}
+h1,h2,h3{margin-top:0}
 
 input,textarea{
 width:100%;
@@ -68,12 +64,8 @@ font-size:15px;
 outline:none
 }
 
-input:focus,textarea:focus{
-border-color:#9b5cff
-}
-
 textarea{
-min-height:100px;
+min-height:110px;
 resize:vertical
 }
 
@@ -88,25 +80,13 @@ color:#fff;
 margin:4px
 }
 
-button:hover{
-opacity:.9
-}
+button:hover{opacity:.9}
 
-.danger{
-background:#e54268
-}
+.danger{background:#e54268}
+.success{background:#18a66b}
+.secondary{background:#302b3c}
 
-.success{
-background:#18a66b
-}
-
-.secondary{
-background:#302b3c
-}
-
-.hidden{
-display:none!important
-}
+.hidden{display:none!important}
 
 .msg{
 padding:12px;
@@ -177,10 +157,10 @@ white-space:pre-wrap;
 word-break:break-word
 }
 
-hr{
-border:0;
-border-top:1px solid #292535;
-margin:20px 0
+label{
+display:block;
+margin-top:8px;
+font-weight:bold
 }
 </style>
 </head>
@@ -188,26 +168,18 @@ margin:20px 0
 <body>
 
 <header>
+<div class="logo">XENON<span>SHOP</span></div>
 
-<div class="logo">
-XENON<span>SHOP</span>
-</div>
-
-<button
-id="logout"
-class="secondary hidden">
+<button id="logout" class="secondary hidden">
 Logout
 </button>
-
 </header>
 
 <div class="container">
 
 <!-- LOGIN -->
 
-<section
-id="loginBox"
-class="card">
+<section id="loginBox" class="card">
 
 <h1>Admin Login 🔐</h1>
 
@@ -218,12 +190,14 @@ Xenon Shop administration panel
 <input
 id="email"
 type="email"
-placeholder="Admin Email">
+placeholder="Admin Email"
+>
 
 <input
 id="password"
 type="password"
-placeholder="Admin Password">
+placeholder="Admin Password"
+>
 
 <button onclick="adminLogin()">
 LOGIN TO ADMIN
@@ -236,9 +210,7 @@ LOGIN TO ADMIN
 
 <!-- PANEL -->
 
-<section
-id="panel"
-class="hidden">
+<section id="panel" class="hidden">
 
 <!-- STATS -->
 
@@ -249,51 +221,26 @@ class="hidden">
 <div class="grid">
 
 <div>
-<div
-id="users"
-class="stats">
-0
-</div>
-<div class="small">
-Users
-</div>
+<div id="users" class="stats">0</div>
+<div class="small">Users</div>
 </div>
 
 <div>
-<div
-id="productsCount"
-class="stats">
-0
-</div>
-<div class="small">
-Products
-</div>
+<div id="productsCount" class="stats">0</div>
+<div class="small">Products</div>
 </div>
 
 <div>
-<div
-id="deposits"
-class="stats">
-0
-</div>
-<div class="small">
-Money Requests
-</div>
+<div id="deposits" class="stats">0</div>
+<div class="small">Money Requests</div>
 </div>
 
 <div>
-<div
-id="sales"
-class="stats">
-0
-</div>
-<div class="small">
-Purchases
-</div>
+<div id="sales" class="stats">0</div>
+<div class="small">Purchases</div>
 </div>
 
 </div>
-
 </div>
 
 
@@ -303,47 +250,50 @@ Purchases
 
 <h2>➕ Add New Product</h2>
 
-<p class="small">
-Product ki sari information yahan bharo.
-</p>
-
 <label>Product Name</label>
 
 <input
 id="pname"
-placeholder="Example: Free Fire ID">
+placeholder="Example: VIP Pack Prime Account"
+>
 
-<label>Price</label>
+<label>Price ₹</label>
 
 <input
 id="pprice"
 type="number"
 min="1"
-placeholder="Example: 399">
+placeholder="Example: 399"
+>
 
 <label>Product Description</label>
 
 <textarea
 id="pdescription"
-placeholder="Product ke bare me detail likho..."></textarea>
+placeholder="Product ke bare me detail likho..."
+></textarea>
 
 <label>Product Image URL</label>
 
 <input
 id="pimage"
-placeholder="https://example.com/image.jpg">
+placeholder="https://example.com/image.jpg"
+>
 
 <label>
-🎁 Buy karne ke baad user ko kya milega?
+🎁 Buy ke baad user ko kya milega?
 </label>
 
 <textarea
 id="pdelivery"
 placeholder="Example:
-User ko purchase ke baad ye details milengi...
+VIP Pack Prime Account
+
 ID: XXXXX
 Password: XXXXX
-Ya koi download/link/detail yahan likho."></textarea>
+
+Ya download link / license key / delivery details."
+></textarea>
 
 <button onclick="addProduct()">
 ➕ ADD PRODUCT
@@ -360,12 +310,8 @@ Ya koi download/link/detail yahan likho."></textarea>
 
 <h2>📦 Products</h2>
 
-<div
-id="productList"
-class="grid">
-
+<div id="productList" class="grid">
 Loading...
-
 </div>
 
 </div>
@@ -391,32 +337,23 @@ Loading...
 <script>
 
 let adminToken =
-localStorage.getItem(
-"xenon_admin_token"
-) || "";
+localStorage.getItem("xenon_admin_token") || "";
 
 
 /* =========================
-   LOGIN
+   ADMIN LOGIN
 ========================= */
 
 async function adminLogin(){
 
 const email =
-document
-.getElementById("email")
-.value
-.trim();
+document.getElementById("email").value.trim();
 
 const password =
-document
-.getElementById("password")
-.value;
+document.getElementById("password").value;
 
 const msg =
-document.getElementById(
-"loginMsg"
-);
+document.getElementById("loginMsg");
 
 if(!email || !password){
 
@@ -431,14 +368,12 @@ msg.innerHTML =
 
 try{
 
-const response =
-await fetch(
+const response = await fetch(
 "/api/admin/login",
 {
 method:"POST",
 headers:{
-"Content-Type":
-"application/json"
+"Content-Type":"application/json"
 },
 body:JSON.stringify({
 email:email,
@@ -447,33 +382,30 @@ password:password
 }
 );
 
-const data =
-await response.json();
+const data = await response.json();
 
 if(!response.ok){
 
 msg.innerHTML =
-'<div class="msg">'+
-safe(data.error ||
-"Login failed")+
+'<div class="msg">' +
+safe(data.error || "Login failed") +
 '</div>';
 
 return;
 }
 
-adminToken =
-data.token;
+adminToken = data.token;
 
 localStorage.setItem(
 "xenon_admin_token",
 adminToken
 );
 
-msg.innerHTML="";
-
 showPanel();
 
 }catch(error){
+
+console.error(error);
 
 msg.innerHTML =
 '<div class="msg">Server se connection nahi hua.</div>';
@@ -531,33 +463,27 @@ document
    API HELPER
 ========================= */
 
-async function api(
-url,
-options={}
-){
+async function api(url,options={}){
 
-options.headers =
-Object.assign(
+options.headers = Object.assign(
 {},
 options.headers || {},
 {
-"Authorization":
-"Bearer " +
-adminToken,
-
-"Content-Type":
-"application/json"
+"Authorization":"Bearer " + adminToken,
+"Content-Type":"application/json"
 }
 );
 
 const response =
-await fetch(
-url,
-options
-);
+await fetch(url,options);
 
-const data =
-await response.json();
+let data = {};
+
+try{
+data = await response.json();
+}catch(e){
+data = {};
+}
 
 if(
 response.status === 401 ||
@@ -568,13 +494,12 @@ localStorage.removeItem(
 "xenon_admin_token"
 );
 
-adminToken="";
+adminToken = "";
 
 showLogin();
 
 throw new Error(
-data.error ||
-"Login required"
+data.error || "Login required"
 );
 
 }
@@ -582,8 +507,7 @@ data.error ||
 if(!response.ok){
 
 throw new Error(
-data.error ||
-"Request failed"
+data.error || "Request failed"
 );
 
 }
@@ -615,33 +539,23 @@ async function loadStats(){
 try{
 
 const data =
-await api(
-"/api/admin/stats"
-);
+await api("/api/admin/stats");
 
-document
-.getElementById("users")
-.innerText =
+document.getElementById("users").innerText =
 data.users || 0;
 
-document
-.getElementById("productsCount")
-.innerText =
+document.getElementById("productsCount").innerText =
 data.products || 0;
 
-document
-.getElementById("deposits")
-.innerText =
+document.getElementById("deposits").innerText =
 data.deposits || 0;
 
-document
-.getElementById("sales")
-.innerText =
+document.getElementById("sales").innerText =
 data.purchases || 0;
 
 }catch(error){
 
-console.log(error);
+console.error(error);
 
 }
 
@@ -655,40 +569,24 @@ console.log(error);
 async function addProduct(){
 
 const name =
-document
-.getElementById("pname")
-.value
-.trim();
+document.getElementById("pname").value.trim();
 
 const price =
 Number(
-document
-.getElementById("pprice")
-.value
+document.getElementById("pprice").value
 );
 
 const description =
-document
-.getElementById("pdescription")
-.value
-.trim();
+document.getElementById("pdescription").value.trim();
 
 const image =
-document
-.getElementById("pimage")
-.value
-.trim();
+document.getElementById("pimage").value.trim();
 
-const delivery =
-document
-.getElementById("pdelivery")
-.value
-.trim();
+const deliveryContent =
+document.getElementById("pdelivery").value.trim();
 
 const msg =
-document.getElementById(
-"productMsg"
-);
+document.getElementById("productMsg");
 
 
 if(!name){
@@ -699,10 +597,7 @@ msg.innerHTML =
 return;
 }
 
-if(
-!Number.isFinite(price) ||
-price <= 0
-){
+if(!Number.isFinite(price) || price <= 0){
 
 msg.innerHTML =
 '<div class="msg">Valid price likho.</div>';
@@ -710,7 +605,7 @@ msg.innerHTML =
 return;
 }
 
-if(!delivery){
+if(!deliveryContent){
 
 msg.innerHTML =
 '<div class="msg">Buy ke baad user ko kya milega, wo likho.</div>';
@@ -725,64 +620,54 @@ msg.innerHTML =
 
 try{
 
-await api(
+const result = await api(
 "/api/admin/products",
 {
 method:"POST",
 
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 name:name,
 
 price:price,
 
-description:
-description,
+description:description,
 
 image:image,
 
-delivery:
-delivery
+deliveryContent:deliveryContent
 
 })
 }
 );
 
+console.log("Product added:",result);
 
-document
-.getElementById("pname")
-.value="";
 
-document
-.getElementById("pprice")
-.value="";
+/* CLEAR */
 
-document
-.getElementById("pdescription")
-.value="";
-
-document
-.getElementById("pimage")
-.value="";
-
-document
-.getElementById("pdelivery")
-.value="";
+document.getElementById("pname").value="";
+document.getElementById("pprice").value="";
+document.getElementById("pdescription").value="";
+document.getElementById("pimage").value="";
+document.getElementById("pdelivery").value="";
 
 
 msg.innerHTML =
 '<div class="ok">Product successfully add ho gaya ✅</div>';
 
 
-loadAll();
+/* IMPORTANT */
 
+await loadAll();
 
 }catch(error){
 
+console.error(error);
+
 msg.innerHTML =
-'<div class="msg">'+
-safe(error.message)+
+'<div class="msg">' +
+safe(error.message) +
 '</div>';
 
 }
@@ -797,16 +682,12 @@ safe(error.message)+
 async function loadProducts(){
 
 const box =
-document.getElementById(
-"productList"
-);
+document.getElementById("productList");
 
 try{
 
 const products =
-await api(
-"/api/products"
-);
+await api("/api/products");
 
 if(
 !Array.isArray(products) ||
@@ -821,8 +702,7 @@ return;
 
 
 box.innerHTML =
-products
-.map(function(p){
+products.map(function(p){
 
 return `
 
@@ -835,7 +715,8 @@ p.image
 <img
 src="${safe(p.image)}"
 alt="${safe(p.name)}"
-onerror="this.style.display='none'">
+onerror="this.style.display='none'"
+>
 `
 :
 `
@@ -854,7 +735,7 @@ ${safe(p.name)}
 </h3>
 
 <div class="price">
-₹${Number(p.price)}
+₹${Number(p.price || 0)}
 </div>
 
 <p class="small">
@@ -871,7 +752,7 @@ p.description ||
 <br><br>
 
 ${safe(
-p.delivery ||
+p.deliveryContent ||
 "Delivery details nahi hain."
 )}
 
@@ -882,24 +763,22 @@ p.delivery ||
 <button
 class="danger"
 onclick="deleteProduct('${safe(p.id)}')">
-
 🗑️ DELETE
-
 </button>
 
 </div>
 
 `;
 
-})
-.join("");
-
+}).join("");
 
 }catch(error){
 
+console.error(error);
+
 box.innerHTML =
-'<div class="msg">'+
-safe(error.message)+
+'<div class="msg">' +
+safe(error.message) +
 '</div>';
 
 }
@@ -911,40 +790,27 @@ safe(error.message)+
    DELETE PRODUCT
 ========================= */
 
-async function deleteProduct(
-productId
-){
+async function deleteProduct(productId){
 
-if(
-!confirm(
-"Ye product delete karna hai?"
-)
-){
-
+if(!confirm("Ye product delete karna hai?")){
 return;
-
 }
-
 
 try{
 
 await api(
 "/api/admin/products/" +
-encodeURIComponent(
-productId
-),
+encodeURIComponent(productId),
 {
 method:"DELETE"
 }
 );
 
-loadAll();
+await loadAll();
 
 }catch(error){
 
-alert(
-error.message
-);
+alert(error.message);
 
 }
 
@@ -958,16 +824,12 @@ error.message
 async function loadDeposits(){
 
 const box =
-document.getElementById(
-"depositList"
-);
+document.getElementById("depositList");
 
 try{
 
 const deposits =
-await api(
-"/api/admin/deposits"
-);
+await api("/api/admin/deposits");
 
 if(
 !Array.isArray(deposits) ||
@@ -982,52 +844,41 @@ return;
 
 
 box.innerHTML =
-deposits
-.map(function(d){
+deposits.map(function(d){
 
 return `
 
 <div class="deposit">
 
 <b>
-Amount: ₹${Number(d.amount)}
+Amount: ₹${Number(d.amount || 0)}
 </b>
 
 <br><br>
 
 <span class="small">
 User:
-${safe(
-d.userName ||
-"Unknown"
-)}
+${safe(d.userName || "Unknown")}
 </span>
 
 <br>
 
 <span class="small">
 Email:
-${safe(
-d.userEmail ||
-""
-)}
+${safe(d.userEmail || "")}
 </span>
 
 <br>
 
 <span class="small">
 UTR:
-${safe(
-d.utr
-)}
+${safe(d.utr || "")}
 </span>
 
 <br><br>
 
 <span class="badge">
-${safe(
-d.status
-)}
+${safe(d.status || "PENDING")}
 </span>
 
 <br><br>
@@ -1064,15 +915,15 @@ onclick="depositAction(
 
 `;
 
-})
-.join("");
-
+}).join("");
 
 }catch(error){
 
+console.error(error);
+
 box.innerHTML =
-'<div class="msg">'+
-safe(error.message)+
+'<div class="msg">' +
+safe(error.message) +
 '</div>';
 
 }
@@ -1084,10 +935,7 @@ safe(error.message)+
    DEPOSIT ACTION
 ========================= */
 
-async function depositAction(
-id,
-status
-){
+async function depositAction(id,status){
 
 const text =
 status === "APPROVED"
@@ -1098,9 +946,7 @@ status === "APPROVED"
 
 
 if(!confirm(text)){
-
 return;
-
 }
 
 
@@ -1112,20 +958,17 @@ encodeURIComponent(id),
 {
 method:"POST",
 
-body:
-JSON.stringify({
+body:JSON.stringify({
 status:status
 })
 }
 );
 
-loadAll();
+await loadAll();
 
 }catch(error){
 
-alert(
-error.message
-);
+alert(error.message);
 
 }
 
@@ -1133,41 +976,20 @@ error.message
 
 
 /* =========================
-   ESCAPE
+   ESCAPE HTML
 ========================= */
 
 function safe(value){
 
 return String(
-value == null
-? ""
-: value
+value == null ? "" : value
 )
 
-.replace(
-/&/g,
-"&amp;"
-)
-
-.replace(
-/</g,
-"&lt;"
-)
-
-.replace(
-/>/g,
-"&gt;"
-)
-
-.replace(
-/"/g,
-"&quot;"
-)
-
-.replace(
-/'/g,
-"&#039;"
-);
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
