@@ -2,1131 +2,450 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Xenon Shop</title>
 
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#070914;color:#fff;
- font-family:Arial,sans-serif;padding-bottom:80px
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-.wrap{max-width:720px;margin:auto;padding:18px}
-.logo{font-size:25px;font-weight:900}
-.logo span{color:#9a86ff}
 
-.auth{
- min-height:100vh;display:flex;align-items:center;
- justify-content:center;padding:20px
+body{
+  background:#070914;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
 }
-.authbox{
- width:100%;max-width:430px;background:#101426;
- border:1px solid #292f48;border-radius:25px;padding:28px
+
+button,input,textarea{
+  font:inherit;
 }
-.authbox h1{font-size:34px;margin:28px 0 8px}
-.muted{color:#9299ae;line-height:1.5;font-size:14px}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* AUTH */
+
+#authPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.authBox{
+  width:100%;
+  max-width:430px;
+  background:#111528;
+  border:1px solid #2b3150;
+  border-radius:25px;
+  padding:28px;
+  box-shadow:0 20px 60px #0008;
+}
+
+.logo{
+  font-size:30px;
+  font-weight:900;
+}
+
+.logo span{
+  color:#8b63ff;
+}
+
+.authBox h1{
+  margin-top:35px;
+  font-size:38px;
+}
+
+.sub{
+  color:#9299ad;
+  margin:10px 0 25px;
+}
 
 label{
- display:block;color:#9299ae;font-size:13px;
- margin:17px 0 7px
+  display:block;
+  color:#aeb5ca;
+  margin:15px 0 7px;
 }
+
 input,textarea{
- width:100%;padding:15px;border-radius:14px;
- border:1px solid #292f48;background:#080b15;
- color:#fff;outline:none
+  width:100%;
+  padding:15px;
+  border-radius:14px;
+  border:1px solid #303650;
+  background:#080b15;
+  color:white;
+  outline:none;
 }
-input:focus,textarea:focus{border-color:#7657ff}
+
+input:focus,textarea:focus{
+  border-color:#8061ff;
+}
 
 .btn{
- width:100%;border:0;border-radius:14px;
- background:#7657ff;color:#fff;
- padding:15px;margin-top:13px;font-weight:800
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding:15px;
+  margin-top:12px;
+  background:#7657ff;
+  color:white;
+  font-weight:800;
 }
-.btn.dark{background:#181e31;border:1px solid #303750}
-.btn.red{background:#4a1b28;color:#ff8194}
+
+.btn.secondary{
+  background:#20263b;
+}
 
 .switch{
- text-align:center;color:#a895ff;
- margin-top:20px;padding:12px;
- cursor:pointer;
- user-select:none;
- -webkit-user-select:none;
+  text-align:center;
+  margin-top:20px;
+  color:#a992ff;
+  cursor:pointer;
 }
 
-.top{
- position:sticky;top:0;z-index:20;
- height:66px;padding:0 18px;
- display:flex;align-items:center;
- justify-content:space-between;
- background:rgba(7,9,20,.96);
- border-bottom:1px solid #252b43
+/* APP */
+
+#app{
+  min-height:100vh;
+  padding-bottom:85px;
 }
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#090b17ee;
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid #202640;
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
 .avatar{
- width:42px;height:42px;border-radius:13px;
- background:#7657ff;display:grid;place-items:center;
- font-weight:900
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#7657ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
 }
 
-.hero{padding:28px 3px}
-.tag{
- display:inline-block;padding:7px 11px;
- border-radius:20px;background:#17152a;
- border:1px solid #38305e;
- color:#a895ff;font-size:11px
+.container{
+  max-width:760px;
+  margin:auto;
+  padding:20px;
 }
-.hero h1{font-size:40px;line-height:1.05}
-.hero h1 span{color:#9a86ff}
-.hero p{color:#9299ae;line-height:1.6}
+
+.hero{
+  padding:25px 0;
+}
+
+.hero small{
+  color:#a78fff;
+  font-weight:bold;
+}
+
+.hero h1{
+  font-size:40px;
+  margin:12px 0;
+}
+
+.hero h1 span{
+  color:#916cff;
+}
+
+.hero p{
+  color:#9198ad;
+}
+
+/* WALLET */
 
 .wallet{
- background:linear-gradient(135deg,#7657ff,#392671);
- padding:21px;border-radius:22px
+  background:linear-gradient(135deg,#7657ff,#40257e);
+  border-radius:22px;
+  padding:22px;
+  margin:15px 0 28px;
 }
-.wallet small{opacity:.75}
-.balance{font-size:36px;font-weight:900;margin:8px 0 15px}
-.row{display:flex;gap:10px}
-.row>*{flex:1}
 
-.section{
- display:flex;justify-content:space-between;
- align-items:center;margin:25px 0 13px
+.wallet small{
+  color:#ddd4ff;
 }
-.section h2{font-size:20px}
 
-.grid{
- display:grid;grid-template-columns:1fr 1fr;gap:13px
+.balance{
+  font-size:36px;
+  font-weight:900;
+  margin:10px 0 18px;
 }
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.row .btn{
+  margin:0;
+}
+
+/* PRODUCTS */
+
+.sectionTitle{
+  margin:20px 0 15px;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:13px;
+}
+
 .card{
- background:#101426;border:1px solid #292f48;
- border-radius:19px;padding:16px
+  background:#111528;
+  border:1px solid #292f4b;
+  border-radius:20px;
+  padding:17px;
 }
-.icon{
- width:54px;height:54px;border-radius:15px;
- background:#18162b;display:grid;
- place-items:center;font-size:27px;margin-bottom:12px
-}
-.card h3{margin:0 0 8px}
-.price{font-size:20px;font-weight:900;margin:14px 0}
-.empty{text-align:center;color:#7f879c;padding:30px}
 
-.bottom{
- position:fixed;bottom:0;left:50%;
- transform:translateX(-50%);
- width:100%;max-width:720px;height:74px;
- background:#0c0f1c;border-top:1px solid #292f48;
- display:grid;grid-template-columns:repeat(5,1fr);
- z-index:100
+.productIcon{
+  font-size:35px;
 }
-.nav{
- border:0;background:none;color:#737c94;
- font-size:10px;font-weight:700
+
+.card h3{
+  margin:10px 0;
 }
-.nav b{display:block;font-size:20px;margin-bottom:3px}
-.nav.active{color:#a895ff}
+
+.description{
+  color:#8e96ac;
+  font-size:14px;
+  min-height:38px;
+}
+
+.price{
+  font-size:20px;
+  font-weight:900;
+  margin-top:12px;
+}
+
+.card .btn{
+  margin-top:12px;
+}
+
+/* PAGES */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.pageTitle{
+  font-size:28px;
+  margin:15px 0 20px;
+}
+
+/* REFER */
+
+.referBox{
+  text-align:center;
+  padding:28px;
+}
+
+.referIcon{
+  font-size:55px;
+}
+
+.refCode{
+  background:#080b15;
+  border:1px dashed #7657ff;
+  border-radius:14px;
+  padding:16px;
+  margin:20px 0;
+  font-size:20px;
+  font-weight:bold;
+}
+
+/* HISTORY */
+
+.historyItem{
+  padding:15px 0;
+  border-bottom:1px solid #292f4b;
+}
+
+.status{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.pending{
+  background:#55420d;
+}
+
+.accepted{
+  background:#10452b;
+}
+
+.rejected{
+  background:#541a27;
+}
+
+/* PROFILE */
+
+.profileCard{
+  text-align:center;
+}
+
+.profileAvatar{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:#7657ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:bold;
+  margin:0 auto 15px;
+}
+
+.info{
+  text-align:left;
+  margin-top:20px;
+}
+
+.info div{
+  padding:13px 0;
+  border-bottom:1px solid #292f4b;
+}
+
+.info span{
+  color:#858da4;
+}
+
+/* BOTTOM */
+
+.bottomNav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:72px;
+  max-width:760px;
+  margin:auto;
+  background:#0d1020;
+  border-top:1px solid #292f4b;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  z-index:10;
+}
+
+.navBtn{
+  border:0;
+  background:transparent;
+  color:#7e879e;
+  font-size:11px;
+}
+
+.navBtn b{
+  display:block;
+  font-size:21px;
+  margin-bottom:3px;
+}
+
+.navBtn.active{
+  color:#a88fff;
+}
+
+/* MODAL */
 
 .modal{
- position:fixed;inset:0;z-index:200;
- background:rgba(0,0,0,.78);
- display:flex;align-items:flex-end;
- justify-content:center
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:50;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
 }
-.modalbox{
- width:100%;max-width:720px;
- max-height:92vh;overflow:auto;
- background:#0e1221;
- border:1px solid #292f48;
- border-radius:25px 25px 0 0;
- padding:20px 17px 30px
-}
-.modalhead{
- display:flex;justify-content:space-between;
- align-items:center;margin-bottom:15px
-}
-.close{
- width:40px;height:40px;border:0;
- border-radius:12px;background:#191e31;
- color:#fff;font-size:23px
-}
-.notice{
- background:#151a2b;border:1px solid #292f48;
- border-radius:14px;padding:13px;
- color:#b9c1d3;font-size:13px;
- line-height:1.5;margin:12px 0
-}
-.qr{
- width:180px;height:180px;margin:18px auto;
- background:#fff;color:#111;border-radius:15px;
- display:grid;place-items:center;
- text-align:center;font-weight:900
-}
-.status{
- display:inline-block;padding:6px 9px;
- border-radius:20px;font-size:11px;font-weight:800
-}
-.PENDING{background:#3a3017;color:#ffd05c}
-.ACCEPTED{background:#123523;color:#35dc88}
-.REJECTED{background:#3b1822;color:#ff7188}
-.history{
- padding:14px 0;border-bottom:1px solid #292f48
-}
-.profile{
- display:flex;justify-content:space-between;
- padding:14px 0;border-bottom:1px solid #292f48;
- gap:10px
-}
-.admin-tabs{
- display:grid;grid-template-columns:repeat(3,1fr);
- gap:8px
-}
-.admin-tabs button{margin:0;padding:11px 5px;font-size:11px}
 
-@media(max-width:430px){
- .grid{grid-template-columns:1fr}
- .hero h1{font-size:34px}
+.modalBox{
+  width:100%;
+  max-width:760px;
+  background:#111528;
+  border-radius:25px 25px 0 0;
+  padding:22px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+.close{
+  float:right;
+  background:#252b40;
+  border:0;
+  color:#fff;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:22px;
+}
+
+/* ADMIN */
+
+.adminItem{
+  padding:15px 0;
+  border-bottom:1px solid #292f4b;
+}
+
+@media(max-width:520px){
+  .products{
+    grid-template-columns:1fr;
+  }
+
+  .hero h1{
+    font-size:34px;
+  }
+
+  .row{
+    flex-direction:column;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
+<!-- LOGIN / REGISTER -->
 
-<div id="auth" class="auth">
-<div class="authbox">
+<div id="authPage">
 
-<div class="logo">XENON<span>SHOP</span></div>
+  <div class="authBox">
 
-<div id="loginBox">
+    <div class="logo">
+      XENON<span>SHOP</span>
+    </div>
 
-<h1>Welcome Back</h1>
-<p class="muted">Login to your Xenon Shop account</p>
+    <!-- LOGIN -->
 
-<label>Email</label>
-<input id="loginEmail" type="email" placeholder="Enter email">
+    <div id="loginBox">
 
-<label>Password</label>
-<input id="loginPassword" type="password" placeholder="Enter password">
+      <h1>Welcome Back</h1>
 
-<button class="btn" type="button" id="loginBtn">
-Login
-</button>
-
-<div class="switch" id="registerLink">
-Create new account
-</div>
-
-</div>
-
-
-<div id="registerBox" class="hidden">
-
-<h1>Create Account</h1>
-<p class="muted">Create your Xenon Shop account</p>
-
-<label>Name</label>
-<input id="regName" placeholder="Your name">
-
-<label>Email</label>
-<input id="regEmail" type="email" placeholder="Email">
-
-<label>Password</label>
-<input id="regPassword" type="password" placeholder="Minimum 6 characters">
-
-<label>Referral Code</label>
-<input id="regReferral" placeholder="Optional">
-
-<button class="btn" type="button" id="registerBtn">
-Create Account
-</button>
-
-<div class="switch" id="loginLink">
-Already have an account? Login
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-<!-- APP -->
-
-<div id="app" class="hidden">
-
-<div class="top">
-<div class="logo">XENON<span>SHOP</span></div>
-<div class="avatar" id="avatar">X</div>
-</div>
-
-
-<div class="wrap">
-
-<!-- HOME -->
-
-<section id="homePage">
-
-<div class="hero">
-
-<div class="tag">⚡ PREMIUM DIGITAL STORE</div>
-
-<h1>Shop <span>Digital</span><br>Products.</h1>
-
-<p>
-Redeem codes, digital products and more.
-Fast delivery directly to your account.
-</p>
-
-</div>
-
-
-<div class="wallet">
-
-<small>WALLET BALANCE</small>
-
-<div class="balance" id="balance">₹0</div>
-
-<div class="row">
-
-<button class="btn dark" id="addMoneyBtn">
-＋ Add Money
-</button>
-
-<button class="btn dark" id="historyTopBtn">
-History
-</button>
-
-</div>
-
-</div>
-
-
-<div class="section">
-<h2>🔥 Products</h2>
-</div>
-
-<div id="products" class="grid"></div>
-
-</section>
-
-
-<!-- WALLET -->
-
-<section id="walletPage" class="hidden">
-
-<div class="section">
-<h2>💳 My Wallet</h2>
-</div>
-
-<div class="wallet">
-
-<small>AVAILABLE BALANCE</small>
-
-<div class="balance" id="walletBalance">₹0</div>
-
-<button class="btn dark" id="walletAddBtn">
-＋ Add Money
-</button>
-
-</div>
-
-<div class="section">
-<h2>Payment Status</h2>
-</div>
-
-<div class="card" id="walletPayments">
-<div class="empty">Loading...</div>
-</div>
-
-</section>
-
-
-<!-- REFER -->
-
-<section id="referPage" class="hidden">
-
-<div class="section">
-<h2>🎁 Refer & Earn</h2>
-</div>
-
-<div class="card">
-
-<h2>Invite & Earn ₹50</h2>
-
-<p class="muted">
-Apna referral code share karo.
-Referred user ki first eligible purchase par ₹50 reward milega.
-</p>
-
-<label>Your Referral Code</label>
-
-<div id="refCode"
-style="background:#080b15;padding:15px;border-radius:13px;font-weight:900">
--
-</div>
-
-<button class="btn" id="copyRefBtn">
-Copy Referral Code
-</button>
-
-</div>
-
-</section>
-
-
-<!-- HISTORY -->
-
-<section id="historyPage" class="hidden">
-
-<div class="section">
-<h2>📜 History</h2>
-</div>
-
-<div class="card" id="historyBox">
-<div class="empty">Loading...</div>
-</div>
-
-</section>
-
-
-<!-- PROFILE -->
-
-<section id="profilePage" class="hidden">
-
-<div class="section">
-<h2>👤 Profile</h2>
-</div>
-
-<div class="card">
-
-<div class="profile">
-<span class="muted">Name</span>
-<b id="profileName">-</b>
-</div>
-
-<div class="profile">
-<span class="muted">Email</span>
-<b id="profileEmail">-</b>
-</div>
-
-<div class="profile">
-<span class="muted">UID</span>
-<b id="profileUid">-</b>
-</div>
-
-<div class="profile">
-<span class="muted">Membership</span>
-<b>💎 VIP PRIME PROFESSIONAL</b>
-</div>
-
-</div>
-
-<button class="btn dark" id="supportBtn">
-🎧 Customer Support
-</button>
-
-<button class="btn dark" id="adminBtn">
-⚙️ Admin Panel
-</button>
-
-<button class="btn red" id="logoutBtn">
-Logout
-</button>
-
-</section>
-
-</div>
-
-
-<!-- NAV -->
-
-<nav class="bottom">
-
-<button class="nav active" data-page="home">
-<b>⌂</b>Home
-</button>
-
-<button class="nav" data-page="wallet">
-<b>◉</b>Wallet
-</button>
-
-<button class="nav" data-page="refer">
-<b>🎁</b>Refer
-</button>
-
-<button class="nav" data-page="history">
-<b>◷</b>History
-</button>
-
-<button class="nav" data-page="profile">
-<b>●</b>Profile
-</button>
-
-</nav>
-
-</div>
-
-
-<!-- WALLET MODAL -->
-
-<div id="walletModal" class="modal hidden">
-
-<div class="modalbox">
-
-<div class="modalhead">
-<div>
-<h2>💳 Add Money</h2>
-<p class="muted">Payment verification</p>
-</div>
-<button class="close" id="closeWallet">×</button>
-</div>
-
-<div class="notice">
-QR par payment karo, phir amount aur UTR submit karo.
-Admin approve karega to wallet me money add hogi.
-</div>
-
-<div class="qr">
-YOUR<br>PAYMENT<br>QR
-</div>
-
-<label>Amount</label>
-<input id="amount" type="number" placeholder="Enter amount">
-
-<label>UTR / Transaction ID</label>
-<input id="utr" placeholder="Enter UTR">
-
-<button class="btn" id="submitDepositBtn">
-Submit Payment
-</button>
-
-<div class="section">
-<h2 style="font-size:17px">Your Payment Status</h2>
-</div>
-
-<div id="paymentStatus"></div>
-
-</div>
-</div>
-
-
-<!-- BUY MODAL -->
-
-<div id="buyModal" class="modal hidden">
-
-<div class="modalbox">
-
-<div class="modalhead">
-
-<div>
-<h2 id="buyName">Product</h2>
-<p class="muted" id="buyDescription"></p>
-</div>
-
-<button class="close" id="closeBuy">×</button>
-
-</div>
-
-<div class="notice">
-Product Price:
-<b id="buyPrice">₹0</b>
-</div>
-
-<label>Coupon Code</label>
-<input id="coupon" placeholder="Enter coupon code">
-
-<button class="btn dark" id="couponBtn">
-Apply Coupon
-</button>
-
-<div id="couponResult" class="notice hidden"></div>
-
-<button class="btn" id="buyBtn">
-Confirm Purchase
-</button>
-
-</div>
-</div>
-
-
-<!-- SUPPORT -->
-
-<div id="supportModal" class="modal hidden">
-
-<div class="modalbox">
-
-<div class="modalhead">
-<h2>🎧 Support</h2>
-<button class="close" id="closeSupport">×</button>
-</div>
-
-<label>Subject</label>
-<input id="supportSubject" placeholder="Subject">
-
-<label>Message</label>
-<textarea id="supportMessage"
-style="height:130px"
-placeholder="Write your message"></textarea>
-
-<button class="btn" id="sendSupportBtn">
-Send Message
-</button>
-
-</div>
-</div>
-
-
-<!-- ADMIN LOGIN -->
-
-<div id="adminLoginModal" class="modal hidden">
-
-<div class="modalbox">
-
-<div class="modalhead">
-<h2>⚙️ Admin Login</h2>
-<button class="close" id="closeAdminLogin">×</button>
-</div>
-
-<label>Admin Email</label>
-<input id="adminEmail" type="email">
-
-<label>Admin Password</label>
-<input id="adminPassword" type="password">
-
-<button class="btn" id="adminLoginBtn">
-Login
-</button>
-
-</div>
-</div>
-
-
-<!-- ADMIN PANEL -->
-
-<div id="adminModal" class="modal hidden">
-
-<div class="modalbox">
-
-<div class="modalhead">
-
-<div>
-<h2>⚙️ Xenon Admin</h2>
-<p class="muted">Store Management</p>
-</div>
-
-<button class="close" id="closeAdminPanel">×</button>
-
-</div>
-
-<div class="admin-tabs">
-
-<button class="btn" id="adminPaymentsBtn">
-Payments
-</button>
-
-<button class="btn dark" id="adminProductsBtn">
-Products
-</button>
-
-<button class="btn dark" id="adminCouponsBtn">
-Coupons
-</button>
-
-</div>
-
-<div id="adminContent"></div>
-
-</div>
-</div>
-
-
-<script>
-
-let token=localStorage.getItem("xenon_token");
-let user=null;
-let selectedProduct=null;
-
-let adminEmail="";
-let adminPassword="";
-
-
-/* API */
-
-async function api(url,options={}){
-
-const headers={
-"Content-Type":"application/json",
-...(options.headers||{})
-};
-
-if(token){
-headers.Authorization="Bearer "+token;
-}
-
-const response=await fetch(url,{
-...options,
-headers
-});
-
-let data={};
-
-try{
-data=await response.json();
-}catch(e){}
-
-if(!response.ok){
-throw new Error(data.error||"Request failed");
-}
-
-return data;
-}
-
-
-async function adminApi(url,options={}){
-
-const response=await fetch(url,{
-...options,
-headers:{
-"Content-Type":"application/json",
-"x-admin-email":adminEmail,
-"x-admin-password":adminPassword,
-...(options.headers||{})
-}
-});
-
-let data={};
-
-try{
-data=await response.json();
-}catch(e){}
-
-if(!response.ok){
-throw new Error(data.error||"Admin request failed");
-}
-
-return data;
-}
-
-
-function money(n){
-return "₹"+Number(n||0).toLocaleString("en-IN");
-}
-
-
-function safe(x){
-
-return String(x??"")
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-
-}
-
-
-/* AUTH SCREEN */
-
-function showRegister(){
-
-document.getElementById("loginBox")
-.classList.add("hidden");
-
-document.getElementById("registerBox")
-.classList.remove("hidden");
-
-}
-
-
-function showLogin(){
-
-document.getElementById("registerBox")
-.classList.add("hidden");
-
-document.getElementById("loginBox")
-.classList.remove("hidden");
-
-}
-
-
-async function register(){
-
-const name=
-document.getElementById("regName").value.trim();
-
-const email=
-document.getElementById("regEmail").value.trim();
-
-const password=
-document.getElementById("regPassword").value;
-
-const referralCode=
-document.getElementById("regReferral").value.trim();
-
-if(!name||!email||!password){
-
-alert("Name, email aur password required hai.");
-
-return;
-}
-
-try{
-
-const data=await api("/api/register",{
-method:"POST",
-body:JSON.stringify({
-name,
-email,
-password,
-referralCode
-})
-});
-
-token=data.token;
-
-localStorage.setItem("xenon_token",token);
-
-await start();
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-}
-
-
-async function login(){
-
-const email=
-document.getElementById("loginEmail").value.trim();
-
-const password=
-document.getElementById("loginPassword").value;
-
-if(!email||!password){
-
-alert("Email aur password enter karo.");
-
-return;
-}
-
-try{
-
-const data=await api("/api/login",{
-method:"POST",
-body:JSON.stringify({
-email,
-password
-})
-});
-
-token=data.token;
-
-localStorage.setItem("xenon_token",token);
-
-await start();
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-}
-
-
-/* START */
-
-async function start(){
-
-if(!token){
-return;
-}
-
-try{
-
-user=await api("/api/me");
-
-document.getElementById("auth")
-.classList.add("hidden");
-
-document.getElementById("app")
-.classList.remove("hidden");
-
-updateUser();
-
-loadProducts();
-
-}catch(error){
-
-localStorage.removeItem("xenon_token");
-
-token=null;
-
-}
-
-}
-
-
-function updateUser(){
-
-document.getElementById("balance")
-.textContent=money(user.wallet);
-
-document.getElementById("walletBalance")
-.textContent=money(user.wallet);
-
-document.getElementById("profileName")
-.textContent=user.name;
-
-document.getElementById("profileEmail")
-.textContent=user.email;
-
-document.getElementById("profileUid")
-.textContent=user.uid;
-
-document.getElementById("refCode")
-.textContent=user.referralCode;
-
-document.getElementById("avatar")
-.textContent=(user.name||"X")[0].toUpperCase();
-
-}
-
-
-/* NAVIGATION */
-
-function goPage(name,button){
-
-[
-"homePage",
-"walletPage",
-"referPage",
-"historyPage",
-"profilePage"
-].forEach(id=>{
-document.getElementById(id)
-.classList.add("hidden");
-});
-
-document.getElementById(name+"Page")
-.classList.remove("hidden");
-
-document.querySelectorAll(".nav")
-.forEach(x=>x.classList.remove("active"));
-
-if(button){
-button.classList.add("active");
-}
-
-if(name==="history"){
-loadHistory();
-}
-
-if(name==="wallet"){
-loadWalletPayments();
-}
-
-window.scrollTo(0,0);
-
-}
-
-
-/* PRODUCTS */
-
-async function loadProducts(){
-
-try{
-
-const products=await api("/api/products");
-
-const box=document.getElementById("products");
-
-box.innerHTML="";
-
-if(!products.length){
-
-box.innerHTML=
-'<div class="card empty">No products available</div>';
-
-return;
-
-}
-
-products.forEach(product=>{
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-
-<div class="icon">
-${safe(product.icon||"🎟️")}
-</div>
-
-<h3>${safe(product.name)}</h3>
-
-<p class="muted">
-${safe(product.description||"Digital product")}
-</p>
-
-<div class="price">
-${money(product.price)}
-</div>
-
-<button class="btn buyButton">
-Buy Now
-</button>
-`;
-
-card.querySelector(".buyButton")
-.addEventListener("click",function(){
-
-openBuy(product);
-
-});
-
-box.appendChild(card);
-
-});
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-}
-
-
-/* WALLET */
-
-function openWallet(){
-
-document.getElementById("walletModal")
-.classList.remove("hidden");
-
-loadPaymentStatus();
-
-}
-
-
-function closeWallet(){
-
-document.getElementById("walletModal")
-.classList.add("hidden");
-
-}
-
-
-async function submitDeposit(){
-
-const amount=
-Number(document.getElementById("amount").value);
-
-const utr=
-document.getElementById("utr").value.trim();
-
-if(!amount||amount<10){
-
-alert("Minimum deposit ₹10 hai.");
-
-return;
-
-}
-
-if(!utr){
-
-alert("UTR required hai.");
-
-return;
-
-}
-
-try{
-
-await api("/api/deposits",{
-method:"POST",
-body:JSON.stringify({
-amount,
-utr
-})
-});
-
-document.getElementById("amount").value="";
-document.getElementById("utr").value="";
-
-alert("Payment submitted. Admin approval ka wait karo.");
-
-loadPaymentStatus();
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-}
-
-
-async function loadPaymentStatus(){
-
-try{
-
-const data=await api("/api/history");
-
-const box=
-document.getElementById("paymentStatus");
-
-if(!data.deposits.length){
-
-box.innerHTML=
-'<div class="empty">No payments yet</div>';
-
-return;
-
-}
-
-box.innerHTML=data.deposits
-.slice().reverse()
-.map(d=>`
-
-<div class="history">
-
-<b>${money(d.amount)}</b>
-
-<br>
-
-<span class="muted">
-UTR: ${safe(d.utr)}
-</span>
-
-<br><br>
-
-<span class="status ${safe(d.status)}">
-${safe(d.status)}
-</span>
-
-${d.reviewNote?
-`<div class="muted">${safe(d.reviewNote)}</div>`
-:""}
-
-</div>
-
-`).join("");
-
-}catch(error){}
-
-}
-
-
-async function loadWalletPayments(){
-
-try{
-
-const data=
+      <p class="sub">
+        Login to your Xenon Shop
