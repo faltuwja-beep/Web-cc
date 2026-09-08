@@ -8,26 +8,22 @@ const app = express();
 
 const PORT = process.env.PORT || 10000;
 
-/* =========================
-   ADMIN SETTINGS
-========================= */
+const ADMIN_EMAIL =
+  process.env.ADMIN_EMAIL || "freefireidaskgamer@gmail.com";
 
-const ADMIN_EMAIL = "freefireidaskgamer@gmail.com";
-const ADMIN_PASSWORD = "sonu333";
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD || "sonu333";
 
 const JWT_SECRET =
-  process.env.JWT_SECRET || "xenon-secret-change-this";
+  process.env.JWT_SECRET || "xenon-shop-secret-change-this";
 
 const UPI_ID =
   process.env.UPI_ID || "yourupi@upi";
 
-/* =========================
-   PATHS
-========================= */
-
 const DATA_DIR = path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "db.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
+
 
 /* =========================
    APP
@@ -37,11 +33,12 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
 
+
 /* =========================
    DATABASE
 ========================= */
 
-function defaultDatabase() {
+function defaultData() {
   return {
     users: [],
     products: [],
@@ -50,78 +47,57 @@ function defaultDatabase() {
   };
 }
 
+
 function ensureDatabase() {
   if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, {
-      recursive: true
-    });
+    fs.mkdirSync(DATA_DIR, { recursive: true });
   }
 
   if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(
       DATA_FILE,
-      JSON.stringify(
-        defaultDatabase(),
-        null,
-        2
-      )
+      JSON.stringify(defaultData(), null, 2)
     );
   }
 }
+
 
 function database() {
   ensureDatabase();
 
   try {
-    const raw =
-      fs.readFileSync(
-        DATA_FILE,
-        "utf8"
-      );
-
-    const data = JSON.parse(raw);
+    const data = JSON.parse(
+      fs.readFileSync(DATA_FILE, "utf8")
+    );
 
     return {
-      users: Array.isArray(data.users)
-        ? data.users
-        : [],
-
+      users: Array.isArray(data.users) ? data.users : [],
       products: Array.isArray(data.products)
         ? data.products
         : [],
-
       deposits: Array.isArray(data.deposits)
         ? data.deposits
         : [],
-
       purchases: Array.isArray(data.purchases)
         ? data.purchases
         : []
     };
-
   } catch (error) {
-
-    console.error(
-      "Database read error:",
-      error
-    );
-
-    return defaultDatabase();
+    console.error("Database read error:", error);
+    return defaultData();
   }
 }
+
 
 function save(data) {
   ensureDatabase();
 
   fs.writeFileSync(
     DATA_FILE,
-    JSON.stringify(
-      data,
-      null,
-      2
-    )
+    JSON.stringify(data, null, 2)
   );
 }
+
 
 /* =========================
    HELPERS
@@ -130,64 +106,48 @@ function save(data) {
 function makeId() {
   return (
     Date.now().toString(36) +
-    "-" +
     Math.random()
       .toString(36)
-      .substring(2, 10)
+      .slice(2, 10)
   );
 }
+
 
 function makeReferralCode(name) {
-
-  let prefix =
+  const first =
     String(name || "USER")
-      .replace(
-        /[^a-zA-Z0-9]/g,
-        ""
-      )
+      .replace(/[^a-zA-Z0-9]/g, "")
       .toUpperCase()
-      .substring(0, 5);
-
-  if (!prefix) {
-    prefix = "USER";
-  }
+      .slice(0, 5) || "USER";
 
   return (
-    prefix +
-    Math.floor(
-      1000 +
-      Math.random() * 9000
-    )
+    first +
+    Math.random()
+      .toString(36)
+      .slice(2, 7)
+      .toUpperCase()
   );
 }
 
-function publicUser(user) {
 
+function publicUser(user) {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
-    balance: Number(
-      user.balance || 0
-    ),
+    balance: Number(user.balance || 0),
     role: user.role || "user",
-    referralCode:
-      user.referralCode || "",
-    referralCount:
-      Number(
-        user.referralCount || 0
-      ),
-    referralEarnings:
-      Number(
-        user.referralEarnings || 0
-      ),
-    createdAt:
-      user.createdAt
+    referralCode: user.referralCode || "",
+    referralCount: Number(user.referralCount || 0),
+    referralEarnings: Number(
+      user.referralEarnings || 0
+    ),
+    createdAt: user.createdAt
   };
 }
 
-function createToken(user) {
 
+function createToken(user) {
   return jwt.sign(
     {
       id: user.id
@@ -199,109 +159,80 @@ function createToken(user) {
   );
 }
 
+
 /* =========================
    AUTH
 ========================= */
 
 function auth(req, res, next) {
-
   const header =
     req.headers.authorization || "";
 
-  if (
-    !header.startsWith(
-      "Bearer "
-    )
-  ) {
+  if (!header.startsWith("Bearer ")) {
     return res.status(401).json({
       error: "Login required"
     });
   }
 
-  const token =
-    header.substring(7);
+  const token = header.slice(7);
 
   try {
-
-    req.user =
-      jwt.verify(
-        token,
-        JWT_SECRET
-      );
+    req.user = jwt.verify(
+      token,
+      JWT_SECRET
+    );
 
     next();
-
   } catch (error) {
-
     return res.status(401).json({
-      error:
-        "Invalid or expired token"
+      error: "Invalid or expired token"
     });
   }
 }
 
-function adminOnly(
-  req,
-  res,
-  next
-) {
 
-  const data =
-    database();
+function adminOnly(req, res, next) {
+  const data = database();
 
-  const user =
-    data.users.find(
-      x =>
-        String(x.id) ===
-        String(req.user.id)
-    );
+  const user = data.users.find(
+    x => String(x.id) === String(req.user.id)
+  );
 
   if (
     !user ||
     user.role !== "admin"
   ) {
     return res.status(403).json({
-      error:
-        "Admin access required"
+      error: "Admin access required"
     });
   }
 
   next();
 }
 
-ensureDatabase();
 
 /* =========================
    HEALTH
 ========================= */
 
-app.get(
-  "/api/health",
-  (req, res) => {
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "Xenon Shop is running"
+  });
+});
 
-    res.json({
-      success: true,
-      message:
-        "Xenon Shop is running"
-    });
-
-  }
-);
 
 /* =========================
    CONFIG
 ========================= */
 
-app.get(
-  "/api/config",
-  (req, res) => {
+app.get("/api/config", (req, res) => {
+  res.json({
+    upiId: UPI_ID
+  });
+});
 
-    res.json({
-      upiId: UPI_ID
-    });
-
-  }
-);
 
 /* =========================
    REGISTER
@@ -310,93 +241,93 @@ app.get(
 app.post(
   "/api/register",
   async (req, res) => {
-
     try {
-
       const name =
-        String(
-          req.body.name || ""
-        ).trim();
+        String(req.body.name || "").trim();
 
       const email =
-        String(
-          req.body.email || ""
-        )
+        String(req.body.email || "")
           .trim()
           .toLowerCase();
 
       const password =
-        String(
-          req.body.password || ""
-        );
+        String(req.body.password || "");
 
       const referral =
-        String(
-          req.body.referral || ""
-        )
+        String(req.body.referral || "")
           .trim()
           .toUpperCase();
 
       if (!name) {
         return res.status(400).json({
-          error:
-            "Name is required"
+          error: "Name is required"
         });
       }
 
       if (!email) {
         return res.status(400).json({
-          error:
-            "Email is required"
+          error: "Email is required"
         });
       }
 
-      if (
-        password.length < 6
-      ) {
+      if (password.length < 6) {
         return res.status(400).json({
           error:
             "Password must be at least 6 characters"
         });
       }
 
-      const data =
-        database();
+      const data = database();
 
       if (
         data.users.some(
-          x =>
-            x.email === email
+          x => x.email === email
         )
       ) {
         return res.status(400).json({
-          error:
-            "Email already registered"
+          error: "Email already registered"
         });
       }
 
-      let code =
-        makeReferralCode(
-          name
-        );
+      let referralCode =
+        makeReferralCode(name);
 
       while (
         data.users.some(
           x =>
             x.referralCode ===
-            code
+            referralCode
         )
       ) {
-        code =
-          makeReferralCode(
-            name
-          );
+        referralCode =
+          makeReferralCode(name);
       }
 
-      let referredBy = "";
+      const user = {
+        id: makeId(),
+        name,
+        email,
+        password:
+          await bcrypt.hash(password, 10),
+
+        balance: 0,
+
+        role: "user",
+
+        referralCode,
+
+        referralCount: 0,
+
+        referralEarnings: 0,
+
+        referredBy: referral,
+
+        createdAt:
+          new Date().toISOString()
+      };
+
 
       if (referral) {
-
         const referrer =
           data.users.find(
             x =>
@@ -407,81 +338,35 @@ app.post(
           );
 
         if (referrer) {
-
-          referredBy =
-            referrer.id;
-
           referrer.referralCount =
             Number(
-              referrer.referralCount ||
-              0
+              referrer.referralCount || 0
             ) + 1;
         }
       }
 
-      const user = {
 
-        id: makeId(),
-
-        name: name,
-
-        email: email,
-
-        password:
-          await bcrypt.hash(
-            password,
-            10
-          ),
-
-        balance: 0,
-
-        role: "user",
-
-        referralCode:
-          code,
-
-        referralCount: 0,
-
-        referralEarnings: 0,
-
-        referredBy:
-          referredBy,
-
-        createdAt:
-          new Date().toISOString()
-      };
-
-      data.users.push(
-        user
-      );
+      data.users.push(user);
 
       save(data);
 
+
       res.status(201).json({
-
         success: true,
-
-        token:
-          createToken(user),
-
-        user:
-          publicUser(user)
+        token: createToken(user),
+        user: publicUser(user)
       });
 
     } catch (error) {
-
-      console.error(
-        "Register error:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
-        error:
-          "Registration failed"
+        error: "Registration failed"
       });
     }
   }
 );
+
 
 /* =========================
    USER LOGIN
@@ -490,33 +375,23 @@ app.post(
 app.post(
   "/api/login",
   async (req, res) => {
-
     try {
-
       const email =
-        String(
-          req.body.email || ""
-        )
+        String(req.body.email || "")
           .trim()
           .toLowerCase();
 
       const password =
-        String(
-          req.body.password || ""
-        );
+        String(req.body.password || "");
 
-      const data =
-        database();
+      const data = database();
 
       const user =
         data.users.find(
-          x =>
-            x.email ===
-            email
+          x => x.email === email
         );
 
       if (!user) {
-
         return res.status(401).json({
           error:
             "Invalid email or password"
@@ -530,7 +405,6 @@ app.post(
         );
 
       if (!valid) {
-
         return res.status(401).json({
           error:
             "Invalid email or password"
@@ -538,469 +412,21 @@ app.post(
       }
 
       res.json({
-
         success: true,
-
-        token:
-          createToken(user),
-
-        user:
-          publicUser(user)
+        token: createToken(user),
+        user: publicUser(user)
       });
 
     } catch (error) {
-
-      console.error(
-        "Login error:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
-        error:
-          "Login failed"
+        error: "Login failed"
       });
     }
   }
 );
 
-/* =========================
-   CURRENT USER
-========================= */
-
-app.get(
-  "/api/me",
-  auth,
-  (req, res) => {
-
-    const data =
-      database();
-
-    const user =
-      data.users.find(
-        x =>
-          String(x.id) ===
-          String(req.user.id)
-      );
-
-    if (!user) {
-
-      return res.status(404).json({
-        error:
-          "User not found"
-      });
-    }
-
-    res.json(
-      publicUser(user)
-    );
-  }
-);
-
-/* =========================
-   PRODUCTS - PUBLIC
-========================= */
-
-app.get(
-  "/api/products",
-  (req, res) => {
-
-    const data =
-      database();
-
-    const products =
-      data.products.map(
-        product => ({
-
-          id:
-            product.id,
-
-          name:
-            product.name,
-
-          price:
-            Number(
-              product.price || 0
-            ),
-
-          description:
-            product.description ||
-            "",
-
-          image:
-            product.image ||
-            "",
-
-          icon:
-            product.icon ||
-            "📦",
-
-          /*
-            Delivery is included
-            so the frontend can
-            show what the buyer
-            receives.
-          */
-
-          delivery:
-            product.delivery ||
-            "",
-
-          createdAt:
-            product.createdAt
-        })
-      );
-
-    res.json(
-      products
-    );
-  }
-);
-
-/* =========================
-   BUY PRODUCT
-========================= */
-
-app.post(
-  "/api/buy",
-  auth,
-  (req, res) => {
-
-    try {
-
-      const productId =
-        String(
-          req.body.productId ||
-          ""
-        );
-
-      const data =
-        database();
-
-      const user =
-        data.users.find(
-          x =>
-            String(x.id) ===
-            String(req.user.id)
-        );
-
-      if (!user) {
-
-        return res.status(404).json({
-          error:
-            "User not found"
-        });
-      }
-
-      const product =
-        data.products.find(
-          x =>
-            String(x.id) ===
-            productId
-        );
-
-      if (!product) {
-
-        return res.status(404).json({
-          error:
-            "Product not found"
-        });
-      }
-
-      const price =
-        Number(
-          product.price
-        );
-
-      if (
-        !Number.isFinite(
-          price
-        ) ||
-        price <= 0
-      ) {
-
-        return res.status(400).json({
-          error:
-            "Invalid product price"
-        });
-      }
-
-      const balance =
-        Number(
-          user.balance || 0
-        );
-
-      if (
-        balance < price
-      ) {
-
-        return res.status(400).json({
-          error:
-            "Insufficient wallet balance"
-        });
-      }
-
-      user.balance =
-        balance - price;
-
-      const purchase = {
-
-        id: makeId(),
-
-        userId:
-          user.id,
-
-        name:
-          user.name,
-
-        email:
-          user.email,
-
-        product:
-          product.name,
-
-        productId:
-          product.id,
-
-        amount:
-          price,
-
-        delivery:
-          product.delivery ||
-          "",
-
-        createdAt:
-          new Date().toISOString()
-      };
-
-      data.purchases.push(
-        purchase
-      );
-
-      save(data);
-
-      res.json({
-
-        success: true,
-
-        message:
-          "Purchase successful",
-
-        balance:
-          user.balance,
-
-        purchase:
-          purchase,
-
-        delivery:
-          product.delivery ||
-          ""
-      });
-
-    } catch (error) {
-
-      console.error(
-        "Buy error:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Purchase failed"
-      });
-    }
-  }
-);
-
-/* =========================
-   USER PURCHASES
-========================= */
-
-app.get(
-  "/api/purchases",
-  auth,
-  (req, res) => {
-
-    const data =
-      database();
-
-    res.json(
-      data.purchases
-        .filter(
-          x =>
-            String(
-              x.userId
-            ) ===
-            String(
-              req.user.id
-            )
-        )
-        .reverse()
-    );
-  }
-);
-
-/* =========================
-   PUBLIC ACTIVITY
-========================= */
-
-app.get(
-  "/api/activity",
-  (req, res) => {
-
-    const data =
-      database();
-
-    res.json(
-      data.purchases
-        .slice(-30)
-        .reverse()
-        .map(
-          purchase => ({
-
-            name:
-              purchase.name,
-
-            product:
-              purchase.product,
-
-            amount:
-              purchase.amount,
-
-            createdAt:
-              purchase.createdAt
-          })
-        )
-    );
-  }
-);
-
-/* =========================
-   ADD MONEY
-========================= */
-
-app.post(
-  "/api/deposits",
-  auth,
-  (req, res) => {
-
-    const amount =
-      Number(
-        req.body.amount
-      );
-
-    const utr =
-      String(
-        req.body.utr || ""
-      ).trim();
-
-    if (
-      !Number.isFinite(
-        amount
-      ) ||
-      amount <= 0
-    ) {
-
-      return res.status(400).json({
-        error:
-          "Valid amount required"
-      });
-    }
-
-    if (!utr) {
-
-      return res.status(400).json({
-        error:
-          "UTR is required"
-      });
-    }
-
-    const data =
-      database();
-
-    const user =
-      data.users.find(
-        x =>
-          String(x.id) ===
-          String(req.user.id)
-      );
-
-    if (!user) {
-
-      return res.status(404).json({
-        error:
-          "User not found"
-      });
-    }
-
-    const deposit = {
-
-      id: makeId(),
-
-      userId:
-        user.id,
-
-      userName:
-        user.name,
-
-      userEmail:
-        user.email,
-
-      amount:
-        amount,
-
-      utr:
-        utr,
-
-      status:
-        "PENDING",
-
-      createdAt:
-        new Date().toISOString()
-    };
-
-    data.deposits.push(
-      deposit
-    );
-
-    save(data);
-
-    res.status(201).json({
-
-      success: true,
-
-      deposit:
-        deposit
-    });
-  }
-);
-
-/* =========================
-   USER DEPOSITS
-========================= */
-
-app.get(
-  "/api/deposits",
-  auth,
-  (req, res) => {
-
-    const data =
-      database();
-
-    res.json(
-      data.deposits
-        .filter(
-          x =>
-            String(
-              x.userId
-            ) ===
-            String(
-              req.user.id
-            )
-        )
-        .reverse()
-    );
-  }
-);
 
 /* =========================
    ADMIN LOGIN
@@ -1009,36 +435,28 @@ app.get(
 app.post(
   "/api/admin/login",
   async (req, res) => {
-
     try {
-
       const email =
-        String(
-          req.body.email || ""
-        )
+        String(req.body.email || "")
           .trim()
           .toLowerCase();
 
       const password =
-        String(
-          req.body.password || ""
-        );
+        String(req.body.password || "");
 
       if (
         email !==
-        ADMIN_EMAIL.toLowerCase() ||
-        password !==
-        ADMIN_PASSWORD
+          ADMIN_EMAIL.toLowerCase() ||
+        password !== ADMIN_PASSWORD
       ) {
-
         return res.status(401).json({
-          error:
-            "Invalid admin login"
+          error: "Invalid admin login"
         });
       }
 
-      const data =
-        database();
+
+      const data = database();
+
 
       let user =
         data.users.find(
@@ -1047,16 +465,11 @@ app.post(
             ADMIN_EMAIL.toLowerCase()
         );
 
+
       if (!user) {
-
         user = {
-
-          id:
-            "admin",
-
-          name:
-            "Xenon Admin",
-
+          id: "admin",
+          name: "Xenon Admin",
           email:
             ADMIN_EMAIL.toLowerCase(),
 
@@ -1068,11 +481,9 @@ app.post(
 
           balance: 0,
 
-          role:
-            "admin",
+          role: "admin",
 
-          referralCode:
-            "ADMIN",
+          referralCode: "ADMIN",
 
           referralCount: 0,
 
@@ -1082,14 +493,11 @@ app.post(
             new Date().toISOString()
         };
 
-        data.users.push(
-          user
-        );
+        data.users.push(user);
 
       } else {
 
-        user.role =
-          "admin";
+        user.role = "admin";
 
         user.password =
           await bcrypt.hash(
@@ -1098,170 +506,103 @@ app.post(
           );
       }
 
+
       save(data);
+
 
       res.json({
-
         success: true,
-
-        token:
-          createToken(user),
-
-        user:
-          publicUser(user)
+        token: createToken(user),
+        user: publicUser(user)
       });
 
     } catch (error) {
-
-      console.error(
-        "Admin login error:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
-        error:
-          "Admin login failed"
+        error: "Admin login failed"
       });
     }
   }
 );
 
+
 /* =========================
-   ADMIN PRODUCTS - ADD
+   CURRENT USER
 ========================= */
 
-app.post(
-  "/api/admin/products",
+app.get(
+  "/api/me",
   auth,
-  adminOnly,
   (req, res) => {
+    const data = database();
 
-    try {
-
-      const name =
-        String(
-          req.body.name || ""
-        ).trim();
-
-      const price =
-        Number(
-          req.body.price
-        );
-
-      const description =
-        String(
-          req.body.description ||
-          ""
-        ).trim();
-
-      const image =
-        String(
-          req.body.image || ""
-        ).trim();
-
-      const delivery =
-        String(
-          req.body.delivery ||
-          ""
-        ).trim();
-
-      const icon =
-        String(
-          req.body.icon ||
-          "📦"
-        ).trim();
-
-      if (!name) {
-
-        return res.status(400).json({
-          error:
-            "Product name required"
-        });
-      }
-
-      if (
-        !Number.isFinite(
-          price
-        ) ||
-        price <= 0
-      ) {
-
-        return res.status(400).json({
-          error:
-            "Valid price required"
-        });
-      }
-
-      const data =
-        database();
-
-      const product = {
-
-        id: makeId(),
-
-        name:
-          name,
-
-        price:
-          price,
-
-        description:
-          description,
-
-        image:
-          image,
-
-        delivery:
-          delivery,
-
-        icon:
-          icon,
-
-        createdAt:
-          new Date().toISOString()
-      };
-
-      data.products.push(
-        product
+    const user =
+      data.users.find(
+        x =>
+          String(x.id) ===
+          String(req.user.id)
       );
 
-      save(data);
-
-      res.status(201).json({
-
-        success: true,
-
-        product:
-          product
-      });
-
-    } catch (error) {
-
-      console.error(
-        "Add product error:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Product add failed"
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found"
       });
     }
+
+    res.json(
+      publicUser(user)
+    );
   }
 );
 
+
 /* =========================
-   ADMIN PRODUCTS - UPDATE
+   PRODUCTS - PUBLIC
 ========================= */
 
-app.put(
-  "/api/admin/products/:id",
-  auth,
-  adminOnly,
+app.get(
+  "/api/products",
   (req, res) => {
+    const data = database();
 
-    const data =
-      database();
+    const products =
+      data.products.map(
+        product => ({
+          id: product.id,
+
+          name: product.name,
+
+          price:
+            Number(product.price || 0),
+
+          description:
+            product.description || "",
+
+          image:
+            product.image || "",
+
+          icon:
+            product.icon || "📦",
+
+          createdAt:
+            product.createdAt
+        })
+      );
+
+    res.json(products);
+  }
+);
+
+
+/* =========================
+   SINGLE PRODUCT
+========================= */
+
+app.get(
+  "/api/products/:id",
+  (req, res) => {
+    const data = database();
 
     const product =
       data.products.find(
@@ -1271,83 +612,673 @@ app.put(
       );
 
     if (!product) {
+      return res.status(404).json({
+        error: "Product not found"
+      });
+    }
 
+    res.json(product);
+  }
+);
+
+
+/* =========================
+   BUY PRODUCT
+========================= */
+
+app.post(
+  "/api/buy",
+  auth,
+  (req, res) => {
+    const data = database();
+
+    const user =
+      data.users.find(
+        x =>
+          String(x.id) ===
+          String(req.user.id)
+      );
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found"
+      });
+    }
+
+
+    const product =
+      data.products.find(
+        x =>
+          String(x.id) ===
+          String(req.body.productId)
+      );
+
+
+    if (!product) {
+      return res.status(404).json({
+        error: "Product not found"
+      });
+    }
+
+
+    const price =
+      Number(product.price);
+
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      return res.status(400).json({
+        error: "Invalid product price"
+      });
+    }
+
+
+    const balance =
+      Number(user.balance || 0);
+
+
+    if (balance < price) {
+      return res.status(400).json({
+        error:
+          "Insufficient wallet balance"
+      });
+    }
+
+
+    user.balance =
+      balance - price;
+
+
+    /*
+      Product delivery/content
+      admin ke product me jo
+      deliveryContent hoga,
+      buy ke baad wahi milega.
+    */
+
+    const purchase = {
+      id: makeId(),
+
+      userId: user.id,
+
+      name: user.name,
+
+      product: product.name,
+
+      productId: product.id,
+
+      amount: price,
+
+      deliveryContent:
+        product.deliveryContent || "",
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+
+    data.purchases.push(
+      purchase
+    );
+
+
+    save(data);
+
+
+    res.json({
+      success: true,
+
+      message:
+        "Purchase successful",
+
+      balance:
+        user.balance,
+
+      purchase: purchase
+    });
+  }
+);
+
+
+/* =========================
+   USER PURCHASES
+========================= */
+
+app.get(
+  "/api/purchases",
+  auth,
+  (req, res) => {
+    const data = database();
+
+    const purchases =
+      data.purchases
+        .filter(
+          x =>
+            String(x.userId) ===
+            String(req.user.id)
+        )
+        .reverse();
+
+    res.json(purchases);
+  }
+);
+
+
+/* =========================
+   PUBLIC ACTIVITY
+========================= */
+
+app.get(
+  "/api/activity",
+  (req, res) => {
+    const data = database();
+
+    res.json(
+      data.purchases
+        .slice(-30)
+        .reverse()
+        .map(x => ({
+          id: x.id,
+          name: x.name,
+          product: x.product,
+          amount: x.amount,
+          createdAt: x.createdAt
+        }))
+    );
+  }
+);
+
+
+/* =========================
+   DEPOSIT REQUEST
+========================= */
+
+app.post(
+  "/api/deposits",
+  auth,
+  (req, res) => {
+    const amount =
+      Number(req.body.amount);
+
+    const utr =
+      String(
+        req.body.utr || ""
+      ).trim();
+
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      return res.status(400).json({
+        error: "Invalid amount"
+      });
+    }
+
+
+    if (!utr) {
+      return res.status(400).json({
+        error: "UTR is required"
+      });
+    }
+
+
+    const data = database();
+
+
+    const user =
+      data.users.find(
+        x =>
+          String(x.id) ===
+          String(req.user.id)
+      );
+
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found"
+      });
+    }
+
+
+    const deposit = {
+      id: makeId(),
+
+      userId: user.id,
+
+      userName: user.name,
+
+      userEmail: user.email,
+
+      amount,
+
+      utr,
+
+      status: "PENDING",
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+
+    data.deposits.push(
+      deposit
+    );
+
+    save(data);
+
+
+    res.status(201).json({
+      success: true,
+      deposit
+    });
+  }
+);
+
+
+/* =========================
+   USER DEPOSITS
+========================= */
+
+app.get(
+  "/api/deposits",
+  auth,
+  (req, res) => {
+    const data = database();
+
+    res.json(
+      data.deposits
+        .filter(
+          x =>
+            String(x.userId) ===
+            String(req.user.id)
+        )
+        .reverse()
+    );
+  }
+);
+
+
+/* =========================
+   ADMIN ADD PRODUCT
+========================= */
+
+app.post(
+  "/api/admin/products",
+  auth,
+  adminOnly,
+  (req, res) => {
+
+    const name =
+      String(
+        req.body.name || ""
+      ).trim();
+
+    const price =
+      Number(req.body.price);
+
+    const description =
+      String(
+        req.body.description || ""
+      ).trim();
+
+    const image =
+      String(
+        req.body.image || ""
+      ).trim();
+
+    const icon =
+      String(
+        req.body.icon || "📦"
+      ).trim();
+
+    /*
+      YAHI PRODUCT KA
+      DELIVERY CONTENT HAI.
+
+      Example:
+
+      Free Fire ID details
+      Email/password
+      Game account details
+      Download link
+      License key
+      etc.
+    */
+
+    const deliveryContent =
+      String(
+        req.body.deliveryContent || ""
+      ).trim();
+
+
+    if (!name) {
+      return res.status(400).json({
+        error:
+          "Product name required"
+      });
+    }
+
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      return res.status(400).json({
+        error:
+          "Valid price required"
+      });
+    }
+
+
+    const data = database();
+
+
+    const product = {
+      id: makeId(),
+
+      name,
+
+      price,
+
+      description,
+
+      image,
+
+      icon,
+
+      deliveryContent,
+
+      createdAt:
+        new Date().toISOString()
+    };
+
+
+    data.products.push(
+      product
+    );
+
+    save(data);
+
+
+    res.status(201).json({
+      success: true,
+      product
+    });
+  }
+);
+
+
+/* =========================
+   ADMIN UPDATE PRODUCT
+========================= */
+
+app.put(
+  "/api/admin/products/:id",
+  auth,
+  adminOnly,
+  (req, res) => {
+
+    const data = database();
+
+
+    const product =
+      data.products.find(
+        x =>
+          String(x.id) ===
+          String(req.params.id)
+      );
+
+
+    if (!product) {
       return res.status(404).json({
         error:
           "Product not found"
       });
     }
 
-    if (
-      req.body.name !==
-      undefined
-    ) {
 
-      const name =
+    if (
+      req.body.name !== undefined
+    ) {
+      product.name =
         String(
           req.body.name
         ).trim();
-
-      if (!name) {
-
-        return res.status(400).json({
-          error:
-            "Product name required"
-        });
-      }
-
-      product.name =
-        name;
     }
 
-    if (
-      req.body.price !==
-      undefined
-    ) {
 
+    if (
+      req.body.price !== undefined
+    ) {
       const price =
-        Number(
-          req.body.price
-        );
+        Number(req.body.price);
 
       if (
-        !Number.isFinite(
-          price
-        ) ||
+        !Number.isFinite(price) ||
         price <= 0
       ) {
-
         return res.status(400).json({
           error:
             "Invalid price"
         });
       }
 
-      product.price =
-        price;
+      product.price = price;
     }
+
 
     if (
       req.body.description !==
       undefined
     ) {
-
       product.description =
         String(
           req.body.description
         ).trim();
     }
 
-    if (
-      req.body.image !==
-      undefined
-    ) {
 
+    if (
+      req.body.image !== undefined
+    ) {
       product.image =
         String(
           req.body.image
         ).trim();
     }
 
+
     if (
-  
+      req.body.icon !== undefined
+    ) {
+      product.icon =
+        String(
+          req.body.icon
+        ).trim();
+    }
+
+
+    if (
+      req.body.deliveryContent !==
+      undefined
+    ) {
+      product.deliveryContent =
+        String(
+          req.body.deliveryContent
+        ).trim();
+    }
+
+
+    product.updatedAt =
+      new Date().toISOString();
+
+
+    save(data);
+
+
+    res.json({
+      success: true,
+      product
+    });
+  }
+);
+
+
+/* =========================
+   ADMIN DELETE PRODUCT
+========================= */
+
+app.delete(
+  "/api/admin/products/:id",
+  auth,
+  adminOnly,
+  (req, res) => {
+
+    const data = database();
+
+
+    const index =
+      data.products.findIndex(
+        x =>
+          String(x.id) ===
+          String(req.params.id)
+      );
+
+
+    if (index === -1) {
+      return res.status(404).json({
+        error:
+          "Product not found"
+      });
+    }
+
+
+    const product =
+      data.products.splice(
+        index,
+        1
+      )[0];
+
+
+    save(data);
+
+
+    res.json({
+      success: true,
+      product
+    });
+  }
+);
+
+
+/* =========================
+   ADMIN DEPOSITS
+========================= */
+
+app.get(
+  "/api/admin/deposits",
+  auth,
+  adminOnly,
+  (req, res) => {
+
+    const data = database();
+
+
+    res.json(
+      data.deposits
+        .slice()
+        .reverse()
+    );
+  }
+);
+
+
+/* =========================
+   APPROVE / REJECT DEPOSIT
+========================= */
+
+app.post(
+  "/api/admin/deposits/:id",
+  auth,
+  adminOnly,
+  (req, res) => {
+
+    const status =
+      String(
+        req.body.status || ""
+      ).toUpperCase();
+
+
+    if (
+      status !== "APPROVED" &&
+      status !== "REJECTED"
+    ) {
+      return res.status(400).json({
+        error:
+          "Status must be APPROVED or REJECTED"
+      });
+    }
+
+
+    const data = database();
+
+
+    const deposit =
+      data.deposits.find(
+        x =>
+          String(x.id) ===
+          String(req.params.id)
+      );
+
+
+    if (!deposit) {
+      return res.status(404).json({
+        error:
+          "Deposit not found"
+      });
+    }
+
+
+    if (
+      deposit.status !==
+      "PENDING"
+    ) {
+      return res.status(400).json({
+        error:
+          "Deposit already processed"
+      });
+    }
+
+
+    deposit.status =
+      status;
+
+
+    deposit.updatedAt =
+      new Date().toISOString();
+
+
+    if (
+      status === "APPROVED"
+    ) {
+
+      const user =
+        data.users.find(
+          x =>
+            String(x.id) ===
+            String(deposit.userId)
+        );
+
+
+      if (!user) {
+        return res.status(404).json({
+          error:
+            "User not found"
+        });
+      }
+
+
+      user.balance =
