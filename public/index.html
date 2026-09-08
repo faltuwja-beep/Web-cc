@@ -2,297 +2,183 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Xenon Shop</title>
 
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;
- background:#070914;
- color:#fff;
- font-family:Arial,sans-serif;
- padding-bottom:80px
+ margin:0;background:#070914;color:#fff;
+ font-family:Arial,sans-serif;padding-bottom:80px
 }
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
-
-.container{max-width:720px;margin:auto;padding:18px}
-
-.logo{
- font-size:25px;
- font-weight:900;
- margin-bottom:25px
-}
-.logo span{color:#967cff}
+.wrap{max-width:720px;margin:auto;padding:18px}
+.logo{font-size:25px;font-weight:900}
+.logo span{color:#9a86ff}
 
 .auth{
- min-height:100vh;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:18px
+ min-height:100vh;display:flex;align-items:center;
+ justify-content:center;padding:20px
 }
 .authbox{
- width:100%;
- max-width:430px;
- background:#101426;
- border:1px solid #292f48;
- border-radius:25px;
- padding:25px
+ width:100%;max-width:430px;background:#101426;
+ border:1px solid #292f48;border-radius:25px;padding:28px
 }
-.authbox h1{font-size:29px;margin:0 0 8px}
-.muted{color:#9299ae;font-size:13px;line-height:1.5}
+.authbox h1{font-size:34px;margin:28px 0 8px}
+.muted{color:#9299ae;line-height:1.5;font-size:14px}
 
 label{
- display:block;
- color:#9299ae;
- font-size:12px;
- margin:15px 0 7px
+ display:block;color:#9299ae;font-size:13px;
+ margin:17px 0 7px
 }
 input,textarea{
- width:100%;
- padding:14px;
- border-radius:13px;
- border:1px solid #292f48;
- background:#080b15;
- color:white;
- outline:none
+ width:100%;padding:15px;border-radius:14px;
+ border:1px solid #292f48;background:#080b15;
+ color:#fff;outline:none
 }
 input:focus,textarea:focus{border-color:#7657ff}
 
 .btn{
- width:100%;
- padding:14px;
- margin-top:12px;
- border:0;
- border-radius:13px;
- background:#7657ff;
- color:#fff;
- font-weight:800
+ width:100%;border:0;border-radius:14px;
+ background:#7657ff;color:#fff;
+ padding:15px;margin-top:13px;font-weight:800
 }
-.btn.dark{
- background:#181e31;
- border:1px solid #292f48
-}
-.btn.red{
- background:#4b1b29;
- color:#ff8194
-}
+.btn.dark{background:#181e31;border:1px solid #303750}
+.btn.red{background:#4a1b28;color:#ff8194}
 
 .switch{
- text-align:center;
- margin-top:18px;
- color:#a895ff;
- font-size:13px;
- cursor:pointer
+ text-align:center;color:#a895ff;
+ margin-top:20px;padding:12px;
+ cursor:pointer;
+ user-select:none;
+ -webkit-user-select:none;
 }
 
 .top{
- position:sticky;
- top:0;
- z-index:50;
- background:rgba(7,9,20,.95);
- backdrop-filter:blur(15px);
- border-bottom:1px solid #252b43;
- padding:15px;
- display:flex;
- align-items:center;
- justify-content:space-between
+ position:sticky;top:0;z-index:20;
+ height:66px;padding:0 18px;
+ display:flex;align-items:center;
+ justify-content:space-between;
+ background:rgba(7,9,20,.96);
+ border-bottom:1px solid #252b43
 }
-
 .avatar{
- width:42px;
- height:42px;
- border-radius:13px;
- background:#7657ff;
- display:grid;
- place-items:center;
+ width:42px;height:42px;border-radius:13px;
+ background:#7657ff;display:grid;place-items:center;
  font-weight:900
 }
 
-.hero{padding:25px 3px}
+.hero{padding:28px 3px}
 .tag{
- display:inline-block;
- padding:7px 11px;
- border-radius:20px;
- color:#a895ff;
- background:#17152a;
+ display:inline-block;padding:7px 11px;
+ border-radius:20px;background:#17152a;
  border:1px solid #38305e;
- font-size:11px
+ color:#a895ff;font-size:11px
 }
-.hero h1{
- font-size:40px;
- line-height:1.05;
- margin:17px 0 10px
-}
-.hero h1 span{color:#967cff}
+.hero h1{font-size:40px;line-height:1.05}
+.hero h1 span{color:#9a86ff}
 .hero p{color:#9299ae;line-height:1.6}
 
 .wallet{
- background:linear-gradient(135deg,#7657ff,#382675);
- border-radius:23px;
- padding:21px;
- margin-bottom:24px
+ background:linear-gradient(135deg,#7657ff,#392671);
+ padding:21px;border-radius:22px
 }
-.wallet-title{font-size:11px;opacity:.75}
-.balance{
- font-size:36px;
- font-weight:900;
- margin:7px 0 15px
-}
-.row{display:flex;gap:9px}
-.row .btn{margin:0}
+.wallet small{opacity:.75}
+.balance{font-size:36px;font-weight:900;margin:8px 0 15px}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
 
 .section{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin:22px 0 13px
+ display:flex;justify-content:space-between;
+ align-items:center;margin:25px 0 13px
 }
 .section h2{font-size:20px}
 
 .grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:12px
+ display:grid;grid-template-columns:1fr 1fr;gap:13px
 }
 .card{
- background:#101426;
- border:1px solid #292f48;
- border-radius:19px;
- padding:16px
+ background:#101426;border:1px solid #292f48;
+ border-radius:19px;padding:16px
 }
 .icon{
- width:52px;
- height:52px;
- border-radius:15px;
- background:#18162b;
- display:grid;
- place-items:center;
- font-size:26px;
- margin-bottom:13px
+ width:54px;height:54px;border-radius:15px;
+ background:#18162b;display:grid;
+ place-items:center;font-size:27px;margin-bottom:12px
 }
-.card h3{margin:0 0 7px}
-.price{
- font-size:20px;
- font-weight:900;
- margin:13px 0
-}
+.card h3{margin:0 0 8px}
+.price{font-size:20px;font-weight:900;margin:14px 0}
+.empty{text-align:center;color:#7f879c;padding:30px}
 
 .bottom{
- position:fixed;
- bottom:0;
- left:50%;
+ position:fixed;bottom:0;left:50%;
  transform:translateX(-50%);
- width:100%;
- max-width:720px;
- height:75px;
- background:#0c0f1c;
- border-top:1px solid #292f48;
- display:grid;
- grid-template-columns:repeat(5,1fr);
+ width:100%;max-width:720px;height:74px;
+ background:#0c0f1c;border-top:1px solid #292f48;
+ display:grid;grid-template-columns:repeat(5,1fr);
  z-index:100
 }
 .nav{
- border:0;
- background:none;
- color:#737c94;
- font-size:10px;
- font-weight:700
+ border:0;background:none;color:#737c94;
+ font-size:10px;font-weight:700
 }
 .nav b{display:block;font-size:20px;margin-bottom:3px}
 .nav.active{color:#a895ff}
 
 .modal{
- position:fixed;
- inset:0;
- z-index:200;
- background:rgba(0,0,0,.75);
- display:flex;
- align-items:flex-end;
+ position:fixed;inset:0;z-index:200;
+ background:rgba(0,0,0,.78);
+ display:flex;align-items:flex-end;
  justify-content:center
 }
 .modalbox{
- width:100%;
- max-width:720px;
- max-height:92vh;
- overflow:auto;
+ width:100%;max-width:720px;
+ max-height:92vh;overflow:auto;
  background:#0e1221;
  border:1px solid #292f48;
  border-radius:25px 25px 0 0;
- padding:20px 16px 30px
+ padding:20px 17px 30px
 }
 .modalhead{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:18px
+ display:flex;justify-content:space-between;
+ align-items:center;margin-bottom:15px
 }
 .close{
- width:40px;
- height:40px;
- border:0;
- border-radius:12px;
- background:#191e31;
- color:#fff;
- font-size:22px
+ width:40px;height:40px;border:0;
+ border-radius:12px;background:#191e31;
+ color:#fff;font-size:23px
 }
 .notice{
- background:#151a2b;
- border:1px solid #292f48;
- border-radius:14px;
- padding:13px;
- color:#b9c1d3;
- font-size:13px;
- line-height:1.5;
- margin:10px 0
+ background:#151a2b;border:1px solid #292f48;
+ border-radius:14px;padding:13px;
+ color:#b9c1d3;font-size:13px;
+ line-height:1.5;margin:12px 0
 }
 .qr{
- width:180px;
- height:180px;
- margin:18px auto;
- background:white;
- color:#111;
- border-radius:14px;
- display:grid;
- place-items:center;
- text-align:center;
- font-weight:900
+ width:180px;height:180px;margin:18px auto;
+ background:#fff;color:#111;border-radius:15px;
+ display:grid;place-items:center;
+ text-align:center;font-weight:900
 }
 .status{
- display:inline-block;
- padding:6px 9px;
- border-radius:20px;
- font-size:11px;
- font-weight:800
+ display:inline-block;padding:6px 9px;
+ border-radius:20px;font-size:11px;font-weight:800
 }
 .PENDING{background:#3a3017;color:#ffd05c}
 .ACCEPTED{background:#123523;color:#35dc88}
 .REJECTED{background:#3b1822;color:#ff7188}
-
 .history{
- padding:14px 0;
- border-bottom:1px solid #292f48
+ padding:14px 0;border-bottom:1px solid #292f48
 }
-.empty{
- text-align:center;
- color:#777f96;
- padding:30px 10px
-}
-
 .profile{
- display:flex;
- justify-content:space-between;
- padding:14px 0;
- border-bottom:1px solid #292f48;
- gap:15px
+ display:flex;justify-content:space-between;
+ padding:14px 0;border-bottom:1px solid #292f48;
+ gap:10px
 }
-
 .admin-tabs{
- display:grid;
- grid-template-columns:repeat(3,1fr);
+ display:grid;grid-template-columns:repeat(3,1fr);
  gap:8px
 }
 .admin-tabs button{margin:0;padding:11px 5px;font-size:11px}
@@ -306,10 +192,9 @@ input:focus,textarea:focus{border-color:#7657ff}
 
 <body>
 
-<!-- LOGIN / REGISTER -->
+<!-- AUTH -->
 
 <div id="auth" class="auth">
-
 <div class="authbox">
 
 <div class="logo">XENON<span>SHOP</span></div>
@@ -325,9 +210,11 @@ input:focus,textarea:focus{border-color:#7657ff}
 <label>Password</label>
 <input id="loginPassword" type="password" placeholder="Enter password">
 
-<button class="btn" onclick="login()">Login</button>
+<button class="btn" type="button" id="loginBtn">
+Login
+</button>
 
-<div class="switch" onclick="showRegister()">
+<div class="switch" id="registerLink">
 Create new account
 </div>
 
@@ -337,7 +224,7 @@ Create new account
 <div id="registerBox" class="hidden">
 
 <h1>Create Account</h1>
-<p class="muted">Join Xenon Shop</p>
+<p class="muted">Create your Xenon Shop account</p>
 
 <label>Name</label>
 <input id="regName" placeholder="Your name">
@@ -351,9 +238,11 @@ Create new account
 <label>Referral Code</label>
 <input id="regReferral" placeholder="Optional">
 
-<button class="btn" onclick="register()">Create Account</button>
+<button class="btn" type="button" id="registerBtn">
+Create Account
+</button>
 
-<div class="switch" onclick="showLogin()">
+<div class="switch" id="loginLink">
 Already have an account? Login
 </div>
 
@@ -368,12 +257,12 @@ Already have an account? Login
 <div id="app" class="hidden">
 
 <div class="top">
-<div class="logo" style="margin:0">XENON<span>SHOP</span></div>
+<div class="logo">XENON<span>SHOP</span></div>
 <div class="avatar" id="avatar">X</div>
 </div>
 
 
-<div class="container">
+<div class="wrap">
 
 <!-- HOME -->
 
@@ -395,17 +284,17 @@ Fast delivery directly to your account.
 
 <div class="wallet">
 
-<div class="wallet-title">WALLET BALANCE</div>
+<small>WALLET BALANCE</small>
 
 <div class="balance" id="balance">₹0</div>
 
 <div class="row">
 
-<button class="btn dark" onclick="openWallet()">
+<button class="btn dark" id="addMoneyBtn">
 ＋ Add Money
 </button>
 
-<button class="btn dark" onclick="goPage('history')">
+<button class="btn dark" id="historyTopBtn">
 History
 </button>
 
@@ -415,7 +304,7 @@ History
 
 
 <div class="section">
-<h2>🔥 Featured Products</h2>
+<h2>🔥 Products</h2>
 </div>
 
 <div id="products" class="grid"></div>
@@ -433,21 +322,23 @@ History
 
 <div class="wallet">
 
-<div class="wallet-title">AVAILABLE BALANCE</div>
+<small>AVAILABLE BALANCE</small>
 
 <div class="balance" id="walletBalance">₹0</div>
 
-<button class="btn dark" onclick="openWallet()">
+<button class="btn dark" id="walletAddBtn">
 ＋ Add Money
 </button>
 
 </div>
 
 <div class="section">
-<h2>Payment Requests</h2>
+<h2>Payment Status</h2>
 </div>
 
-<div class="card" id="walletPayments"></div>
+<div class="card" id="walletPayments">
+<div class="empty">Loading...</div>
+</div>
 
 </section>
 
@@ -466,17 +357,17 @@ History
 
 <p class="muted">
 Apna referral code share karo.
-Referred user ki eligible purchase par ₹50 reward milega.
+Referred user ki first eligible purchase par ₹50 reward milega.
 </p>
 
 <label>Your Referral Code</label>
 
 <div id="refCode"
-style="background:#080b15;padding:14px;border-radius:13px;font-weight:900">
+style="background:#080b15;padding:15px;border-radius:13px;font-weight:900">
 -
 </div>
 
-<button class="btn" onclick="copyReferral()">
+<button class="btn" id="copyRefBtn">
 Copy Referral Code
 </button>
 
@@ -532,15 +423,15 @@ Copy Referral Code
 
 </div>
 
-<button class="btn dark" onclick="openSupport()">
+<button class="btn dark" id="supportBtn">
 🎧 Customer Support
 </button>
 
-<button class="btn dark" onclick="openAdmin()">
+<button class="btn dark" id="adminBtn">
 ⚙️ Admin Panel
 </button>
 
-<button class="btn red" onclick="logout()">
+<button class="btn red" id="logoutBtn">
 Logout
 </button>
 
@@ -549,27 +440,27 @@ Logout
 </div>
 
 
-<!-- BOTTOM -->
+<!-- NAV -->
 
 <nav class="bottom">
 
-<button class="nav active" onclick="goPage('home',this)">
+<button class="nav active" data-page="home">
 <b>⌂</b>Home
 </button>
 
-<button class="nav" onclick="goPage('wallet',this)">
+<button class="nav" data-page="wallet">
 <b>◉</b>Wallet
 </button>
 
-<button class="nav" onclick="goPage('refer',this)">
+<button class="nav" data-page="refer">
 <b>🎁</b>Refer
 </button>
 
-<button class="nav" onclick="goPage('history',this)">
+<button class="nav" data-page="history">
 <b>◷</b>History
 </button>
 
-<button class="nav" onclick="goPage('profile',this)">
+<button class="nav" data-page="profile">
 <b>●</b>Profile
 </button>
 
@@ -578,7 +469,7 @@ Logout
 </div>
 
 
-<!-- ADD MONEY -->
+<!-- WALLET MODAL -->
 
 <div id="walletModal" class="modal hidden">
 
@@ -587,14 +478,14 @@ Logout
 <div class="modalhead">
 <div>
 <h2>💳 Add Money</h2>
-<p class="muted">Payment verification required</p>
+<p class="muted">Payment verification</p>
 </div>
-<button class="close" onclick="closeWallet()">×</button>
+<button class="close" id="closeWallet">×</button>
 </div>
 
 <div class="notice">
 QR par payment karo, phir amount aur UTR submit karo.
-Admin verification ke baad balance update hoga.
+Admin approve karega to wallet me money add hogi.
 </div>
 
 <div class="qr">
@@ -607,12 +498,12 @@ YOUR<br>PAYMENT<br>QR
 <label>UTR / Transaction ID</label>
 <input id="utr" placeholder="Enter UTR">
 
-<button class="btn" onclick="submitDeposit()">
+<button class="btn" id="submitDepositBtn">
 Submit Payment
 </button>
 
 <div class="section">
-<h2 style="font-size:17px">Payment Status</h2>
+<h2 style="font-size:17px">Your Payment Status</h2>
 </div>
 
 <div id="paymentStatus"></div>
@@ -621,7 +512,7 @@ Submit Payment
 </div>
 
 
-<!-- BUY -->
+<!-- BUY MODAL -->
 
 <div id="buyModal" class="modal hidden">
 
@@ -634,7 +525,7 @@ Submit Payment
 <p class="muted" id="buyDescription"></p>
 </div>
 
-<button class="close" onclick="closeBuy()">×</button>
+<button class="close" id="closeBuy">×</button>
 
 </div>
 
@@ -644,15 +535,15 @@ Product Price:
 </div>
 
 <label>Coupon Code</label>
-<input id="coupon" placeholder="Enter coupon">
+<input id="coupon" placeholder="Enter coupon code">
 
-<button class="btn dark" onclick="applyCoupon()">
+<button class="btn dark" id="couponBtn">
 Apply Coupon
 </button>
 
 <div id="couponResult" class="notice hidden"></div>
 
-<button class="btn" onclick="buyProduct()">
+<button class="btn" id="buyBtn">
 Confirm Purchase
 </button>
 
@@ -668,7 +559,7 @@ Confirm Purchase
 
 <div class="modalhead">
 <h2>🎧 Support</h2>
-<button class="close" onclick="closeSupport()">×</button>
+<button class="close" id="closeSupport">×</button>
 </div>
 
 <label>Subject</label>
@@ -679,7 +570,7 @@ Confirm Purchase
 style="height:130px"
 placeholder="Write your message"></textarea>
 
-<button class="btn" onclick="sendSupport()">
+<button class="btn" id="sendSupportBtn">
 Send Message
 </button>
 
@@ -695,7 +586,7 @@ Send Message
 
 <div class="modalhead">
 <h2>⚙️ Admin Login</h2>
-<button class="close" onclick="closeAdmin()">×</button>
+<button class="close" id="closeAdminLogin">×</button>
 </div>
 
 <label>Admin Email</label>
@@ -704,7 +595,7 @@ Send Message
 <label>Admin Password</label>
 <input id="adminPassword" type="password">
 
-<button class="btn" onclick="adminLogin()">
+<button class="btn" id="adminLoginBtn">
 Login
 </button>
 
@@ -712,7 +603,7 @@ Login
 </div>
 
 
-<!-- ADMIN -->
+<!-- ADMIN PANEL -->
 
 <div id="adminModal" class="modal hidden">
 
@@ -725,21 +616,21 @@ Login
 <p class="muted">Store Management</p>
 </div>
 
-<button class="close" onclick="closeAdminPanel()">×</button>
+<button class="close" id="closeAdminPanel">×</button>
 
 </div>
 
 <div class="admin-tabs">
 
-<button class="btn" onclick="adminPayments()">
+<button class="btn" id="adminPaymentsBtn">
 Payments
 </button>
 
-<button class="btn dark" onclick="adminProducts()">
+<button class="btn dark" id="adminProductsBtn">
 Products
 </button>
 
-<button class="btn dark" onclick="adminCoupons()">
+<button class="btn dark" id="adminCouponsBtn">
 Coupons
 </button>
 
@@ -761,18 +652,23 @@ let adminEmail="";
 let adminPassword="";
 
 
+/* API */
+
 async function api(url,options={}){
 
-options.headers={
+const headers={
 "Content-Type":"application/json",
 ...(options.headers||{})
 };
 
 if(token){
-options.headers.Authorization="Bearer "+token;
+headers.Authorization="Bearer "+token;
 }
 
-const response=await fetch(url,options);
+const response=await fetch(url,{
+...options,
+headers
+});
 
 let data={};
 
@@ -781,7 +677,7 @@ data=await response.json();
 }catch(e){}
 
 if(!response.ok){
-throw new Error(data.error||"Something went wrong");
+throw new Error(data.error||"Request failed");
 }
 
 return data;
@@ -790,14 +686,15 @@ return data;
 
 async function adminApi(url,options={}){
 
-options.headers={
+const response=await fetch(url,{
+...options,
+headers:{
 "Content-Type":"application/json",
 "x-admin-email":adminEmail,
 "x-admin-password":adminPassword,
 ...(options.headers||{})
-};
-
-const response=await fetch(url,options);
+}
+});
 
 let data={};
 
@@ -818,4 +715,418 @@ return "₹"+Number(n||0).toLocaleString("en-IN");
 }
 
 
-function
+function safe(x){
+
+return String(x??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+/* AUTH SCREEN */
+
+function showRegister(){
+
+document.getElementById("loginBox")
+.classList.add("hidden");
+
+document.getElementById("registerBox")
+.classList.remove("hidden");
+
+}
+
+
+function showLogin(){
+
+document.getElementById("registerBox")
+.classList.add("hidden");
+
+document.getElementById("loginBox")
+.classList.remove("hidden");
+
+}
+
+
+async function register(){
+
+const name=
+document.getElementById("regName").value.trim();
+
+const email=
+document.getElementById("regEmail").value.trim();
+
+const password=
+document.getElementById("regPassword").value;
+
+const referralCode=
+document.getElementById("regReferral").value.trim();
+
+if(!name||!email||!password){
+
+alert("Name, email aur password required hai.");
+
+return;
+}
+
+try{
+
+const data=await api("/api/register",{
+method:"POST",
+body:JSON.stringify({
+name,
+email,
+password,
+referralCode
+})
+});
+
+token=data.token;
+
+localStorage.setItem("xenon_token",token);
+
+await start();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+async function login(){
+
+const email=
+document.getElementById("loginEmail").value.trim();
+
+const password=
+document.getElementById("loginPassword").value;
+
+if(!email||!password){
+
+alert("Email aur password enter karo.");
+
+return;
+}
+
+try{
+
+const data=await api("/api/login",{
+method:"POST",
+body:JSON.stringify({
+email,
+password
+})
+});
+
+token=data.token;
+
+localStorage.setItem("xenon_token",token);
+
+await start();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+/* START */
+
+async function start(){
+
+if(!token){
+return;
+}
+
+try{
+
+user=await api("/api/me");
+
+document.getElementById("auth")
+.classList.add("hidden");
+
+document.getElementById("app")
+.classList.remove("hidden");
+
+updateUser();
+
+loadProducts();
+
+}catch(error){
+
+localStorage.removeItem("xenon_token");
+
+token=null;
+
+}
+
+}
+
+
+function updateUser(){
+
+document.getElementById("balance")
+.textContent=money(user.wallet);
+
+document.getElementById("walletBalance")
+.textContent=money(user.wallet);
+
+document.getElementById("profileName")
+.textContent=user.name;
+
+document.getElementById("profileEmail")
+.textContent=user.email;
+
+document.getElementById("profileUid")
+.textContent=user.uid;
+
+document.getElementById("refCode")
+.textContent=user.referralCode;
+
+document.getElementById("avatar")
+.textContent=(user.name||"X")[0].toUpperCase();
+
+}
+
+
+/* NAVIGATION */
+
+function goPage(name,button){
+
+[
+"homePage",
+"walletPage",
+"referPage",
+"historyPage",
+"profilePage"
+].forEach(id=>{
+document.getElementById(id)
+.classList.add("hidden");
+});
+
+document.getElementById(name+"Page")
+.classList.remove("hidden");
+
+document.querySelectorAll(".nav")
+.forEach(x=>x.classList.remove("active"));
+
+if(button){
+button.classList.add("active");
+}
+
+if(name==="history"){
+loadHistory();
+}
+
+if(name==="wallet"){
+loadWalletPayments();
+}
+
+window.scrollTo(0,0);
+
+}
+
+
+/* PRODUCTS */
+
+async function loadProducts(){
+
+try{
+
+const products=await api("/api/products");
+
+const box=document.getElementById("products");
+
+box.innerHTML="";
+
+if(!products.length){
+
+box.innerHTML=
+'<div class="card empty">No products available</div>';
+
+return;
+
+}
+
+products.forEach(product=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML=`
+
+<div class="icon">
+${safe(product.icon||"🎟️")}
+</div>
+
+<h3>${safe(product.name)}</h3>
+
+<p class="muted">
+${safe(product.description||"Digital product")}
+</p>
+
+<div class="price">
+${money(product.price)}
+</div>
+
+<button class="btn buyButton">
+Buy Now
+</button>
+`;
+
+card.querySelector(".buyButton")
+.addEventListener("click",function(){
+
+openBuy(product);
+
+});
+
+box.appendChild(card);
+
+});
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+/* WALLET */
+
+function openWallet(){
+
+document.getElementById("walletModal")
+.classList.remove("hidden");
+
+loadPaymentStatus();
+
+}
+
+
+function closeWallet(){
+
+document.getElementById("walletModal")
+.classList.add("hidden");
+
+}
+
+
+async function submitDeposit(){
+
+const amount=
+Number(document.getElementById("amount").value);
+
+const utr=
+document.getElementById("utr").value.trim();
+
+if(!amount||amount<10){
+
+alert("Minimum deposit ₹10 hai.");
+
+return;
+
+}
+
+if(!utr){
+
+alert("UTR required hai.");
+
+return;
+
+}
+
+try{
+
+await api("/api/deposits",{
+method:"POST",
+body:JSON.stringify({
+amount,
+utr
+})
+});
+
+document.getElementById("amount").value="";
+document.getElementById("utr").value="";
+
+alert("Payment submitted. Admin approval ka wait karo.");
+
+loadPaymentStatus();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+async function loadPaymentStatus(){
+
+try{
+
+const data=await api("/api/history");
+
+const box=
+document.getElementById("paymentStatus");
+
+if(!data.deposits.length){
+
+box.innerHTML=
+'<div class="empty">No payments yet</div>';
+
+return;
+
+}
+
+box.innerHTML=data.deposits
+.slice().reverse()
+.map(d=>`
+
+<div class="history">
+
+<b>${money(d.amount)}</b>
+
+<br>
+
+<span class="muted">
+UTR: ${safe(d.utr)}
+</span>
+
+<br><br>
+
+<span class="status ${safe(d.status)}">
+${safe(d.status)}
+</span>
+
+${d.reviewNote?
+`<div class="muted">${safe(d.reviewNote)}</div>`
+:""}
+
+</div>
+
+`).join("");
+
+}catch(error){}
+
+}
+
+
+async function loadWalletPayments(){
+
+try{
+
+const data=
