@@ -1,444 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Xenon Shop - Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>Xenon Shop Admin</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #070914;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+<style>
+*{
+  box-sizing:border-box;
+}
 
-    .box {
-      width: 100%;
-      max-width: 430px;
-      background: #111528;
-      border: 1px solid #292f4d;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.45);
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  background:#070914;
+  color:#fff;
+  padding:25px;
+}
 
-    .logo {
-      font-size: 28px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
+.box{
+  max-width:500px;
+  margin:40px auto;
+  background:#111528;
+  border:1px solid #2b3150;
+  border-radius:24px;
+  padding:28px;
+}
 
-    .logo span {
-      color: #8657ff;
-    }
+.logo{
+  font-size:30px;
+  font-weight:900;
+}
 
-    h1 {
-      margin: 30px 0 8px;
-      font-size: 32px;
-    }
+.logo span{
+  color:#8255ff;
+}
 
-    .sub {
-      color: #9298b3;
-      margin-bottom: 28px;
-    }
+h1{
+  margin-top:30px;
+}
 
-    label {
-      display: block;
-      color: #b8bdd2;
-      margin: 18px 0 8px;
-    }
+.sub{
+  color:#9298b3;
+  margin-bottom:25px;
+}
 
-    input {
-      width: 100%;
-      padding: 16px;
-      border-radius: 14px;
-      border: 1px solid #303654;
-      background: #080b18;
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
+label{
+  display:block;
+  margin:16px 0 8px;
+  color:#bfc4d8;
+}
 
-    input:focus {
-      border-color: #8657ff;
-    }
+input{
+  width:100%;
+  padding:15px;
+  border-radius:13px;
+  border:1px solid #303752;
+  background:#080b18;
+  color:white;
+  font-size:16px;
+  outline:none;
+}
 
-    button {
-      width: 100%;
-      margin-top: 25px;
-      padding: 16px;
-      border: 0;
-      border-radius: 14px;
-      background: #7952ff;
-      color: white;
-      font-size: 17px;
-      font-weight: 800;
-      cursor: pointer;
-    }
+button{
+  width:100%;
+  padding:16px;
+  margin-top:22px;
+  border:0;
+  border-radius:14px;
+  background:#7952ff;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+}
 
-    button:active {
-      transform: scale(.98);
-    }
+.message{
+  margin-top:18px;
+  padding:13px;
+  border-radius:12px;
+  background:#321b29;
+  color:#ff9ab8;
+  display:none;
+}
 
-    .message {
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 12px;
-      display: none;
-      background: #26172a;
-      color: #ff9cbd;
-    }
+#dashboard{
+  display:none;
+}
 
-    .dashboard {
-      display: none;
-    }
+.card{
+  background:#080b18;
+  border:1px solid #292f4c;
+  border-radius:16px;
+  padding:20px;
+  margin-top:14px;
+}
 
-    .stat {
-      background: #080b18;
-      border: 1px solid #292f4d;
-      padding: 18px;
-      border-radius: 16px;
-      margin-top: 12px;
-    }
+.number{
+  font-size:30px;
+  font-weight:bold;
+  margin-top:7px;
+}
 
-    .stat b {
-      font-size: 25px;
-      display: block;
-      margin-top: 5px;
-    }
-
-    .logout {
-      background: #242941;
-      margin-top: 15px;
-    }
-  </style>
+.logout{
+  background:#292e43;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="box">
+<div class="box">
 
-    <div class="logo">
-      XENON<span>SHOP</span>
+  <div class="logo">
+    XENON<span>SHOP</span>
+  </div>
+
+  <!-- LOGIN -->
+
+  <div id="login">
+
+    <h1>Admin Login</h1>
+
+    <div class="sub">
+      Login to Xenon Shop Admin Panel
     </div>
 
-    <!-- LOGIN -->
+    <label>Email</label>
 
-    <div id="loginBox">
+    <input
+      id="email"
+      type="email"
+      value="admin@xenon.shop"
+      placeholder="Admin email"
+    >
 
-      <h1>Admin Login</h1>
+    <label>Password</label>
 
-      <div class="sub">
-        Xenon Shop administrator panel
-      </div>
+    <input
+      id="password"
+      type="password"
+      placeholder="Admin password"
+    >
 
-      <label>Email</label>
+    <button onclick="loginAdmin()">
+      🔐 Login
+    </button>
 
-      <input
-        id="email"
-        type="email"
-        placeholder="Admin email"
-        autocomplete="username"
-      >
-
-      <label>Password</label>
-
-      <input
-        id="password"
-        type="password"
-        placeholder="Admin password"
-        autocomplete="current-password"
-      >
-
-      <button onclick="adminLogin()">
-        🔐 Login to Admin
-      </button>
-
-      <div id="message" class="message"></div>
-
-    </div>
-
-
-    <!-- DASHBOARD -->
-
-    <div id="dashboard">
-
-      <h1>Admin Panel</h1>
-
-      <div class="sub">
-        Welcome to Xenon Shop
-      </div>
-
-      <div class="stat">
-        Users
-        <b id="users">0</b>
-      </div>
-
-      <div class="stat">
-        Products
-        <b id="products">0</b>
-      </div>
-
-      <div class="stat">
-        Pending Deposits
-        <b id="pending">0</b>
-      </div>
-
-      <div class="stat">
-        Purchases
-        <b id="purchases">0</b>
-      </div>
-
-      <button class="logout" onclick="logout()">
-        Logout
-      </button>
-
-    </div>
+    <div
+      id="message"
+      class="message"
+    ></div>
 
   </div>
 
 
+  <!-- DASHBOARD -->
+
+  <div id="dashboard">
+
+    <h1>Admin Panel</h1>
+
+    <div class="sub">
+      Xenon Shop Control Center
+    </div>
+
+    <div class="card">
+      👥 Users
+      <div
+        id="users"
+        class="number"
+      >
+        Loading...
+      </div>
+    </div>
+
+    <div class="card">
+      📦 Products
+      <div
+        id="products"
+        class="number"
+      >
+        Loading...
+      </div>
+    </div>
+
+    <div class="card">
+      💰 Deposits
+      <div
+        id="deposits"
+        class="number"
+      >
+        Loading...
+      </div>
+    </div>
+
+    <div class="card">
+      🛒 Purchases
+      <div
+        id="orders"
+        class="number"
+      >
+        Loading...
+      </div>
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</div>
+
+
 <script>
 
-  const ADMIN_EMAIL = "admin@xenon.shop";
-  const ADMIN_PASSWORD = "admin123";
+let adminEmail = "";
+let adminPassword = "";
 
 
-  function showMessage(text) {
+/* MESSAGE */
 
-    const box =
-      document.getElementById("message");
+function message(text){
 
-    box.innerText = text;
-    box.style.display = "block";
+  const box =
+    document.getElementById("message");
 
+  box.innerText = text;
+  box.style.display = "block";
+
+}
+
+
+/* ADMIN LOGIN */
+
+async function loginAdmin(){
+
+  const email =
+    document.getElementById("email")
+      .value
+      .trim();
+
+  const password =
+    document.getElementById("password")
+      .value;
+
+
+  if(!email || !password){
+
+    message(
+      "Email aur password bharo."
+    );
+
+    return;
   }
 
 
-  async function adminLogin() {
+  const button =
+    document.querySelector(
+      "#login button"
+    );
 
-    const email =
-      document.getElementById("email")
-        .value
-        .trim();
+  button.disabled = true;
 
-    const password =
-      document.getElementById("password")
-        .value;
+  button.innerText =
+    "Checking...";
 
 
-    if (!email || !password) {
+  try{
 
-      showMessage(
-        "Email aur password dono bharo."
+    /*
+      Tumhare server me
+      admin login endpoint nahi hai.
+
+      Server headers check karta hai.
+    */
+
+    const response =
+      await fetch(
+        "/api/admin/deposits",
+        {
+          method:"GET",
+
+          headers:{
+            "x-admin-email":email,
+            "x-admin-password":password
+          }
+        }
       );
 
-      return;
+
+    if(response.status === 401){
+
+      throw new Error(
+        "Invalid admin email ya password."
+      );
+
     }
 
 
-    const button =
-      document.querySelector("#loginBox button");
+    if(!response.ok){
 
-    button.disabled = true;
-    button.innerText = "Logging in...";
+      throw new Error(
+        "Admin server error."
+      );
 
-
-    try {
-
-      const response =
-        await fetch("/api/admin/login", {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-
-        });
+    }
 
 
-      const data =
-        await response.json();
+    /*
+      Login successful
+    */
+
+    adminEmail = email;
+    adminPassword = password;
 
 
-      if (!response.ok) {
+    sessionStorage.setItem(
+      "xenon_admin_email",
+      email
+    );
 
-        throw new Error(
-          data.error ||
-          "Admin login failed"
-        );
-
-      }
+    sessionStorage.setItem(
+      "xenon_admin_password",
+      password
+    );
 
 
-      localStorage.setItem(
-        "xenon_admin_token",
-        data.token
+    document.getElementById(
+      "login"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "dashboard"
+    ).style.display = "block";
+
+
+    loadDashboard();
+
+  }
+
+  catch(error){
+
+    message(
+      error.message
+    );
+
+  }
+
+  finally{
+
+    button.disabled = false;
+
+    button.innerText =
+      "🔐 Login";
+
+  }
+
+}
+
+
+/* AUTH HEADERS */
+
+function headers(){
+
+  return {
+
+    "x-admin-email":
+      adminEmail,
+
+    "x-admin-password":
+      adminPassword
+
+  };
+
+}
+
+
+/* DASHBOARD */
+
+async function loadDashboard(){
+
+  try{
+
+    /*
+      Products
+    */
+
+    const productsResponse =
+      await fetch(
+        "/api/products"
+      );
+
+    const products =
+      await productsResponse.json();
+
+
+    document.getElementById(
+      "products"
+    ).innerText =
+      Array.isArray(products)
+        ? products.length
+        : 0;
+
+
+    /*
+      Deposits
+    */
+
+    const depositsResponse =
+      await fetch(
+        "/api/admin/deposits",
+        {
+          headers:headers()
+        }
       );
 
 
-      document.getElementById(
-        "loginBox"
-      ).style.display = "none";
+    const deposits =
+      await depositsResponse.json();
 
+
+    document.getElementById(
+      "deposits"
+    ).innerText =
+      Array.isArray(deposits)
+        ? deposits.length
+        : 0;
+
+
+    /*
+      Users/orders ka separate
+      admin endpoint tumhare
+      current server me nahi hai.
+    */
+
+    document.getElementById(
+      "users"
+    ).innerText =
+      "—";
+
+
+    document.getElementById(
+      "orders"
+    ).innerText =
+      "—";
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+  }
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+  sessionStorage.removeItem(
+    "xenon_admin_email"
+  );
+
+  sessionStorage.removeItem(
+    "xenon_admin_password"
+  );
+
+  adminEmail = "";
+  adminPassword = "";
+
+  location.reload();
+
+}
+
+
+/* AUTO LOGIN */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    const email =
+      sessionStorage.getItem(
+        "xenon_admin_email"
+      );
+
+    const password =
+      sessionStorage.getItem(
+        "xenon_admin_password"
+      );
+
+
+    if(email && password){
+
+      adminEmail = email;
+      adminPassword = password;
+
+      document.getElementById(
+        "login"
+      ).style.display = "none";
 
       document.getElementById(
         "dashboard"
       ).style.display = "block";
 
-
-      loadStats();
-
-    }
-
-    catch (error) {
-
-      showMessage(
-        error.message
-      );
-
-    }
-
-    finally {
-
-      button.disabled = false;
-      button.innerText =
-        "🔐 Login to Admin";
+      loadDashboard();
 
     }
 
   }
-
-
-  async function loadStats() {
-
-    const token =
-      localStorage.getItem(
-        "xenon_admin_token"
-      );
-
-
-    if (!token) return;
-
-
-    try {
-
-      const response =
-        await fetch(
-          "/api/admin/stats",
-          {
-            headers: {
-              Authorization:
-                "Bearer " + token
-            }
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "Stats error"
-        );
-      }
-
-
-      document.getElementById(
-        "users"
-      ).innerText =
-        data.users || 0;
-
-
-      document.getElementById(
-        "products"
-      ).innerText =
-        data.products || 0;
-
-
-      document.getElementById(
-        "pending"
-      ).innerText =
-        data.pendingDeposits || 0;
-
-
-      document.getElementById(
-        "purchases"
-      ).innerText =
-        data.purchases || 0;
-
-    }
-
-    catch (error) {
-
-      console.log(error);
-
-      logout();
-
-    }
-
-  }
-
-
-  function logout() {
-
-    localStorage.removeItem(
-      "xenon_admin_token"
-    );
-
-    location.reload();
-
-  }
-
-
-  /*
-    Agar pehle se admin token hai
-    to dashboard dikhao.
-  */
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      const token =
-        localStorage.getItem(
-          "xenon_admin_token"
-        );
-
-      if (token) {
-
-        document.getElementById(
-          "loginBox"
-        ).style.display = "none";
-
-        document.getElementById(
-          "dashboard"
-        ).style.display = "block";
-
-        loadStats();
-
-      }
-
-    }
-  );
+);
 
 </script>
 
