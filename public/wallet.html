@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallet</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">XENON<span>SHOP</span></div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+  <h1>Wallet 💰</h1>
+  <p>Add money and check payment status.</p>
+</section>
+
+<div class="card">
+
+<h3>Payment UPI</h3>
+
+<div class="price" id="upi">
+Loading...
+</div>
+
+<label class="label">
+Amount
+</label>
+
+<input
+  id="amount"
+  class="input"
+  type="number"
+  placeholder="Enter amount">
+
+<label class="label">
+UTR / Transaction ID
+</label>
+
+<input
+  id="utr"
+  class="input"
+  placeholder="Enter UTR">
+
+<button
+  class="btn"
+  onclick="submitPayment()">
+
+SUBMIT PAYMENT
+
+</button>
+
+</div>
+
+<h2>Payment History</h2>
+
+<div id="history"></div>
+
+</main>
+
+<nav class="nav">
+  <a href="/shop.html">🏠 Shop</a>
+  <a href="/wallet.html">💰 Wallet</a>
+  <a href="/referral.html">🎁 Refer</a>
+  <a href="/profile.html">👤 Profile</a>
+</nav>
+
+<script>
+
+const token =
+  localStorage.getItem("xenon_token");
+
+if(!token){
+  location.href="/login.html";
+}
+
+const headers = {
+  "Authorization":"Bearer "+token,
+  "Content-Type":"application/json"
+};
+
+async function load(){
+
+  const paymentInfo =
+    await fetch("/api/payment-info")
+      .then(r=>r.json());
+
+  document.getElementById("upi").textContent =
+    paymentInfo.upiId;
+
+  const response =
+    await fetch("/api/deposits",{
+      headers
+    });
+
+  const deposits =
+    await response.json();
+
+  if(!deposits.length){
+
+    document.getElementById("history").innerHTML =
+      `<div class="card">
+        <p>No payments yet.</p>
+      </div>`;
+
+    return;
+  }
+
+  document.getElementById("history").innerHTML =
+    deposits.map(d=>`
+
+      <div class="card">
+
+        <h3>₹${d.amount}</h3>
+
+        <p>
+          UTR: ${d.utr}
+        </p>
+
+        <span class="status ${d.status}">
+          ${d.status}
+        </span>
+
+      </div>
+
+    `).join("");
+
+}
+
+async function submitPayment(){
+
+  const amount =
+    document.getElementById("amount").value;
+
+  const utr =
+    document.getElementById("utr").value.trim();
+
+  if(!amount || !utr){
+
+    alert(
+      "Amount and UTR enter karo"
+    );
+
+    return;
+  }
+
+  const response =
+    await fetch("/api/deposits",{
+      method:"POST",
+      headers,
+      body:JSON.stringify({
+        amount,
+        utr
+      })
+    });
+
+  const data =
+    await response.json();
+
+  if(!response.ok){
+
+    alert(data.error);
+
+    return;
+  }
+
+  alert(
+    "Payment submitted! Status: PENDING"
+  );
+
+  document.getElementById("amount").value="";
+  document.getElementById("utr").value="";
+
+  load();
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
