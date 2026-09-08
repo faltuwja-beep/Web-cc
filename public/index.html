@@ -1,370 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xenon Shop</title>
-
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  font-family:Arial,sans-serif;
-  background:#080914;
-  color:#fff;
-}
-button,input{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-
-.auth{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
-
-.box{
-  width:100%;
-  max-width:420px;
-  background:#121426;
-  border:1px solid #303452;
-  border-radius:24px;
-  padding:28px;
-  box-shadow:0 20px 60px rgba(0,0,0,.4);
-}
-
-.logo{
-  text-align:center;
-  font-size:30px;
-  font-weight:900;
-  margin-bottom:25px;
-}
-
-.logo span{color:#8b5cf6}
-
-h1{margin:0 0 8px}
-p{color:#9da1bb;line-height:1.5}
-
-label{
-  display:block;
-  margin:16px 0 7px;
-  color:#b9bdd2;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #383b5c;
-  background:#080914;
-  color:white;
-  outline:none;
-}
-
-input:focus{border-color:#8b5cf6}
-
-.btn{
-  width:100%;
-  border:0;
-  padding:14px;
-  border-radius:13px;
-  margin-top:20px;
-  background:linear-gradient(135deg,#7c3aed,#a855f7);
-  color:white;
-  font-weight:800;
-}
-
-.link{
-  background:none;
-  border:0;
-  color:#a78bfa;
-  font-weight:700;
-}
-
-.switch{
-  text-align:center;
-  margin-top:20px;
-}
-
-#app{
-  min-height:100vh;
-  padding-bottom:90px;
-}
-
-header{
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#0b0c18;
-  border-bottom:1px solid #292c47;
-}
-
-.head{
-  max-width:1000px;
-  margin:auto;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.brand{
-  font-weight:900;
-  font-size:22px;
-}
-
-.brand span{color:#8b5cf6}
-
-.wallet{
-  background:#191b30;
-  padding:10px 14px;
-  border-radius:12px;
-}
-
-main{
-  max-width:1000px;
-  margin:auto;
-  padding:22px 16px;
-}
-
-.hero{
-  padding:28px;
-  border-radius:24px;
-  background:linear-gradient(135deg,#241653,#14172b);
-  border:1px solid #3a3560;
-  margin-bottom:25px;
-}
-
-.hero h1{font-size:32px}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-}
-
-.card{
-  background:#121426;
-  border:1px solid #2c2f4c;
-  border-radius:20px;
-  padding:20px;
-}
-
-.price{
-  font-size:25px;
-  font-weight:900;
-  margin:15px 0;
-}
-
-.bottom{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#0d0e1b;
-  border-top:1px solid #292c47;
-  z-index:10;
-}
-
-.nav{
-  max-width:650px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-}
-
-.nav button{
-  border:0;
-  background:none;
-  color:#8589a4;
-  padding:13px 5px;
-  font-size:12px;
-}
-
-.nav button.active{color:#a78bfa}
-
-.nav b{
-  display:block;
-  font-size:20px;
-  margin-bottom:3px;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:20;
-  background:rgba(0,0,0,.75);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.modalbox{
-  width:100%;
-  max-width:430px;
-  background:#121426;
-  border:1px solid #383b5c;
-  border-radius:22px;
-  padding:24px;
-}
-
-.close{
-  float:right;
-  border:0;
-  background:#24263d;
-  color:#fff;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  font-size:20px;
-}
-
-.status{
-  display:inline-block;
-  padding:6px 9px;
-  border-radius:8px;
-  font-size:11px;
-  font-weight:bold;
-}
-
-.pending{background:#3b2e0b;color:#fbbf24}
-.approved{background:#123a24;color:#4ade80}
-.rejected{background:#3d1820;color:#fb7185}
-
-.toast{
-  position:fixed;
-  top:18px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:100;
-  background:#202239;
-  border:1px solid #444866;
-  border-radius:12px;
-  padding:12px 18px;
-  display:none;
-}
-
-.toast.show{display:block}
-
-@media(max-width:600px){
-  .hero h1{font-size:27px}
-}
-</style>
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+<title>Login</title>
+<link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
-<div id="toast" class="toast"></div>
+<main class="auth">
 
-<!-- LOGIN / REGISTER -->
+<div class="authbox">
 
-<div id="auth" class="auth">
+<div class="logo">
+XENON<span>SHOP</span>
+</div>
 
-  <div class="box">
+<h1>Login</h1>
 
-    <div class="logo">
-      XENON<span>SHOP</span>
-    </div>
+<p>
+Welcome back.
+</p>
 
-    <!-- LOGIN -->
+<label class="label">
+Email
+</label>
 
-    <div id="loginBox">
+<input
+id="email"
+class="input"
+type="email"
+placeholder="Enter email">
 
-      <h1>Welcome Back</h1>
+<label class="label">
+Password
+</label>
 
-      <p>Login to your Xenon Shop account.</p>
+<input
+id="password"
+class="input"
+type="password"
+placeholder="Enter password">
 
-      <label>Email</label>
-      <input id="loginEmail" type="email" placeholder="Enter email">
+<button
+class="btn"
+onclick="login()">
 
-      <label>Password</label>
-      <input id="loginPassword" type="password" placeholder="Enter password">
+LOGIN
 
-      <button class="btn" onclick="login()">
-        LOGIN
-      </button>
+</button>
 
-      <div class="switch">
-        New user?
-        <button class="link" onclick="showRegister()">
-          CREATE ACCOUNT
-        </button>
-      </div>
+<p>
+New user?
+<a href="/register.html">
+Create account
+</a>
+</p>
 
-    </div>
-
-    <!-- REGISTER -->
-
-    <div id="registerBox" class="hidden">
-
-      <h1>Create Account</h1>
-
-      <p>Register your new Xenon Shop account.</p>
-
-      <label>Name</label>
-      <input id="regName" type="text" placeholder="Your name">
-
-      <label>Email</label>
-      <input id="regEmail" type="email" placeholder="Your email">
-
-      <label>Password</label>
-      <input id="regPassword" type="password" placeholder="Minimum 6 characters">
-
-      <label>Referral Code (optional)</label>
-      <input id="regReferral" type="text" placeholder="Referral code">
-
-      <button class="btn" onclick="register()">
-        REGISTER
-      </button>
-
-      <div class="switch">
-        Already registered?
-        <button class="link" onclick="showLogin()">
-          LOGIN
-        </button>
-      </div>
-
-    </div>
-
-  </div>
+<p>
+<a href="/">
+← Home
+</a>
+</p>
 
 </div>
 
-<!-- APP -->
+</main>
 
-<div id="app" class="hidden">
+<script>
 
-<header>
-  <div class="head">
+async function login(){
 
-    <div class="brand">
-      XENON<span>SHOP</span>
-    </div>
+const email =
+document.getElementById(
+"email"
+).value.trim();
 
-    <div class="wallet">
-      ₹<span id="balance">0</span>
-    </div>
+const password =
+document.getElementById(
+"password"
+).value;
 
-  </div>
-</header>
+if(!email || !password){
 
-<main>
+alert(
+"Email and password required"
+);
 
-  <!-- HOME -->
+return;
+}
 
-  <section id="home">
+try{
 
-    <div class="hero">
+const response =
+await fetch(
+"/api/login",
+{
+method:"POST",
 
-      <h1>Premium Digital Store 🚀</h1>
+headers:{
+"Content-Type":
+"application/json"
+},
 
-      <p>
-        Welcome to Xenon Shop. Buy products
-        using your wallet balance.
-      </p>
+body:JSON.stringify({
+email,
+password
+})
+}
+);
 
-    </div>
+const data =
+await response.json();
+
+if(!response.ok){
+throw new Error(
+data.error
+);
+}
+
+localStorage.setItem(
+"xenon_token",
+data.token
+);
+
+location.href =
+"/shop.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
