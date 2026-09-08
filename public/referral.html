@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Referral</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">XENON<span>SHOP</span></div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+
+<h1>Referral 🎁</h1>
+
+<p>
+Share your referral link with friends.
+</p>
+
+</section>
+
+<div class="card">
+
+<h3>Your Referral Code</h3>
+
+<div
+  id="code"
+  class="price">
+
+Loading...
+
+</div>
+
+<button
+  class="btn"
+  onclick="copyLink()">
+
+COPY REFERRAL LINK
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Total Referral Bonus</h3>
+
+<div class="price">
+₹<span id="bonus">0</span>
+</div>
+
+</div>
+
+</main>
+
+<nav class="nav">
+  <a href="/shop.html">🏠 Shop</a>
+  <a href="/wallet.html">💰 Wallet</a>
+  <a href="/referral.html">🎁 Refer</a>
+  <a href="/profile.html">👤 Profile</a>
+</nav>
+
+<script>
+
+const token =
+  localStorage.getItem("xenon_token");
+
+if(!token){
+  location.href="/login.html";
+}
+
+let referralLink="";
+
+async function load(){
+
+  const response =
+    await fetch("/api/referrals",{
+      headers:{
+        "Authorization":
+          "Bearer "+token
+      }
+    });
+
+  const data =
+    await response.json();
+
+  document.getElementById("code")
+    .textContent =
+    data.referralCode;
+
+  document.getElementById("bonus")
+    .textContent =
+    data.bonus;
+
+  referralLink =
+    location.origin +
+    "/register.html?ref=" +
+    data.referralCode;
+
+}
+
+async function copyLink(){
+
+  try{
+
+    await navigator.clipboard
+      .writeText(referralLink);
+
+    alert(
+      "Referral link copied!"
+    );
+
+  }catch{
+
+    prompt(
+      "Copy this link:",
+      referralLink
+    );
+
+  }
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
