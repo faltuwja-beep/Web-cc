@@ -2,172 +2,296 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Xenon Shop</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
-:root{
- --bg:#070914;--card:#101426;--card2:#151a2d;--line:#252b43;
- --text:#f7f8ff;--muted:#8f97ad;--purple:#7657ff;--purple2:#9a86ff;
- --green:#27d17f;--red:#ff526d;--yellow:#ffc857;
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#070914;
+ color:#fff;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
 }
-body{background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:82px}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
-.app{width:100%;max-width:720px;margin:auto;min-height:100vh}
 
-.topbar{
- position:sticky;top:0;z-index:50;height:66px;padding:0 17px;
- display:flex;align-items:center;justify-content:space-between;
- background:rgba(7,9,20,.92);backdrop-filter:blur(18px);
- border-bottom:1px solid var(--line)
-}
-.logo{font-size:21px;font-weight:900;letter-spacing:.8px}
-.logo span{color:var(--purple2)}
-.avatar{
- width:40px;height:40px;border-radius:13px;
- background:linear-gradient(135deg,#7657ff,#38266e);
- display:grid;place-items:center;font-weight:900
-}
-.page{padding:18px 15px}
-.hero{padding:16px 4px 23px}
-.tag{
- display:inline-block;background:#17152a;border:1px solid #38305e;
- color:#a996ff;padding:7px 11px;border-radius:30px;
- font-size:11px;margin-bottom:13px
-}
-.hero h1{font-size:38px;line-height:1.04;margin-bottom:10px}
-.hero h1 span{color:var(--purple2)}
-.hero p{color:var(--muted);line-height:1.6;font-size:14px}
+.wrap{max-width:700px;margin:auto;padding:18px}
 
-.wallet{
- background:linear-gradient(135deg,#7657ff,#382675);
- border-radius:24px;padding:21px;margin-bottom:20px;
- box-shadow:0 20px 50px rgba(55,37,150,.22)
+.logo{
+ font-size:25px;
+ font-weight:900;
+ margin:10px 0 30px;
 }
-.wallet-title{font-size:11px;opacity:.75}
-.balance{font-size:36px;font-weight:900;margin:5px 0 15px}
-.wallet-row{display:flex;gap:9px}
-.wallet-row button{flex:1}
+.logo span{color:#8d72ff}
+
+.auth{
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+}
+.authbox{
+ width:100%;
+ max-width:430px;
+ background:#111528;
+ border:1px solid #282e49;
+ border-radius:24px;
+ padding:25px;
+}
+.authbox h1{margin:0 0 8px;font-size:28px}
+.sub{color:#9299ae;font-size:14px;margin-bottom:22px}
+
+label{
+ display:block;
+ color:#aab0c0;
+ font-size:12px;
+ margin:13px 0 7px;
+}
+input,textarea{
+ width:100%;
+ background:#080b15;
+ color:#fff;
+ border:1px solid #292f48;
+ border-radius:13px;
+ padding:13px;
+ outline:none;
+}
+input:focus,textarea:focus{border-color:#8064ff}
 
 .btn{
- border:0;border-radius:13px;padding:13px 15px;
- background:var(--purple);color:#fff;font-weight:800
+ border:0;
+ border-radius:13px;
+ padding:13px 16px;
+ background:#7657ff;
+ color:#fff;
+ font-weight:800;
+ width:100%;
+ margin-top:12px;
 }
-.btn.light{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18)}
-.btn.dark{background:#171c2f;border:1px solid var(--line)}
-.btn.red{background:#491a27;color:#ff8295}
+.btn.secondary{background:#191e31;border:1px solid #2a3048}
+.btn.danger{background:#4b1b29;color:#ff8da0}
 
-.section-title{
- display:flex;justify-content:space-between;align-items:center;
- margin:22px 2px 13px
+.switch{
+ text-align:center;
+ color:#a692ff;
+ font-size:13px;
+ margin-top:18px;
+ cursor:pointer;
 }
-.section-title h2{font-size:20px}
 
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:16px}
-.product{transition:.2s}
-.product:active{transform:scale(.98)}
-.product-icon{
- width:52px;height:52px;border-radius:15px;background:#18162b;
- display:grid;place-items:center;font-size:26px;margin-bottom:13px
+#app{display:none}
+
+.top{
+ position:sticky;
+ top:0;
+ z-index:20;
+ background:rgba(7,9,20,.95);
+ backdrop-filter:blur(15px);
+ border-bottom:1px solid #252b42;
+ padding:16px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
 }
-.product h3{font-size:15px;margin-bottom:6px}
-.product-desc{color:var(--muted);font-size:12px;line-height:1.45;min-height:38px}
-.product-price{font-size:20px;font-weight:900;margin:13px 0}
-.buy-btn{width:100%}
+
+.avatar{
+ width:40px;
+ height:40px;
+ border-radius:12px;
+ background:#7657ff;
+ display:grid;
+ place-items:center;
+ font-weight:900;
+}
+
+.hero{
+ padding:28px 4px 20px;
+}
+.hero small{
+ color:#a38eff;
+ background:#17142b;
+ border:1px solid #332b55;
+ padding:7px 10px;
+ border-radius:20px;
+}
+.hero h1{
+ font-size:38px;
+ line-height:1.05;
+ margin:18px 0 10px;
+}
+.hero h1 span{color:#927cff}
+.hero p{color:#9299ae;line-height:1.6}
+
+.wallet{
+ background:linear-gradient(135deg,#7657ff,#37266e);
+ border-radius:22px;
+ padding:20px;
+ margin:12px 0 25px;
+}
+.wallet small{opacity:.75}
+.balance{
+ font-size:36px;
+ font-weight:900;
+ margin:7px 0 15px;
+}
+.row{display:flex;gap:9px}
+.row button{margin:0}
+
+.title{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin:20px 0 13px;
+}
+.title h2{font-size:20px}
+
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+.card{
+ background:#111528;
+ border:1px solid #282e49;
+ border-radius:18px;
+ padding:16px;
+}
+.icon{
+ width:50px;
+ height:50px;
+ border-radius:14px;
+ background:#19172c;
+ display:grid;
+ place-items:center;
+ font-size:24px;
+ margin-bottom:12px;
+}
+.card h3{margin:0 0 7px}
+.desc{
+ color:#9299ae;
+ font-size:12px;
+ line-height:1.5;
+ min-height:36px;
+}
+.price{
+ font-size:20px;
+ font-weight:900;
+ margin:13px 0;
+}
 
 .bottom{
- position:fixed;left:50%;bottom:0;transform:translateX(-50%);
- width:100%;max-width:720px;height:75px;background:rgba(12,15,28,.98);
- border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);
- z-index:100;padding:6px 5px
+ position:fixed;
+ bottom:0;
+ left:50%;
+ transform:translateX(-50%);
+ width:100%;
+ max-width:700px;
+ height:72px;
+ background:#0d1120;
+ border-top:1px solid #282e49;
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ z-index:50;
 }
-.nav-btn{
- border:0;background:transparent;color:#737c94;display:flex;
- flex-direction:column;align-items:center;justify-content:center;
- gap:4px;font-size:10px;font-weight:700
+.nav{
+ background:none;
+ border:0;
+ color:#707991;
+ font-size:10px;
+ font-weight:700;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
 }
-.nav-icon{font-size:20px}
-.nav-btn.active{color:#a895ff}
+.nav b{font-size:19px}
+.nav.active{color:#a18dff}
+
+.page{padding-bottom:90px}
 
 .modal{
- position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.73);
- backdrop-filter:blur(7px);display:flex;align-items:flex-end;justify-content:center
+ position:fixed;
+ inset:0;
+ z-index:100;
+ background:rgba(0,0,0,.75);
+ display:flex;
+ align-items:flex-end;
 }
-.modal-box{
- width:100%;max-width:720px;max-height:92vh;overflow:auto;
- background:#0e1221;border:1px solid var(--line);
- border-radius:25px 25px 0 0;padding:20px 16px 30px;
- animation:up .22s ease
+.modalbox{
+ width:100%;
+ max-width:700px;
+ margin:auto;
+ background:#0f1322;
+ border:1px solid #292f48;
+ border-radius:25px 25px 0 0;
+ padding:20px;
+ max-height:90vh;
+ overflow:auto;
 }
-@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modalhead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:15px;
+}
 .close{
- border:0;background:#191e31;color:#fff;width:38px;height:38px;
- border-radius:12px;font-size:22px
+ width:38px;
+ height:38px;
+ border:0;
+ border-radius:11px;
+ background:#191e31;
+ color:#fff;
+ font-size:22px;
 }
-.label{color:var(--muted);font-size:12px;margin:10px 0 6px}
-.input{
- width:100%;background:#080b15;color:#fff;border:1px solid var(--line);
- border-radius:13px;padding:13px;outline:none;margin-bottom:10px
-}
-.input:focus{border-color:var(--purple)}
 .notice{
- background:#151a2b;border:1px solid var(--line);border-radius:14px;
- padding:13px;color:#b9c1d3;font-size:13px;line-height:1.55;margin-bottom:13px
-}
-.qr{
- width:180px;height:180px;margin:14px auto;background:#fff;color:#111;
- border-radius:14px;display:grid;place-items:center;text-align:center;font-weight:900
+ background:#161b2c;
+ border:1px solid #292f48;
+ border-radius:13px;
+ padding:13px;
+ color:#aeb5c7;
+ font-size:13px;
+ line-height:1.5;
+ margin:10px 0;
 }
 .status{
- display:inline-block;padding:6px 9px;border-radius:20px;
- font-size:11px;font-weight:800
+ display:inline-block;
+ padding:6px 10px;
+ border-radius:20px;
+ font-size:11px;
+ font-weight:800;
 }
-.status.PENDING{background:#3a3017;color:var(--yellow)}
-.status.ACCEPTED{background:#123523;color:var(--green)}
-.status.REJECTED{background:#3b1822;color:var(--red)}
-.history-item{padding:14px 0;border-bottom:1px solid var(--line)}
-.history-item:last-child{border:0}
-.muted{color:var(--muted);font-size:13px;line-height:1.5}
-.empty{text-align:center;padding:30px 10px;color:var(--muted)}
+.PENDING{background:#3a3017;color:#ffd05c}
+.ACCEPTED{background:#123824;color:#35dc88}
+.REJECTED{background:#421925;color:#ff7188}
 
-.auth-page{
- min-height:100vh;display:grid;place-items:center;padding:18px
+.history{
+ border-bottom:1px solid #282e49;
+ padding:14px 0;
 }
-.auth-box{
- width:100%;max-width:430px;background:var(--card);
- border:1px solid var(--line);border-radius:25px;padding:25px
-}
-.auth-logo{font-size:29px;font-weight:900;margin-bottom:25px}
-.auth-logo span{color:var(--purple2)}
-.auth-box h1{font-size:27px;margin-bottom:7px}
-.auth-box>p{color:var(--muted);font-size:13px;margin-bottom:20px}
-.auth-switch{text-align:center;color:#a895ff;margin-top:17px;font-size:13px;cursor:pointer}
+.history:last-child{border:0}
+.muted{color:#9299ae;font-size:13px}
 
-.profile-row{
- display:flex;justify-content:space-between;gap:20px;padding:14px 0;
- border-bottom:1px solid var(--line)
+.profile{
+ display:flex;
+ justify-content:space-between;
+ padding:15px 0;
+ border-bottom:1px solid #282e49;
+ gap:15px;
 }
-.profile-row:last-child{border:0}
-.vip{
- display:inline-flex;padding:5px 9px;border-radius:20px;
- background:#2c2057;color:#b6a5ff;font-size:11px;font-weight:900
+.profile:last-child{border:0}
+
+.empty{
+ text-align:center;
+ color:#777f96;
+ padding:25px;
 }
 
-.admin-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
-.admin-tabs button{font-size:11px;padding:11px 5px}
-.admin-list{margin-top:12px}
-.admin-item{
- padding:14px 0;border-bottom:1px solid var(--line)
-}
-.admin-actions{display:flex;gap:8px;margin-top:10px}
-.admin-actions button{flex:1}
-
-@media(max-width:420px){
+@media(max-width:430px){
  .grid{grid-template-columns:1fr}
  .hero h1{font-size:34px}
 }
@@ -176,100 +300,109 @@ button{cursor:pointer}
 
 <body>
 
-<!-- AUTH -->
+<!-- LOGIN / REGISTER -->
 
-<div id="authPage" class="auth-page">
+<div id="auth" class="auth">
 
- <div class="auth-box" id="loginBox">
+ <div class="authbox">
 
-  <div class="auth-logo">XENON<span>SHOP</span></div>
+  <div class="logo">XENON<span>SHOP</span></div>
 
-  <h1>Welcome back</h1>
-  <p>Login to your Xenon Shop account</p>
+  <div id="loginBox">
 
-  <div class="label">Email</div>
-  <input id="loginEmail" class="input" type="email" placeholder="Enter email">
+   <h1>Welcome Back</h1>
+   <div class="sub">Login to your Xenon Shop account</div>
 
-  <div class="label">Password</div>
-  <input id="loginPassword" class="input" type="password" placeholder="Enter password">
+   <label>Email</label>
+   <input id="loginEmail" type="email" placeholder="Enter email">
 
-  <button class="btn" style="width:100%" onclick="login()">Login</button>
+   <label>Password</label>
+   <input id="loginPassword" type="password" placeholder="Enter password">
 
-  <div class="auth-switch" onclick="showRegister()">Create new account</div>
+   <button class="btn" onclick="login()">Login</button>
+
+   <div class="switch" onclick="showRegister()">
+    Create new account
+   </div>
+
+  </div>
+
+
+  <div id="registerBox" class="hidden">
+
+   <h1>Create Account</h1>
+   <div class="sub">Create your Xenon Shop account</div>
+
+   <label>Name</label>
+   <input id="regName" placeholder="Your name">
+
+   <label>Email</label>
+   <input id="regEmail" type="email" placeholder="Email">
+
+   <label>Password</label>
+   <input id="regPassword" type="password" placeholder="Password">
+
+   <label>Referral Code</label>
+   <input id="regReferral" placeholder="Optional">
+
+   <button class="btn" onclick="register()">Register</button>
+
+   <div class="switch" onclick="showLogin()">
+    Already have an account? Login
+   </div>
+
+  </div>
+
  </div>
-
-
- <div class="auth-box hidden" id="registerBox">
-
-  <div class="auth-logo">XENON<span>SHOP</span></div>
-
-  <h1>Create account</h1>
-  <p>Join Xenon Shop and start shopping</p>
-
-  <div class="label">Name</div>
-  <input id="regName" class="input" placeholder="Your name">
-
-  <div class="label">Email</div>
-  <input id="regEmail" class="input" type="email" placeholder="Email">
-
-  <div class="label">Password</div>
-  <input id="regPassword" class="input" type="password" placeholder="Minimum 6 characters">
-
-  <div class="label">Referral code</div>
-  <input id="regReferral" class="input" placeholder="Optional">
-
-  <button class="btn" style="width:100%" onclick="register()">Create Account</button>
-
-  <div class="auth-switch" onclick="showLogin()">Already have an account?</div>
- </div>
-
 </div>
 
 
-<!-- USER APP -->
+<!-- MAIN APP -->
 
-<div id="app" class="app hidden">
+<div id="app">
 
- <header class="topbar">
-  <div class="logo">XENON<span>SHOP</span></div>
+ <div class="top">
+  <div class="logo" style="margin:0">XENON<span>SHOP</span></div>
   <div class="avatar" id="avatar">X</div>
- </header>
+ </div>
 
 
- <main class="page">
+ <main class="wrap page">
 
   <!-- HOME -->
 
   <section id="homePage">
 
    <div class="hero">
-    <div class="tag">⚡ PREMIUM DIGITAL STORE</div>
+
+    <small>⚡ PREMIUM DIGITAL STORE</small>
 
     <h1>Shop <span>Digital</span><br>Products.</h1>
 
     <p>
      Redeem codes, digital products and more.
-     Fast delivery directly to your account.
+     Fast and secure digital delivery.
     </p>
+
    </div>
 
 
    <div class="wallet">
 
-    <div class="wallet-title">WALLET BALANCE</div>
+    <small>WALLET BALANCE</small>
 
     <div class="balance" id="balance">₹0</div>
 
-    <div class="wallet-row">
-     <button class="btn light" onclick="openWallet()">＋ Add Money</button>
-     <button class="btn light" onclick="goPage('history',document.querySelectorAll('.nav-btn')[3])">History</button>
+    <div class="row">
+     <button class="btn secondary" onclick="openWallet()">＋ Add Money</button>
+     <button class="btn secondary" onclick="go('history')">History</button>
     </div>
 
    </div>
 
 
-   <div class="section-title">
-    <h2>🔥 Featured Products</h2>
+   <div class="title">
+    <h2>🔥 Products</h2>
    </div>
 
    <div id="products" class="grid"></div>
@@ -281,23 +414,24 @@ button{cursor:pointer}
 
   <section id="walletPage" class="hidden">
 
-   <div class="section-title">
-    <h2>💳 My Wallet</h2>
+   <div class="title">
+    <h2>💳 Wallet</h2>
    </div>
 
    <div class="wallet">
 
-    <div class="wallet-title">AVAILABLE BALANCE</div>
+    <small>AVAILABLE BALANCE</small>
+
     <div class="balance" id="walletBalance">₹0</div>
 
-    <button class="btn light" style="width:100%" onclick="openWallet()">
+    <button class="btn secondary" onclick="openWallet()">
      ＋ Add Money
     </button>
 
    </div>
 
-   <div class="section-title">
-    <h2>Payment Requests</h2>
+   <div class="title">
+    <h2>Payment Status</h2>
    </div>
 
    <div class="card" id="walletPayments"></div>
@@ -309,41 +443,30 @@ button{cursor:pointer}
 
   <section id="referPage" class="hidden">
 
-   <div class="section-title">
+   <div class="title">
     <h2>🎁 Refer & Earn</h2>
    </div>
 
    <div class="card">
 
-    <h2>Invite & Earn ₹50</h2>
-    <br>
+    <h2>Earn ₹50</h2>
 
     <p class="muted">
-     Apna referral code friends ke saath share karo.
-     Jab referred user purchase karega, eligible referral reward ₹50 wallet me add hoga.
+     Apna referral code friends ko share karo.
+     Eligible purchase hone par referral reward milega.
     </p>
 
-    <br>
+    <label>Your Referral Code</label>
 
-    <div class="label">YOUR REFERRAL CODE</div>
-
-    <div class="big-ref" id="refCode"
-     style="font-size:18px;font-weight:900;word-break:break-all;background:#080b15;padding:14px;border-radius:13px;margin:12px 0">
+    <div id="refCode"
+     style="background:#080b15;padding:15px;border-radius:13px;font-weight:900">
      -
     </div>
 
-    <button class="btn" style="width:100%" onclick="copyReferral()">
+    <button class="btn" onclick="copyReferral()">
      Copy Referral Code
     </button>
 
-   </div>
-
-   <br>
-
-   <div class="notice">
-    💰 Referral reward: ₹50<br>
-    🛒 Reward condition: referred user purchase<br>
-    ⚡ Reward is credited automatically after eligible purchase.
    </div>
 
   </section>
@@ -353,13 +476,11 @@ button{cursor:pointer}
 
   <section id="historyPage" class="hidden">
 
-   <div class="section-title">
+   <div class="title">
     <h2>📜 History</h2>
    </div>
 
-   <div class="card" id="history">
-    <div class="empty">Loading...</div>
-   </div>
+   <div class="card" id="historyBox"></div>
 
   </section>
 
@@ -368,49 +489,43 @@ button{cursor:pointer}
 
   <section id="profilePage" class="hidden">
 
-   <div class="section-title">
+   <div class="title">
     <h2>👤 Profile</h2>
    </div>
 
    <div class="card">
 
-    <div class="profile-row">
+    <div class="profile">
      <span class="muted">Name</span>
      <b id="profileName">-</b>
     </div>
 
-    <div class="profile-row">
+    <div class="profile">
      <span class="muted">Email</span>
      <b id="profileEmail">-</b>
     </div>
 
-    <div class="profile-row">
+    <div class="profile">
      <span class="muted">UID</span>
      <b id="profileUid">-</b>
     </div>
 
-    <div class="profile-row">
+    <div class="profile">
      <span class="muted">Membership</span>
-     <span class="vip">💎 VIP PRIME PROFESSIONAL</span>
+     <b>💎 VIP PRIME</b>
     </div>
 
    </div>
 
-   <br>
-
-   <button class="btn dark" style="width:100%" onclick="openSupport()">
-    🎧 Customer Support
+   <button class="btn secondary" onclick="openSupport()">
+    🎧 Support
    </button>
 
-   <br><br>
-
-   <button class="btn dark" style="width:100%" onclick="openAdmin()">
+   <button class="btn secondary" onclick="openAdmin()">
     ⚙️ Admin Panel
    </button>
 
-   <br><br>
-
-   <button class="btn red" style="width:100%" onclick="logout()">
+   <button class="btn danger" onclick="logout()">
     Logout
    </button>
 
@@ -423,24 +538,24 @@ button{cursor:pointer}
 
  <nav class="bottom">
 
-  <button class="nav-btn active" onclick="goPage('home',this)">
-   <span class="nav-icon">⌂</span>Home
+  <button class="nav active" onclick="go('home',this)">
+   <b>⌂</b>Home
   </button>
 
-  <button class="nav-btn" onclick="goPage('wallet',this)">
-   <span class="nav-icon">◉</span>Wallet
+  <button class="nav" onclick="go('wallet',this)">
+   <b>◉</b>Wallet
   </button>
 
-  <button class="nav-btn" onclick="goPage('refer',this)">
-   <span class="nav-icon">🎁</span>Refer
+  <button class="nav" onclick="go('refer',this)">
+   <b>🎁</b>Refer
   </button>
 
-  <button class="nav-btn" onclick="goPage('history',this)">
-   <span class="nav-icon">◷</span>History
+  <button class="nav" onclick="go('history',this)">
+   <b>◷</b>History
   </button>
 
-  <button class="nav-btn" onclick="goPage('profile',this)">
-   <span class="nav-icon">●</span>Profile
+  <button class="nav" onclick="go('profile',this)">
+   <b>●</b>Profile
   </button>
 
  </nav>
@@ -448,42 +563,45 @@ button{cursor:pointer}
 </div>
 
 
-<!-- ADD MONEY -->
+<!-- ADD MONEY MODAL -->
 
 <div id="walletModal" class="modal hidden">
 
- <div class="modal-box">
+ <div class="modalbox">
 
-  <div class="modal-head">
+  <div class="modalhead">
    <div>
-    <h2>💳 Add Money</h2>
-    <p class="muted">Payment verification required</p>
+    <h2>Add Money</h2>
+    <div class="muted">Make payment and submit UTR</div>
    </div>
 
    <button class="close" onclick="closeWallet()">×</button>
   </div>
 
   <div class="notice">
-   QR par payment karne ke baad amount aur UTR/transaction ID submit karo.
-   Admin verification ke baad wallet balance update hoga.
+   Payment karne ke baad UTR/Transaction ID submit karo.
+   Admin verification ke baad balance update hoga.
   </div>
 
-  <div class="qr">
-   YOUR<br>PAYMENT<br>QR
+  <div style="
+   width:180px;height:180px;background:#fff;color:#111;
+   margin:20px auto;border-radius:15px;
+   display:grid;place-items:center;text-align:center;font-weight:900">
+   PAYMENT<br>QR
   </div>
 
-  <div class="label">Amount</div>
-  <input id="amount" class="input" type="number" placeholder="Enter amount">
+  <label>Amount</label>
+  <input id="amount" type="number" placeholder="Enter amount">
 
-  <div class="label">UTR / Transaction ID</div>
-  <input id="utr" class="input" placeholder="Enter UTR">
+  <label>UTR / Transaction ID</label>
+  <input id="utr" placeholder="Enter UTR">
 
-  <button class="btn" style="width:100%" onclick="submitDeposit()">
+  <button class="btn" onclick="deposit()">
    Submit Payment
   </button>
 
-  <div class="section-title">
-   <h2 style="font-size:17px">Your Payment Status</h2>
+  <div class="title">
+   <h3>Your Payment</h3>
   </div>
 
   <div id="paymentStatus"></div>
@@ -492,40 +610,35 @@ button{cursor:pointer}
 </div>
 
 
-<!-- BUY -->
+<!-- BUY MODAL -->
 
 <div id="buyModal" class="modal hidden">
 
- <div class="modal-box">
+ <div class="modalbox">
 
-  <div class="modal-head">
-
+  <div class="modalhead">
    <div>
     <h2 id="buyName">Product</h2>
-    <p class="muted" id="buyDescription"></p>
+    <div class="muted" id="buyDesc"></div>
    </div>
 
    <button class="close" onclick="closeBuy()">×</button>
   </div>
 
   <div class="notice">
-   Product price:
-   <b id="buyPrice">₹0</b>
+   Price: <b id="buyPrice">₹0</b>
   </div>
 
-  <div class="label">Coupon Code</div>
+  <label>Coupon Code</label>
+  <input id="coupon" placeholder="Enter coupon">
 
-  <input id="coupon" class="input" placeholder="Enter coupon code">
-
-  <button class="btn dark" style="width:100%" onclick="applyCoupon()">
+  <button class="btn secondary" onclick="applyCoupon()">
    Apply Coupon
   </button>
 
-  <div id="couponResult" class="notice hidden" style="margin-top:12px"></div>
+  <div id="couponResult" class="notice hidden"></div>
 
-  <br>
-
-  <button class="btn" style="width:100%" onclick="buyProduct()">
+  <button class="btn" onclick="buy()">
    Confirm Purchase
   </button>
 
@@ -537,21 +650,23 @@ button{cursor:pointer}
 
 <div id="supportModal" class="modal hidden">
 
- <div class="modal-box">
+ <div class="modalbox">
 
-  <div class="modal-head">
+  <div class="modalhead">
    <h2>🎧 Support</h2>
    <button class="close" onclick="closeSupport()">×</button>
   </div>
 
-  <input id="supportSubject" class="input" placeholder="Subject">
+  <label>Subject</label>
+  <input id="supportSubject" placeholder="Subject">
 
-  <textarea id="supportMessage" class="input"
-   style="height:130px"
-   placeholder="Write your message..."></textarea>
+  <label>Message</label>
+  <textarea id="supportMessage"
+   style="height:120px"
+   placeholder="Write your message"></textarea>
 
-  <button class="btn" style="width:100%" onclick="sendSupport()">
-   Send Message
+  <button class="btn" onclick="support()">
+   Send
   </button>
 
  </div>
@@ -562,25 +677,21 @@ button{cursor:pointer}
 
 <div id="adminLoginModal" class="modal hidden">
 
- <div class="modal-box">
+ <div class="modalbox">
 
-  <div class="modal-head">
-   <div>
-    <h2>⚙️ Admin Login</h2>
-    <p class="muted">Administrator access</p>
-   </div>
-
+  <div class="modalhead">
+   <h2>⚙️ Admin Login</h2>
    <button class="close" onclick="closeAdmin()">×</button>
   </div>
 
-  <input id="adminEmail" class="input" type="email"
-   placeholder="Admin email">
+  <label>Admin Email</label>
+  <input id="adminEmail" type="email">
 
-  <input id="adminPassword" class="input" type="password"
-   placeholder="Admin password">
+  <label>Admin Password</label>
+  <input id="adminPassword" type="password">
 
-  <button class="btn" style="width:100%" onclick="adminLogin()">
-   Login to Admin
+  <button class="btn" onclick="adminLogin()">
+   Login
   </button>
 
  </div>
@@ -591,38 +702,24 @@ button{cursor:pointer}
 
 <div id="adminModal" class="modal hidden">
 
- <div class="modal-box">
+ <div class="modalbox">
 
-  <div class="modal-head">
-
+  <div class="modalhead">
    <div>
-    <h2>⚙️ Xenon Admin</h2>
-    <p class="muted">Manage your store</p>
+    <h2>⚙️ Admin Panel</h2>
+    <div class="muted">Xenon Shop Management</div>
    </div>
 
    <button class="close" onclick="closeAdminPanel()">×</button>
-
   </div>
 
-
-  <div class="admin-tabs">
-
-   <button class="btn" onclick="adminSection('payments')">
-    Payments
-   </button>
-
-   <button class="btn dark" onclick="adminSection('products')">
-    Products
-   </button>
-
-   <button class="btn dark" onclick="adminSection('coupons')">
-    Coupons
-   </button>
-
+  <div class="row">
+   <button class="btn" onclick="adminPayments()">Payments</button>
+   <button class="btn secondary" onclick="adminProducts()">Products</button>
+   <button class="btn secondary" onclick="adminCoupons()">Coupons</button>
   </div>
 
-
-  <div id="adminContent"></div>
+  <div id="adminContent" style="margin-top:18px"></div>
 
  </div>
 </div>
@@ -641,39 +738,31 @@ let adminPassword="";
 
 async function api(url,options={}){
 
- options.headers={
+ const headers={
   "Content-Type":"application/json",
   ...(options.headers||{})
  };
 
  if(token){
-  options.headers.Authorization="Bearer "+token;
+  headers.Authorization="Bearer "+token;
  }
 
- const r=await fetch(url,options);
- const d=await r.json();
+ const response=await fetch(url,{
+  ...options,
+  headers
+ });
 
- if(!r.ok) throw new Error(d.error||"Something went wrong");
+ let data={};
 
- return d;
-}
+ try{
+  data=await response.json();
+ }catch(e){}
 
+ if(!response.ok){
+  throw new Error(data.error||"Request failed");
+ }
 
-async function adminApi(url,options={}){
-
- options.headers={
-  "Content-Type":"application/json",
-  "x-admin-email":adminEmail,
-  "x-admin-password":adminPassword,
-  ...(options.headers||{})
- };
-
- const r=await fetch(url,options);
- const d=await r.json();
-
- if(!r.ok) throw new Error(d.error||"Admin request failed");
-
- return d;
+ return data;
 }
 
 
@@ -682,7 +771,7 @@ function money(n){
 }
 
 
-function safe(x){
+function esc(x){
  return String(x??"")
  .replaceAll("&","&amp;")
  .replaceAll("<","&lt;")
@@ -692,84 +781,122 @@ function safe(x){
 }
 
 
+/* AUTH */
+
 function showRegister(){
+
  document.getElementById("loginBox").classList.add("hidden");
  document.getElementById("registerBox").classList.remove("hidden");
+
 }
 
 
 function showLogin(){
+
  document.getElementById("registerBox").classList.add("hidden");
  document.getElementById("loginBox").classList.remove("hidden");
+
 }
 
 
 async function register(){
 
+ const name=document.getElementById("regName").value.trim();
+ const email=document.getElementById("regEmail").value.trim();
+ const password=document.getElementById("regPassword").value;
+ const referralCode=document.getElementById("regReferral").value.trim();
+
+ if(!name||!email||!password){
+  alert("Name, email aur password required hai.");
+  return;
+ }
+
  try{
 
-  const d=await api("/api/register",{
+  const data=await api("/api/register",{
    method:"POST",
    body:JSON.stringify({
-    name:document.getElementById("regName").value,
-    email:document.getElementById("regEmail").value,
-    password:document.getElementById("regPassword").value,
-    referralCode:document.getElementById("regReferral").value
+    name,
+    email,
+    password,
+    referralCode
    })
   });
 
-  token=d.token;
+  token=data.token;
+
   localStorage.setItem("xenon_token",token);
 
-  await start();
+  await loadUser();
 
- }catch(e){
-  alert(e.message);
+ }catch(error){
+
+  alert(error.message);
+
  }
+
 }
 
 
 async function login(){
 
+ const email=document.getElementById("loginEmail").value.trim();
+ const password=document.getElementById("loginPassword").value;
+
+ if(!email||!password){
+  alert("Email aur password enter karo.");
+  return;
+ }
+
  try{
 
-  const d=await api("/api/login",{
+  const data=await api("/api/login",{
    method:"POST",
    body:JSON.stringify({
-    email:document.getElementById("loginEmail").value,
-    password:document.getElementById("loginPassword").value
+    email,
+    password
    })
   });
 
-  token=d.token;
+  token=data.token;
+
   localStorage.setItem("xenon_token",token);
 
-  await start();
+  await loadUser();
 
- }catch(e){
-  alert(e.message);
+ }catch(error){
+
+  alert(error.message);
+
  }
+
 }
 
 
-async function start(){
+async function loadUser(){
 
  try{
 
   user=await api("/api/me");
 
-  document.getElementById("authPage").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("auth").style.display="none";
+  document.getElementById("app").style.display="block";
 
   updateUser();
   loadProducts();
 
- }catch(e){
+ }catch(error){
 
   localStorage.removeItem("xenon_token");
   token=null;
 
+  document.getElementById("auth").style.display="flex";
+  document.getElementById("app").style.display="none";
+
+  alert(error.message);
+
  }
+
 }
 
 
@@ -778,52 +905,24 @@ function updateUser(){
  document.getElementById("balance").textContent=money(user.wallet);
  document.getElementById("walletBalance").textContent=money(user.wallet);
 
- document.getElementById("refCode").textContent=user.referralCode;
+ document.getElementById("profileName").textContent=user.name||"-";
+ document.getElementById("profileEmail").textContent=user.email||"-";
+ document.getElementById("profileUid").textContent=user.uid||"-";
 
- document.getElementById("profileName").textContent=user.name;
- document.getElementById("profileEmail").textContent=user.email;
- document.getElementById("profileUid").textContent=user.uid;
+ document.getElementById("refCode").textContent=user.referralCode||"-";
 
  document.getElementById("avatar").textContent=
-  (user.name||"X")[0].toUpperCase();
+  (user.name||"X").charAt(0).toUpperCase();
+
 }
 
 
-async function loadProducts(){
+function logout(){
 
- try{
+ localStorage.removeItem("xenon_token");
+ token=null;
+ location.reload();
 
-  const products=await api("/api/products");
-  const box=document.getElementById("products");
-
-  box.innerHTML="";
-
-  if(!products.length){
-   box.innerHTML='<div class="card empty">No products available</div>';
-   return;
-  }
-
-  products.forEach(p=>{
-
-   const div=document.createElement("div");
-   div.className="card product";
-
-   div.innerHTML=`
-    <div class="product-icon">${safe(p.icon||"🎟️")}</div>
-    <h3>${safe(p.name)}</h3>
-    <div class="product-desc">${safe(p.description||"Digital product")}</div>
-    <div class="product-price">${money(p.price)}</div>
-    <button class="btn buy-btn">Buy Now</button>
-   `;
-
-   div.querySelector("button").onclick=()=>openBuy(p);
-   box.appendChild(div);
-
-  });
-
- }catch(e){
-  alert(e.message);
- }
 }
 
 
@@ -833,24 +932,73 @@ function hidePages(){
 
  ["homePage","walletPage","referPage","historyPage","profilePage"]
  .forEach(id=>document.getElementById(id).classList.add("hidden"));
+
 }
 
 
-function goPage(name,btn){
+function go(page,button){
 
  hidePages();
 
- document.getElementById(name+"Page").classList.remove("hidden");
+ document.getElementById(page+"Page").classList.remove("hidden");
 
- document.querySelectorAll(".nav-btn")
+ document.querySelectorAll(".nav")
  .forEach(x=>x.classList.remove("active"));
 
- if(btn) btn.classList.add("active");
+ if(button) button.classList.add("active");
 
- if(name==="history") loadHistory();
- if(name==="wallet") loadWalletPayments();
+ if(page==="history") loadHistory();
+ if(page==="wallet") loadWallet();
 
- window.scrollTo({top:0,behavior:"smooth"});
+ window.scrollTo(0,0);
+
+}
+
+
+/* PRODUCTS */
+
+async function loadProducts(){
+
+ try{
+
+  const products=await api("/api/products");
+  const box=document.getElementById("products");
+
+  if(!products.length){
+   box.innerHTML='<div class="card empty">No products available.</div>';
+   return;
+  }
+
+  box.innerHTML="";
+
+  products.forEach(product=>{
+
+   const div=document.createElement("div");
+   div.className="card";
+
+   div.innerHTML=`
+    <div class="icon">${esc(product.icon||"🎟️")}</div>
+    <h3>${esc(product.name)}</h3>
+    <div class="desc">${esc(product.description||"Digital product")}</div>
+    <div class="price">${money(product.price)}</div>
+    <button class="btn">Buy Now</button>
+   `;
+
+   div.querySelector("button").onclick=()=>{
+    openBuy(product);
+   };
+
+   box.appendChild(div);
+
+  });
+
+ }catch(error){
+
+  document.getElementById("products").innerHTML=
+   '<div class="card notice">'+esc(error.message)+'</div>';
+
+ }
+
 }
 
 
@@ -864,4 +1012,134 @@ function openWallet(){
 }
 
 
-function closeWalle
+function closeWallet(){
+
+ document.getElementById("walletModal").classList.add("hidden");
+
+}
+
+
+async function deposit(){
+
+ const amount=Number(document.getElementById("amount").value);
+ const utr=document.getElementById("utr").value.trim();
+
+ if(!amount||amount<10){
+  alert("Minimum amount ₹10 hai.");
+  return;
+ }
+
+ if(!utr){
+  alert("UTR enter karo.");
+  return;
+ }
+
+ try{
+
+  await api("/api/deposits",{
+   method:"POST",
+   body:JSON.stringify({amount,utr})
+  });
+
+  document.getElementById("amount").value="";
+  document.getElementById("utr").value="";
+
+  alert("Payment submitted. Admin verification ka wait karo.");
+
+  loadPaymentStatus();
+
+ }catch(error){
+
+  alert(error.message);
+
+ }
+
+}
+
+
+async function loadPaymentStatus(){
+
+ try{
+
+  const h=await api("/api/history");
+  const box=document.getElementById("paymentStatus");
+
+  if(!h.deposits||!h.deposits.length){
+   box.innerHTML='<div class="empty">No payment requests.</div>';
+   return;
+  }
+
+  box.innerHTML=h.deposits.slice().reverse().map(d=>`
+
+   <div class="history">
+
+    <b>${money(d.amount)}</b><br>
+
+    <span class="muted">
+     UTR: ${esc(d.utr)}
+    </span>
+
+    <br><br>
+
+    <span class="status ${esc(d.status)}">
+     ${esc(d.status)}
+    </span>
+
+    ${d.reviewNote?
+     `<div class="muted" style="margin-top:7px">${esc(d.reviewNote)}</div>`
+     :""
+    }
+
+   </div>
+
+  `).join("");
+
+ }catch(error){}
+
+}
+
+
+async function loadWallet(){
+
+ try{
+
+  const h=await api("/api/history");
+  const box=document.getElementById("walletPayments");
+
+  if(!h.deposits||!h.deposits.length){
+   box.innerHTML='<div class="empty">No payments yet.</div>';
+   return;
+  }
+
+  box.innerHTML=h.deposits.slice().reverse().map(d=>`
+
+   <div class="history">
+
+    <b>${money(d.amount)}</b><br>
+    <span class="muted">UTR: ${esc(d.utr)}</span><br><br>
+
+    <span class="status ${esc(d.status)}">
+     ${esc(d.status)}
+    </span>
+
+   </div>
+
+  `).join("");
+
+ }catch(error){}
+
+}
+
+
+/* BUY */
+
+function openBuy(product){
+
+ selectedProduct=product;
+ finalPrice=product.price;
+
+ document.getElementById("buyName").textContent=product.name;
+ document.getElementById("buyDesc").textContent=product.description||"";
+ document.getElementById("buyPrice").textContent=money(product.price);
+
+ document.getEleme
