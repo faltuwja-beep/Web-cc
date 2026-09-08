@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">XENON<span>SHOP</span></div>
+</header>
+
+<main class="wrap">
+
+<section class="hero">
+  <h1>My Profile 👤</h1>
+</section>
+
+<div class="card">
+
+<h3>Name</h3>
+<p id="name">Loading...</p>
+
+<h3>Email</h3>
+<p id="email">Loading...</p>
+
+<h3>Balance</h3>
+<p>
+₹<span id="balance">0</span>
+</p>
+
+<button
+  class="btn"
+  onclick="logout()">
+
+LOGOUT
+
+</button>
+
+</div>
+
+</main>
+
+<nav class="nav">
+  <a href="/shop.html">🏠 Shop</a>
+  <a href="/wallet.html">💰 Wallet</a>
+  <a href="/referral.html">🎁 Refer</a>
+  <a href="/profile.html">👤 Profile</a>
+</nav>
+
+<script>
+
+const token =
+  localStorage.getItem("xenon_token");
+
+if(!token){
+  location.href="/login.html";
+}
+
+async function load(){
+
+  const response =
+    await fetch("/api/me",{
+      headers:{
+        "Authorization":
+          "Bearer "+token
+      }
+    });
+
+  if(!response.ok){
+
+    localStorage.removeItem(
+      "xenon_token"
+    );
+
+    location.href="/login.html";
+
+    return;
+  }
+
+  const user =
+    await response.json();
+
+  document.getElementById("name")
+    .textContent =
+    user.name;
+
+  document.getElementById("email")
+    .textContent =
+    user.email;
+
+  document.getElementById("balance")
+    .textContent =
+    user.balance;
+
+}
+
+function logout(){
+
+  localStorage.removeItem(
+    "xenon_token"
+  );
+
+  location.href="/login.html";
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
