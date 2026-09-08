@@ -1,33 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Xenon Shop</title>
 
-  <link
-    rel="stylesheet"
-    href="/style.css"
-  >
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    .product {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+      margin-bottom: 15px;
+      background: #1b1825;
+    }
+
+    .product-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      background: #211b31;
+      margin-bottom: 15px;
+    }
+
+    .product .price {
+      font-size: 24px;
+      font-weight: 900;
+      margin: 12px 0;
+    }
+
+    .product-description {
+      min-height: 45px;
+      line-height: 1.5;
+    }
+
+    .delivery-box {
+      margin: 14px 0;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(139, 77, 255, .10);
+      border: 1px solid rgba(139, 77, 255, .25);
+    }
+
+    .delivery-title {
+      font-size: 12px;
+      font-weight: 800;
+      opacity: .75;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .buy-button {
+      width: 100%;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 15px;
+      background: #8b4dff;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .buy-button:hover {
+      opacity: .9;
+    }
+
+    .login-button {
+      width: 100%;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 900;
+      background: #302b3c;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .wallet-info {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #171421;
+      font-size: 13px;
+    }
+
+    .top-user {
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-balance {
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #211b31;
+      font-weight: 800;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .buy-modal {
+      width: 100%;
+      max-width: 430px;
+      background: #13111c;
+      border: 1px solid #332d40;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.55);
+    }
+
+    .modal-price {
+      font-size: 27px;
+      font-weight: 900;
+      margin: 10px 0;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+    }
+
+    .modal-cancel {
+      border: 0;
+      background: #302b3c;
+      color: white;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .modal-confirm {
+      border: 0;
+      background: #8b4dff;
+      color: white;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .buy-message {
+      margin-top: 12px;
+      padding: 11px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .buy-message.show {
+      display: block;
+    }
+
+    .success-message {
+      background: rgba(24,166,107,.14);
+      color: #65e6a0;
+    }
+
+    .error-message {
+      background: rgba(229,66,104,.14);
+      color: #ff9bb0;
+    }
+
+    .empty-products {
+      grid-column: 1 / -1;
+    }
+
+    @media(max-width:600px) {
+      .top-user {
+        display: none;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- TOP BAR -->
+<header class="topbar">
 
-  <header class="topbar">
+  <div class="logo">
+    XENON<span>SHOP</span>
+  </div>
 
-    <div class="logo">
-      XENON<span>SHOP</span>
+  <div class="row">
+
+    <div id="topUser" class="top-user">
+      <div id="topBalance" class="top-balance">
+        ₹0
+      </div>
     </div>
 
-    <div class="row">
+    <a
+      href="/login.html"
+      class="btn-secondary"
+      id="loginBtn"
+    >
+      Login
+    </a>
+
+    <a
+      href="/register.html"
+      class="btn"
+      id="registerBtn"
+    >
+      Register
+    </a>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="small-text">
+      ⚡ NEXT-GEN DIGITAL STORE
+    </div>
+
+    <h1>
+      Premium products.
+      <br>
+      Simple experience.
+    </h1>
+
+    <p>
+      Welcome to Xenon Shop.
+      Create your account, add money
+      and purchase premium products.
+    </p>
+
+    <div
+      class="row wrap"
+      style="margin-top:25px"
+    >
+
+      <a
+        href="/register.html"
+        class="btn"
+      >
+        🚀 Get Started
+      </a>
 
       <a
         href="/login.html"
@@ -36,524 +293,542 @@
         Login
       </a>
 
-      <a
-        href="/register.html"
-        class="btn"
-      >
-        Register
-      </a>
-
     </div>
 
-  </header>
+  </section>
 
 
-  <!-- MAIN -->
+  <!-- PRODUCTS -->
 
-  <main class="container">
+  <h2 class="section-title">
+    🛍️ Featured Products
+  </h2>
 
-    <!-- HERO -->
+  <div
+    id="products"
+    class="grid"
+  >
 
-    <section class="hero">
-
-      <div class="small-text">
-        ⚡ NEXT-GEN DIGITAL STORE
-      </div>
-
-      <h1>
-        Premium products.
-        <br>
-        Simple experience.
-      </h1>
-
-      <p>
-        Welcome to Xenon Shop.
-        Create your account, add money
-        and purchase premium products.
-      </p>
-
-      <div
-        class="row wrap"
-        style="margin-top:25px"
-      >
-
-        <a
-          href="/register.html"
-          class="btn"
-        >
-          🚀 Get Started
-        </a>
-
-        <a
-          href="/login.html"
-          class="btn-secondary"
-        >
-          Login
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- PRODUCTS -->
-
-    <h2 class="section-title">
-      Featured Products
-    </h2>
-
-    <div
-      id="products"
-      class="grid"
-    >
-
-      <div class="card">
-        Loading products...
-      </div>
-
+    <div class="card">
+      Loading products...
     </div>
 
+  </div>
 
-    <!-- LIVE ACTIVITY -->
 
-    <h2 class="section-title">
-      Recent Purchases
-    </h2>
+  <!-- LIVE ACTIVITY -->
 
-    <div
-      id="activity"
-      class="card"
-    >
+  <h2 class="section-title">
+    🔥 Recent Purchases
+  </h2>
+
+  <div
+    id="activity"
+    class="card"
+  >
+
+    <p class="small-text">
+      Loading recent activity...
+    </p>
+
+  </div>
+
+
+  <!-- FEATURES -->
+
+  <h2 class="section-title">
+    Why Xenon Shop?
+  </h2>
+
+  <div class="grid">
+
+    <div class="card">
+
+      <div class="product-icon">
+        🔐
+      </div>
+
+      <h3>
+        Secure Account
+      </h3>
 
       <p class="small-text">
-        Loading recent activity...
+        Your account is protected
+        with secure login.
       </p>
 
     </div>
 
 
-    <!-- FEATURES -->
+    <div class="card">
 
-    <h2 class="section-title">
-      Why Xenon Shop?
-    </h2>
-
-    <div class="grid">
-
-      <div class="card">
-
-        <div
-          class="product-icon"
-        >
-          🔐
-        </div>
-
-        <h3>
-          Secure Account
-        </h3>
-
-        <p class="small-text">
-          Your account is protected
-          with secure login.
-        </p>
-
+      <div class="product-icon">
+        ⚡
       </div>
 
+      <h3>
+        Fast Experience
+      </h3>
 
-      <div class="card">
-
-        <div
-          class="product-icon"
-        >
-          ⚡
-        </div>
-
-        <h3>
-          Fast Experience
-        </h3>
-
-        <p class="small-text">
-          Simple and fast shopping
-          experience.
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <div
-          class="product-icon"
-        >
-          💰
-        </div>
-
-        <h3>
-          Wallet System
-        </h3>
-
-        <p class="small-text">
-          Add money and track
-          your payment status.
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <div
-          class="product-icon"
-        >
-          🎁
-        </div>
-
-        <h3>
-          Refer & Earn
-        </h3>
-
-        <p class="small-text">
-          Share your referral link
-          with friends.
-        </p>
-
-      </div>
+      <p class="small-text">
+        Simple and fast shopping
+        experience.
+      </p>
 
     </div>
 
-  </main>
+
+    <div class="card">
+
+      <div class="product-icon">
+        💰
+      </div>
+
+      <h3>
+        Wallet System
+      </h3>
+
+      <p class="small-text">
+        Add money and track
+        your payment status.
+      </p>
+
+    </div>
 
 
-  <!-- BOTTOM NAV -->
+    <div class="card">
 
-  <nav class="bottom-nav">
+      <div class="product-icon">
+        🎁
+      </div>
 
-    <a
-      href="/"
-      class="active"
+      <h3>
+        Refer & Earn
+      </h3>
+
+      <p class="small-text">
+        Share your referral link
+        with friends.
+      </p>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+  <a
+    href="/"
+    class="active"
+  >
+    🏠 Home
+  </a>
+
+  <a
+    href="/login.html"
+  >
+    🔐 Login
+  </a>
+
+  <a
+    href="/register.html"
+  >
+    ✨ Register
+  </a>
+
+</nav>
+
+
+<!-- BUY MODAL -->
+
+<div
+  id="buyModal"
+  class="modal-backdrop"
+>
+
+  <div class="buy-modal">
+
+    <h2 id="modalProductName">
+      Product
+    </h2>
+
+    <div
+      id="modalPrice"
+      class="modal-price"
     >
-      🏠 Home
-    </a>
+      ₹0
+    </div>
 
-    <a
-      href="/login.html"
+    <p
+      id="modalDescription"
+      class="small-text"
+    ></p>
+
+    <div
+      id="modalDelivery"
+      class="delivery-box"
+      style="display:none"
     >
-      🔐 Login
-    </a>
 
-    <a
-      href="/register.html"
-    >
-      ✨ Register
-    </a>
+      <div class="delivery-title">
+        🎁 You will receive
+      </div>
 
-  </nav>
+      <div id="modalDeliveryText"></div>
+
+    </div>
+
+    <div
+      id="buyMessage"
+      class="buy-message"
+    ></div>
+
+    <div class="modal-buttons">
+
+      <button
+        class="modal-cancel"
+        onclick="closeBuyModal()"
+      >
+        CANCEL
+      </button>
+
+      <button
+        id="confirmBuyBtn"
+        class="modal-confirm"
+        onclick="confirmBuy()"
+      >
+        CONFIRM BUY
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
-  <!-- SCRIPT -->
+<script>
 
-  <script>
-
-    /* ---------------- PRODUCTS ---------------- */
-
-    async function loadProducts() {
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/products"
-          );
-
-        const products =
-          await response.json();
+let currentUser = null;
+let selectedProduct = null;
 
 
-        const box =
-          document.getElementById(
-            "products"
-          );
+/* ---------------- ESCAPE ---------------- */
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
 
 
-        if (
-          !Array.isArray(
-            products
-          ) ||
-          products.length === 0
-        ) {
+/* ---------------- TOKEN ---------------- */
 
-          box.innerHTML = `
+function getToken() {
 
-            <div class="card">
+  return localStorage.getItem("xenon_token") || "";
 
-              <h3>
-                No products yet
-              </h3>
+}
 
-              <p class="small-text">
-                Products will appear here
-                when the admin adds them.
-              </p>
 
-            </div>
+/* ---------------- LOAD USER ---------------- */
 
-          `;
+async function loadUser() {
 
-          return;
+  const token = getToken();
 
+  if (!token) {
+    currentUser = null;
+    updateTopBar();
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      "/api/me",
+      {
+        headers: {
+          "Authorization": "Bearer " + token
         }
-
-
-        box.innerHTML =
-          products
-            .map(
-              product => `
-
-                <div
-                  class="card product"
-                >
-
-                  ${
-                    product.image
-                      ? `
-
-                        <img
-                          src="${escapeHtml(product.image)}"
-                          class="product-image"
-                          alt="${escapeHtml(product.name)}"
-                          onerror="this.style.display='none'"
-                        >
-
-                      `
-                      : `
-
-                        <div
-                          class="product-icon"
-                        >
-                          ${escapeHtml(
-                            product.icon ||
-                            "📦"
-                          )}
-                        </div>
-
-                      `
-                  }
-
-
-                  <h3>
-                    ${escapeHtml(
-                      product.name
-                    )}
-                  </h3>
-
-
-                  <p
-                    class="description"
-                  >
-                    ${escapeHtml(
-                      product.description ||
-                      "Premium digital product."
-                    )}
-                  </p>
-
-
-                  <div class="price">
-                    ₹${Number(
-                      product.price
-                    )}
-                  </div>
-
-
-                  <a
-                    href="/login.html"
-                    class="btn full"
-                  >
-                    LOGIN TO BUY
-                  </a>
-
-                </div>
-
-              `
-            )
-            .join("");
-
       }
+    );
 
-      catch (error) {
+    if (!response.ok) {
+      throw new Error("Login expired");
+    }
 
-        console.error(error);
+    currentUser = await response.json();
 
-      }
+    updateTopBar();
+
+  } catch (error) {
+
+    localStorage.removeItem("xenon_token");
+
+    currentUser = null;
+
+    updateTopBar();
+
+  }
+
+}
+
+
+/* ---------------- TOP BAR ---------------- */
+
+function updateTopBar() {
+
+  const loginBtn =
+    document.getElementById("loginBtn");
+
+  const registerBtn =
+    document.getElementById("registerBtn");
+
+  const topUser =
+    document.getElementById("topUser");
+
+  const topBalance =
+    document.getElementById("topBalance");
+
+  if (currentUser) {
+
+    loginBtn.style.display = "none";
+    registerBtn.style.display = "none";
+    topUser.style.display = "flex";
+
+    topBalance.innerText =
+      "💰 ₹" +
+      Number(currentUser.balance || 0);
+
+  } else {
+
+    loginBtn.style.display = "";
+    registerBtn.style.display = "";
+    topUser.style.display = "none";
+
+  }
+
+}
+
+
+/* ---------------- PRODUCTS ---------------- */
+
+async function loadProducts() {
+
+  const box =
+    document.getElementById("products");
+
+  try {
+
+    const response =
+      await fetch("/api/products");
+
+    if (!response.ok) {
+      throw new Error("Products load failed");
+    }
+
+    const products =
+      await response.json();
+
+    if (
+      !Array.isArray(products) ||
+      products.length === 0
+    ) {
+
+      box.innerHTML = `
+
+        <div class="card empty-products">
+
+          <h3>
+            📦 No products yet
+          </h3>
+
+          <p class="small-text">
+            Products will appear here
+            when the admin adds them.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
 
     }
 
 
-    /* ---------------- ACTIVITY ---------------- */
+    box.innerHTML =
+      products.map(product => {
 
-    async function loadActivity() {
+        const image =
+          product.image
+            ? `
 
-      try {
+              <img
+                src="${escapeHtml(product.image)}"
+                class="product-image"
+                alt="${escapeHtml(product.name)}"
+                onerror="this.style.display='none'"
+              >
 
-        const response =
-          await fetch(
-            "/api/activity"
-          );
+            `
+            : `
+
+              <div class="product-icon">
+                ${escapeHtml(product.icon || "📦")}
+              </div>
+
+            `;
 
 
-        const activity =
-          await response.json();
+        const delivery =
+          product.delivery ||
+          product.reward ||
+          product.content ||
+          product.afterPurchase ||
+          "";
 
 
-        const box =
-          document.getElementById(
-            "activity"
-          );
+        const buyButton =
+          currentUser
+
+            ? `
+
+              <button
+                class="buy-button"
+                onclick="openBuyModal('${escapeHtml(product.id)}')"
+              >
+                🛒 BUY NOW
+              </button>
+
+            `
+
+            : `
+
+              <a
+                href="/login.html"
+                class="login-button"
+              >
+                🔐 LOGIN TO BUY
+              </a>
+
+            `;
 
 
-        if (
-          !Array.isArray(
-            activity
-          ) ||
-          activity.length === 0
-        ) {
+        return `
 
-          box.innerHTML = `
+          <div class="card product">
 
-            <p class="small-text">
-              Abhi koi purchase nahi hua.
+            ${image}
+
+            <h3>
+              ${escapeHtml(product.name)}
+            </h3>
+
+            <p class="description product-description">
+              ${escapeHtml(
+                product.description ||
+                "Premium digital product."
+              )}
             </p>
 
-          `;
+            ${
+              delivery
+                ? `
 
-          return;
+                  <div class="delivery-box">
 
-        }
-
-
-        box.innerHTML =
-          activity
-            .map(
-              item => {
-
-                const date =
-                  new Date(
-                    item.createdAt
-                  );
-
-
-                return `
-
-                  <div
-                    class="activity"
-                  >
-
-                    <span
-                      class="activity-dot"
-                    ></span>
+                    <div class="delivery-title">
+                      🎁 You will receive
+                    </div>
 
                     <div>
-
-                      <b>
-                        ${escapeHtml(
-                          item.name
-                        )}
-                      </b>
-
-                      purchased
-
-                      <b>
-                        ${escapeHtml(
-                          item.product
-                        )}
-                      </b>
-
-                      <div
-                        class="small-text"
-                      >
-
-                        ₹${Number(
-                          item.amount
-                        )}
-
-                        •
-
-                        ${date.toLocaleString()}
-
-                      </div>
-
+                      ${escapeHtml(delivery)}
                     </div>
 
                   </div>
 
-                `;
+                `
+                : ""
+            }
 
-              }
-            )
-            .join("");
+            <div class="price">
+              ₹${Number(product.price || 0)}
+            </div>
 
-      }
+            ${
+              currentUser
+                ? `
 
-      catch (error) {
+                  <div class="wallet-info">
+                    Wallet:
+                    <b>
+                      ₹${Number(currentUser.balance || 0)}
+                    </b>
+                  </div>
 
-        console.error(error);
+                `
+                : ""
+            }
 
-      }
+            ${buyButton}
 
-    }
+          </div>
 
+        `;
 
-    /* ---------------- ESCAPE ---------------- */
+      }).join("");
 
-    function escapeHtml(
-      value
-    ) {
+  } catch (error) {
 
-      return String(
-        value || ""
-      )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
+    console.error(error);
 
-    }
+    box.innerHTML = `
 
+      <div class="card empty-products">
 
-    /* ---------------- START ---------------- */
+        <h3>
+          ⚠️ Products load nahi hue
+        </h3>
 
-    loadProducts();
+        <p class="small-text">
+          Page refresh karke dobara try karo.
+        </p>
 
-    loadActivity();
+      </div>
+
+    `;
+
+  }
+
+}
 
 
-    /*
-      Recent purchase list
-      refreshes automatically.
-    */
+/* ---------------- OPEN BUY MODAL ---------------- */
 
-    setInterval(
-      loadActivity,
-      15000
-    );
+async function openBuyModal(productId) {
 
-  </script>
+  const token = getToken();
 
-</body>
+  if (!token) {
 
-</html>
+    window.location.href =
+      "/login.html";
+
+    return;
+
+  }
+
+
+ 
