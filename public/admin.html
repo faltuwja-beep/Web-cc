@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xenon Admin</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<main class="auth">
+
+<div class="authbox">
+
+<div class="logo">
+XENON<span>ADMIN</span>
+</div>
+
+<h1>Admin Login</h1>
+
+<div id="loginBox">
+
+<label class="label">
+Email
+</label>
+
+<input
+  id="email"
+  class="input"
+  type="email"
+  placeholder="Admin email">
+
+<label class="label">
+Password
+</label>
+
+<input
+  id="password"
+  class="input"
+  type="password"
+  placeholder="Admin password">
+
+<button
+  class="btn"
+  onclick="adminLogin()">
+
+LOGIN
+
+</button>
+
+</div>
+
+<div id="panel"></div>
+
+</div>
+
+</main>
+
+<script>
+
+async function adminLogin(){
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value;
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+  const response =
+    await fetch(
+      "/api/admin/login",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+          email,
+          password
+        })
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if(!response.ok){
+
+    alert(data.error);
+
+    return;
+  }
+
+  localStorage.setItem(
+    "xenon_admin",
+    data.token
+  );
+
+  showPanel();
+
+}
+
+async function showPanel(){
+
+  const token =
+    localStorage.getItem(
+      "xenon_admin"
+    );
+
+  if(!token)return;
+
+  document.getElementById(
+    "loginBox"
+  ).style.display="none";
+
+  const response =
+    await fetch(
+      "/api/admin/deposits",
+      {
+        headers:{
+          "Authorization":
+            "Bearer "+token
+        }
+      }
+    );
+
+  const deposits =
+    await response.json();
+
+  let html =
+    "<h2>Payments</h2>";
+
+  if(!deposits.length){
+
+    html +=
+      `<div class="card">
+        No payments yet.
+      </div>`;
+
+  }else{
+
+    deposits.forEach(d=>{
+
+      html += `
+
+      <div class="card">
+
+        <h3>
+          ₹${d.amount}
+        </h3>
+
+        <p>
+          User: ${d.user}
+        </p>
+
+        <p>
+          UTR: ${d.utr}
+        </p>
+
+        <p>
+          <span
+            class="status ${d.status}">
+            ${d.status}
+          </span>
+        </p>
+
+        ${
+          d.status === "PENDING"
+          ?
+          `
+          <div class="row">
+
+            <button
+              class="btn"
+              onclick="updatePayment(
+                '${d.id}',
+                'APPROVED'
+              )">
+
+              APPROVE
+
+            </button>
+
+            <button
+              class="btn2"
+              onclick="updatePayment(
+                '${d.id}',
+                'REJECTED'
+              )">
+
+              REJECT
+
+            </button>
+
+          </div>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+      `;
+
+    });
+
+  }
+
+  html += `
+
+    <button
+      class="btn"
+      onclick="adminLogout()">
+
+      LOGOUT ADMIN
+
+    </button>
+
+  `;
+
+  document.getElementById(
+    "panel"
+  ).innerHTML=html;
+
+}
+
+async function updatePayment(
+  id,
+  status
+){
+
+  const token =
+    localStorage.getItem(
+      "xenon_admin"
+    );
+
+  const response =
+    await fetch(
+      "/api/admin/deposits/"+id,
+      {
+        method:"POST",
+
+        headers:{
+          "Authorization":
+            "Bearer "+token,
+
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+          status
+        })
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if(!response.ok){
+
+    alert(data.error);
+
+    return;
+  }
+
+  alert(
+    "Payment "+status
+  );
+
+  showPanel();
+
+}
+
+function adminLogout(){
+
+  localStorage.removeItem(
+    "xenon_admin"
+  );
+
+  location.reload();
+
+}
+
+showPanel();
+
+</script>
+
+</body>
+</html>
