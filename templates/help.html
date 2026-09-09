@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h2 class="section-title">
+
+<span>
+💬
+</span>
+
+Help & Support
+
+</h2>
+
+
+<div class="history-card">
+
+<h3>
+📞 Support
+</h3>
+
+<p>
+
+Telegram:
+{{ support_id }}
+
+</p>
+
+</div>
+
+
+<div class="history-card">
+
+<h3>
+💰 Payment Problem
+</h3>
+
+<p>
+
+Payment submit karne ke baad UTR number verify karein.
+
+</p>
+
+</div>
+
+
+<div class="history-card">
+
+<h3>
+📦 Order Problem
+</h3>
+
+<p>
+
+Order related problem ke liye support se contact karein.
+
+</p>
+
+</div>
+
+
+<a
+href="/logout"
+class="reject-btn"
+>
+
+🚪 Logout
+
+</a>
+
+
+{% endblock %}
