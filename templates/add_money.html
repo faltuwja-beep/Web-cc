@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h2 class="section-title">
+
+<span>
+💰
+</span>
+
+Add Money
+
+</h2>
+
+
+<div class="payment-card">
+
+<h3>
+UPI Payment
+</h3>
+
+
+<div class="upi-box">
+
+{{ upi_id }}
+
+</div>
+
+
+<p>
+
+UPI app se payment karne ke baad UTR number enter karein.
+
+</p>
+
+
+<form method="POST">
+
+
+<div class="form-group">
+
+<label>
+Amount
+</label>
+
+<input
+class="input"
+type="number"
+name="amount"
+placeholder="Enter amount"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+UTR / Transaction ID
+</label>
+
+<input
+class="input"
+type="text"
+name="utr"
+placeholder="Enter UTR number"
+required
+>
+
+</div>
+
+
+<button
+class="primary-btn"
+type="submit"
+>
+
+📤 Submit Payment
+
+</button>
+
+
+</form>
+
+</div>
+
+{% endblock %}
