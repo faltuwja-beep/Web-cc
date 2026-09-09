@@ -471,7 +471,7 @@ def shop():
     categories = Category.query.all()
 
     return render_template(
-        "shop.html",
+        "home.html",
         user=user,
         products=products,
         categories=categories
