@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h2 class="section-title">
+
+<span>
+🎮
+</span>
+
+Free Fire UID Info
+
+</h2>
+
+
+<div class="payment-card">
+
+
+<form method="POST">
+
+<div class="form-group">
+
+<label>
+Free Fire UID
+</label>
+
+<input
+class="input"
+type="text"
+name="uid"
+placeholder="Enter UID"
+required
+>
+
+</div>
+
+
+<button
+class="primary-btn"
+type="submit"
+>
+
+🔍 Search Player
+
+</button>
+
+</form>
+
+</div>
+
+
+{% if error %}
+
+<div class="toast">
+
+{{ error }}
+
+</div>
+
+{% endif %}
+
+
+{% if data %}
+
+{% set basic = data.get("basicInfo", {}) %}
+
+{% set clan = data.get("clanBasicInfo", {}) %}
+
+
+<h2 class="section-title">
+
+<span>
+👤
+</span>
+
+Player Profile
+
+</h2>
+
+
+<div class="history-card">
+
+<h3>
+
+👤 {{ basic.get("nickname", "N/A") }}
+
+</h3>
+
+<p>
+
+🆔 UID: {{ basic.get("accountId", "N/A") }}
+
+</p>
+
+<p>
+
+🌍 Region: {{ basic.get("region", "N/A") }}
+
+</p>
+
+<p>
+
+📊 Level: {{ basic.get("level", "N/A") }}
+
+</p>
+
+<p>
+
+❤️ Likes: {{ basic.get("liked", "N/A") }}
+
+</p>
+
+<p>
+
+🏆 BR Rank: {{ basic.get("rank", "N/A") }}
+
+</p>
+
+<p>
+
+⚔️ CS Rank: {{ basic.get("csRank", "N/A") }}
+
+</p>
+
+<p>
+
+🛡️ Guild: {{ clan.get("clanName", "N/A") }}
+
+</p>
+
+</div>
+
+{% endif %}
+
+
+{% endblock %}
