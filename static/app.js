@@ -1,89 +1,106 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    // Toast auto hide
-    const toasts = document.querySelectorAll(".toast");
+        // Toast auto hide
 
-    toasts.forEach(function (toast) {
-        setTimeout(function () {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateY(-10px)";
+        const toasts =
+            document.querySelectorAll(
+                ".toast"
+            );
 
-            setTimeout(function () {
-                toast.remove();
-            }, 400);
+        toasts.forEach(
+            function (toast) {
 
-        }, 3500);
-    });
+                setTimeout(
+                    function () {
 
+                        toast.style.opacity = "0";
 
-    // Smooth button click animation
-    const buttons = document.querySelectorAll(
-        ".primary-btn, .buy-btn, .hero-button"
-    );
+                        setTimeout(
+                            function () {
 
-    buttons.forEach(function (button) {
+                                toast.remove();
 
-        button.addEventListener("click", function () {
+                            },
+                            400
+                        );
 
-            button.style.transform = "scale(0.96)";
+                    },
+                    3500
+                );
 
-            setTimeout(function () {
-                button.style.transform = "";
-            }, 150);
-
-        });
-
-    });
+            }
+        );
 
 
-    // Product cards animation
-    const cards = document.querySelectorAll(".product-card");
+        // Product animation
 
-    cards.forEach(function (card, index) {
+        const cards =
+            document.querySelectorAll(
+                ".product-card"
+            );
 
-        card.style.opacity = "0";
-        card.style.transform = "translateY(20px)";
+        cards.forEach(
+            function (card, index) {
 
-        setTimeout(function () {
+                card.style.opacity = "0";
 
-            card.style.transition =
-                "opacity 0.5s ease, transform 0.5s ease";
+                card.style.transform =
+                    "translateY(20px)";
 
-            card.style.opacity = "1";
-            card.style.transform = "translateY(0)";
+                setTimeout(
+                    function () {
 
-        }, index * 80);
+                        card.style.transition =
+                            "0.5s ease";
 
-    });
+                        card.style.opacity =
+                            "1";
 
+                        card.style.transform =
+                            "translateY(0)";
 
-    // Demo notification only
-    const notification = document.createElement("div");
+                    },
+                    index * 80
+                );
 
-    notification.id = "demo-notification";
-
-    notification.innerHTML = `
-        <div class="demo-icon">🛍️</div>
-
-        <div>
-            <b>Store Activity</b>
-            <p>Welcome! Browse available products.</p>
-        </div>
-    `;
-
-    document.body.appendChild(notification);
+            }
+        );
 
 
-    setTimeout(function () {
+        // Button animation
 
-        notification.classList.add("show");
+        const buttons =
+            document.querySelectorAll(
+                ".primary-btn, .buy-btn"
+            );
 
-        setTimeout(function () {
+        buttons.forEach(
+            function (button) {
 
-            notification.classList.remove("show");
+                button.addEventListener(
+                    "click",
+                    function () {
 
-        }, 4000);
+                        button.style.transform =
+                            "scale(.97)";
 
-    }, 5000);
+                        setTimeout(
+                            function () {
 
-});
+                                button.style.transform =
+                                    "";
+
+                            },
+                            150
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
