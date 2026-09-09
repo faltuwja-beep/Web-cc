@@ -650,3 +650,68 @@ a {
     }
 
 }
+/* =========================
+   STORE ACTIVITY POPUP
+========================= */
+
+#demo-notification {
+    position: fixed;
+    left: 15px;
+    bottom: 95px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: calc(100% - 30px);
+    max-width: 360px;
+
+    padding: 14px;
+
+    background: rgba(18, 17, 30, 0.97);
+
+    border: 1px solid rgba(0, 208, 132, 0.35);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.5);
+
+    transform: translateY(120px);
+
+    opacity: 0;
+
+    transition: 0.5s ease;
+
+    z-index: 9999;
+}
+
+#demo-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.demo-icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 208, 132, 0.15);
+
+    border-radius: 14px;
+
+    font-size: 20px;
+}
+
+#demo-notification b {
+    font-size: 13px;
+}
+
+#demo-notification p {
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+}
