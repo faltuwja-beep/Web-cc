@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shop - Prime Shop
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>
+        🛍️ Redeem Shop
+    </h1>
+
+    <p>
+        Choose your favorite redeem code
+    </p>
+
+</div>
+
+
+<div class="product-grid">
+
+{% for product in products %}
+
+    <div class="product-card">
+
+        <div class="product-image">
+
+            {% if product.image %}
+
+                <img
+                    src="{{ product.image }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                🎁
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="product-info">
+
+            <span class="category">
+
+                {{ product.category }}
+
+            </span>
+
+            <h3>
+
+                {{ product.name }}
+
+            </h3>
+
+            <p>
+
+                {{ product.description }}
+
+            </p>
+
+            <div class="product-bottom">
+
+                <strong>
+
+                    ₹{{ product.price }}
+
+                </strong>
+
+                <a
+                    class="buy-button"
+                    href="{{ url_for('buy_product', product_id=product.id) }}"
+                >
+
+                    Buy Now
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <div class="empty-card">
+
+        <h2>
+            Products Coming Soon
+        </h2>
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
