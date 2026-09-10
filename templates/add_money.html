@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Money - Prime Shop
+{% endblock %}
+
+{% block content %}
+
+<div class="payment-wrapper">
+
+    <div class="payment-card">
+
+        <h1>
+            💰 Add Money
+        </h1>
+
+        <p>
+            Pay using any UPI App
+        </p>
+
+
+        <div class="upi-box">
+
+            <span>
+                UPI ID
+            </span>
+
+            <h2 id="upiId">
+
+                {{ upi_id }}
+
+            </h2>
+
+            <button
+                type="button"
+                onclick="copyUPI()"
+                class="copy-button"
+            >
+                📋 Copy UPI ID
+            </button>
+
+        </div>
+
+
+        <div class="payment-note">
+
+            ⚠️ First pay to the UPI ID.
+            Then enter the exact amount and UTR number.
+
+        </div>
+
+
+        <form method="POST">
+
+            <label>
+                Amount Paid
+            </label>
+
+            <input
+                type="number"
+                name="amount"
+                min="10"
+                step="0.01"
+                placeholder="₹ Enter amount"
+                required
+            >
+
+
+            <label>
+                UTR / Transaction Number
+            </label>
+
+            <input
+                type="text"
+                name="utr"
+                placeholder="Enter UTR number"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="primary-button full"
+            >
+                Submit Payment Request
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
