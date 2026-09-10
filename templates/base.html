@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}Prime Redeem Shop{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<nav class="navbar">
+
+    <a
+        href="{{ url_for('index') }}"
+        class="logo"
+    >
+        PRIME<span>SHOP</span>
+    </a>
+
+    <button
+        class="menu-button"
+        onclick="toggleMenu()"
+    >
+        ☰
+    </button>
+
+    <div
+        class="nav-links"
+        id="navLinks"
+    >
+
+        <a href="{{ url_for('index') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('products') }}">
+            Shop
+        </a>
+
+        {% if current_user_data %}
+
+            <a href="{{ url_for('wallet') }}">
+                💰 Wallet
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                📜 History
+            </a>
+
+            <a href="{{ url_for('profile') }}">
+                👤 {{ current_user_data.username }}
+            </a>
+
+            {% if current_user_data.is_admin %}
+
+                <a
+                    class="admin-link"
+                    href="{{ url_for('admin_dashboard') }}"
+                >
+                    👑 Admin
+                </a>
+
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+            <a
+                class="register-link"
+                href="{{ url_for('register') }}"
+            >
+                Register
+            </a>
+
+        {% endif %}
+
+        <button
+            class="theme-button"
+            onclick="toggleTheme()"
+        >
+            🌙
+        </button>
+
+    </div>
+
+</nav>
+
+
+<div class="ticker">
+
+    <span>
+        🔥 Welcome to Prime Redeem Shop •
+        ⭐ Premium Redeem Codes Available •
+        🎁 Fast Delivery After Purchase
+    </span>
+
+</div>
+
+
+<div class="container">
+
+    {% with messages =
+        get_flashed_messages(with_categories=true)
+    %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="alert {{ category }}"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+
+<footer>
+
+    <h3>
+        PRIME SHOP
+    </h3>
+
+    <p>
+        Premium Redeem Code Store
+    </p>
+
+    <p>
+        © 2026 Prime Shop
+    </p>
+
+</footer>
+
+
+<script
+    src="{{ url_for('static', filename='js/main.js') }}"
+></script>
+
+</body>
+
+</html>
