@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Users
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>
+        👥 Users
+    </h1>
+
+</div>
+
+
+<div class="admin-nav">
+
+    <a href="{{ url_for('admin_dashboard') }}">
+        Dashboard
+    </a>
+
+    <a href="{{ url_for('admin_products') }}">
+        Products
+    </a>
+
+    <a href="{{ url_for('admin_payments') }}">
+        Payments
+    </a>
+
+</div>
+
+
+<div class="users-list">
+
+{% for user in users %}
+
+    <div class="user-card">
+
+        <div class="user-avatar">
+
+            {{ user.username[0].upper() }}
+
+        </div>
+
+        <div>
+
+            <h3>
+
+                {{ user.username }}
+
+                {% if user.is_admin %}
+
+                    👑
+
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {{ user.email }}
+
+            </p>
+
+        </div>
+
+        <strong>
+
+            ₹{{ user.balance }}
+
+        </strong>
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
