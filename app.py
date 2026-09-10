@@ -316,7 +316,7 @@ def admin_required(func):
 def create_admin():
 
     admin_username = os.environ.get(
-        "ADMIN_USERNAME",
+        "sonu",
         "admin"
     )
 
