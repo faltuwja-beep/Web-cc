@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}
+Prime Shop - Home
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            ⭐ PREMIUM DIGITAL STORE
+        </div>
+
+        <h1>
+            Buy Premium
+            <span>Redeem Codes</span>
+        </h1>
+
+        <p>
+            Fast • Secure • Easy Wallet Payment
+        </p>
+
+        <div class="hero-buttons">
+
+            <a
+                href="{{ url_for('products') }}"
+                class="primary-button"
+            >
+                🛍️ Explore Shop
+            </a>
+
+            {% if not user %}
+
+                <a
+                    href="{{ url_for('register') }}"
+                    class="secondary-button"
+                >
+                    Create Account
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features">
+
+    <div class="feature-card">
+
+        <div class="feature-icon">
+            ⚡
+        </div>
+
+        <h3>
+            Fast Delivery
+        </h3>
+
+        <p>
+            Get your redeem code after purchase.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div class="feature-icon">
+            🔒
+        </div>
+
+        <h3>
+            Secure Account
+        </h3>
+
+        <p>
+            Passwords are securely hashed.
+        </p>
+
+    </div>
+
+
+    <div class="feature-card">
+
+        <div class="feature-icon">
+            💰
+        </div>
+
+        <h3>
+            Easy Wallet
+        </h3>
+
+        <p>
+            Add money using UPI.
+        </p>
+
+    </div>
+
+</section>
+
+
+<div class="section-title">
+
+    <h2>
+        🔥 Latest Products
+    </h2>
+
+    <a
+        href="{{ url_for('products') }}"
+    >
+        View All →
+    </a>
+
+</div>
+
+
+<div class="product-grid">
+
+    {% for product in products %}
+
+        <div class="product-card">
+
+            <div class="product-image">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image }}"
+                        alt="{{ product.name }}"
+                    >
+
+                {% else %}
+
+                    🎁
+
+                {% endif %}
+
+            </div>
+
+            <div class="product-info">
+
+                <span class="category">
+                    {{ product.category }}
+                </span>
+
+                <h3>
+                    {{ product.name }}
+                </h3>
+
+                <p>
+                    {{ product.description }}
+                </p>
+
+                <div class="product-bottom">
+
+                    <strong>
+                        ₹{{ product.price }}
+                    </strong>
+
+                    <a
+                        href="{{ url_for('buy_product', product_id=product.id) }}"
+                        class="buy-button"
+                    >
+                        Buy Now
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-card">
+
+            <h3>
+                No Products Yet
+            </h3>
+
+            <p>
+                Admin can add products from Admin Panel.
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
