@@ -312,6 +312,7 @@ def admin_required(func):
 # =====================================
 # CREATE ADMIN
 # =====================================
+
 def create_admin():
 
     admin_username = os.environ.get(
@@ -328,21 +329,27 @@ def create_admin():
         username=admin_username
     ).first()
 
-    if not admin:
+    if admin:
+        # Existing user ko admin bana do
+        admin.is_admin = True
+        admin.password = generate_password_hash(
+            admin_password
+        )
+        db.session.commit()
+
+    else:
+        # Admin user create karo
         admin = User(
             username=admin_username,
             email="admin@store.local",
-            password=generate_password_hash(admin_password),
+            password=generate_password_hash(
+                admin_password
+            ),
             balance=Decimal("0.00"),
             is_admin=True
         )
 
         db.session.add(admin)
-        db.session.commit()
-
-    else:
-        admin.is_admin = True
-        admin.password = generate_password_hash(admin_password)
         db.session.commit()
 
 
