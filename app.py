@@ -1125,4 +1125,155 @@ def approve_payment(payment_id):
         )
 
         return redirect(
-            url_for
+            url_for("admin_payments")
+        )
+
+    user = db.session.get(
+        User,
+        payment.user_id
+    )
+
+    if not user:
+
+        flash(
+            "User not found.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_payments")
+        )
+
+    user.balance += payment.amount
+
+    payment.status = "APPROVED"
+
+    payment.admin_note = "Payment verified and approved."
+
+    db.session.commit()
+
+    flash(
+        "Payment approved and wallet updated!",
+        "success"
+    )
+
+    return redirect(
+        url_for("admin_payments")
+    )
+
+
+# =====================================
+# ADMIN REJECT PAYMENT
+# =====================================
+
+@app.route(
+    "/admin/payment/<int:payment_id>/reject",
+    methods=["POST"]
+)
+@admin_required
+def reject_payment(payment_id):
+
+    payment = db.session.get(
+        PaymentRequest,
+        payment_id
+    )
+
+    if not payment:
+
+        flash(
+            "Payment not found.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_payments")
+        )
+
+    if payment.status != "PENDING":
+
+        flash(
+            "Payment already processed.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_payments")
+        )
+
+    note = request.form.get(
+        "note",
+        ""
+    ).strip()
+
+    payment.status = "REJECTED"
+
+    payment.admin_note = (
+        note or
+        "Payment could not be verified."
+    )
+
+    db.session.commit()
+
+    flash(
+        "Payment rejected.",
+        "success"
+    )
+
+    return redirect(
+        url_for("admin_payments")
+    )
+
+
+# =====================================
+# ADMIN USERS
+# =====================================
+
+@app.route("/admin/users")
+@admin_required
+def admin_users():
+
+    users = User.query.order_by(
+        User.id.desc()
+    ).all()
+
+    return render_template(
+        "admin/users.html",
+        users=users
+    )
+
+
+# =====================================
+# CONTEXT
+# =====================================
+
+@app.context_processor
+def inject_user():
+
+    return {
+        "current_user_data": current_user()
+    }
+
+
+# =====================================
+# START
+# =====================================
+
+with app.app_context():
+
+    db.create_all()
+
+    create_admin()
+
+
+if __name__ == "__main__":
+
+    app.run(
+        host="0.0.0.0",
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        ),
+        debug=True
+    )
