@@ -37,24 +37,20 @@ Admin Payments
     <div class="admin-product">
 
         <div>
-            <h3>
-                Payment #{{ payment.id }}
-            </h3>
+            <h3>Payment #{{ payment.id }}</h3>
+
+            <p>User ID: {{ payment.user_id }}</p>
+
+            <p>Amount: ₹{{ payment.amount }}</p>
 
             <p>
-                User ID: {{ payment.user_id }}
+                UTR:
+                <strong>{{ payment.utr }}</strong>
             </p>
 
             <p>
-                Amount: ₹{{ payment.amount }}
-            </p>
-
-            <p>
-                UTR: <strong>{{ payment.utr }}</strong>
-            </p>
-
-            <p>
-                Status: <strong>{{ payment.status }}</strong>
+                Status:
+                <strong>{{ payment.status }}</strong>
             </p>
 
             <p>
