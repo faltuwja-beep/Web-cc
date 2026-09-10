@@ -1084,24 +1084,10 @@ def admin_delete_product(product_id):
 # ADMIN PAYMENTS
 # =====================================
 
+
 @app.route("/admin/payments")
 @admin_required
 def admin_payments():
-
-    print("===== PAYMENT TEMPLATE DEBUG =====")
-    print("APP ROOT:", app.root_path)
-    print("TEMPLATE FOLDER:", app.template_folder)
-
-    template_path = os.path.join(
-        app.root_path,
-        app.template_folder,
-        "admin",
-        "payments.html"
-    )
-
-    print("PAYMENT TEMPLATE PATH:", template_path)
-    print("PAYMENT TEMPLATE EXISTS:", os.path.exists(template_path))
-    print("=================================")
 
     payments = PaymentRequest.query.order_by(
         PaymentRequest.id.desc()
@@ -1111,6 +1097,8 @@ def admin_payments():
         "admin/payments.html",
         payments=payments
     )
+
+
 
 
 # =====================================
