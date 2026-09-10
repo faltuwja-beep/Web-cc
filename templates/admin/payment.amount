@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Payments
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>
+        💳 Payment Requests
+    </h1>
+
+</div>
+
+
+<div class="admin-nav">
+
+    <a href="{{ url_for('admin_dashboard') }}">
+        Dashboard
+    </a>
+
+    <a href="{{ url_for('admin_products') }}">
+        Products
+    </a>
+
+    <a href="{{ url_for('admin_users') }}">
+        Users
+    </a>
+
+</div>
+
+
+<div class="payment-admin-list">
+
+{% for payment in payments %}
+
+    <div class="payment-admin-card">
+
+        <div class="payment-info">
+
+            <h2>
+
+                ₹{{ payment.amount }}
+
+            </h2>
+
+            <p>
+
+                User ID: {{ payment.user_id }}
+
+            </p>
+
+            <p>
+
+                UTR:
+                <strong>
+                    {{ payment.utr }}
+                </strong>
+
+            </p>
+
+            <p>
+
+                {{ payment.created_at }}
+
+            </p>
+
+        </div>
+
+
+        <span
+            class="status {{ payment.status.lower() }}"
+        >
+
+            {{ payment.status }}
+
+        </span>
+
+
+        {% if payment.status == "PENDING" %}
+
+            <div class="payment-actions">
+
+                <form
+                    method="POST"
+                    action="{{ url_for('approve_payment', payment_id=payment.id) }}"
+                >
+
+                    <button
+                        type="submit"
+                        class="approve-button"
+                    >
+                        ✅ Approve
+                    </button>
+
+                </form>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('reject_payment', payment_id=payment.id) }}"
+                >
+
+                    <input
+                        type="text"
+                        name="note"
+                        placeholder="Reject reason"
+                    >
+
+                    <button
+                        type="submit"
+                        class="reject-button"
+                    >
+                        ❌ Reject
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% else %}
+
+            <p>
+
+                {{ payment.admin_note }}
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+{% else %}
+
+    <div class="empty-card">
+
+        No payment requests.
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
