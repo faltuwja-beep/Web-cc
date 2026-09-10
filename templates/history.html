@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}
+History - Prime Shop
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>
+        📜 My History
+    </h1>
+
+</div>
+
+
+<h2 class="small-title">
+
+    🛍️ Purchases
+
+</h2>
+
+
+<div class="history-list">
+
+{% for purchase in purchases %}
+
+    <div class="history-card">
+
+        <div>
+
+            <h3>
+
+                {{ purchase.product_name }}
+
+            </h3>
+
+            <p>
+
+                ₹{{ purchase.amount }}
+
+            </p>
+
+            <div class="redeem-code">
+
+                {{ purchase.redeem_code }}
+
+            </div>
+
+        </div>
+
+        <span class="status approved">
+
+            SUCCESS
+
+        </span>
+
+    </div>
+
+{% else %}
+
+    <div class="empty-card">
+
+        No purchases yet.
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+
+<h2 class="small-title">
+
+    💰 Payments
+
+</h2>
+
+
+<div class="history-list">
+
+{% for payment in payments %}
+
+    <div class="history-card">
+
+        <div>
+
+            <h3>
+
+                ₹{{ payment.amount }}
+
+            </h3>
+
+            <p>
+
+                UTR: {{ payment.utr }}
+
+            </p>
+
+            {% if payment.admin_note %}
+
+                <small>
+
+                    {{ payment.admin_note }}
+
+                </small>
+
+            {% endif %}
+
+        </div>
+
+        <span
+            class="status {{ payment.status.lower() }}"
+        >
+
+            {{ payment.status }}
+
+        </span>
+
+    </div>
+
+{% else %}
+
+    <div class="empty-card">
+
+        No payment history yet.
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
