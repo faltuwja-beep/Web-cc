@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-header">
+
+    <div>
+
+        <h1>
+            👑 Admin Dashboard
+        </h1>
+
+        <p>
+            Manage your Prime Shop
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="admin-nav">
+
+    <a href="{{ url_for('admin_dashboard') }}">
+
+        Dashboard
+
+    </a>
+
+    <a href="{{ url_for('admin_products') }}">
+
+        Products
+
+    </a>
+
+    <a href="{{ url_for('admin_payments') }}">
+
+        Payments
+
+    </a>
+
+    <a href="{{ url_for('admin_users') }}">
+
+        Users
+
+    </a>
+
+</div>
+
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+
+        <span>
+            👥
+        </span>
+
+        <h2>
+
+            {{ total_users }}
+
+        </h2>
+
+        <p>
+            Total Users
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>
+            🛍️
+        </span>
+
+        <h2>
+
+            {{ total_products }}
+
+        </h2>
+
+        <p>
+            Products
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>
+            ⏳
+        </span>
+
+        <h2>
+
+            {{ pending_payments }}
+
+        </h2>
+
+        <p>
+            Pending Payments
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>
+            💰
+        </span>
+
+        <h2>
+
+            ₹{{ total_sales }}
+
+        </h2>
+
+        <p>
+            Total Sales
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
