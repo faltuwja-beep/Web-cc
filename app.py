@@ -321,7 +321,7 @@ def create_admin():
     )
 
     admin_password = os.environ.get(
-        "ADMIN_PASSWORD",
+        "sha1234",
         "Admin@12345"
     )
 
